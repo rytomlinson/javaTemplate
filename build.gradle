@@ -1,0 +1,142 @@
+plugins {
+    id 'org.springframework.boot' version '1.5.4.RELEASE'
+    id 'java'
+    id 'maven'
+    id 'nebula.ospackage' version '4.4.0'
+    id 'com.jfrog.artifactory' version '4.4.18'
+    id 'ivy-publish'
+   // id 'war'
+    // id 'maven-publish'
+}
+
+def insightServerRelease = '1' // TODO: How to bump this programmatically?
+def insightServerVersion = "0.1.0-SNAPSHOT"
+def insightServerTimestamp = (new Date()).format('yyyyMMdd.HHmmss', TimeZone.getTimeZone('UTC'))
+def rpmVersionString = insightServerVersion.replaceAll('-SNAPSHOT', '.' + insightServerTimestamp)
+
+group = 'com.navis.insightserver'
+version = insightServerVersion
+
+description = """"""
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url "https://artifacts.buehner-fry.com/artifactory/release" }
+    maven { url "https://artifacts.buehner-fry.com/artifactory/snapshot" }
+}
+
+//configurations.all {
+//    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+//}
+
+dependencies {
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '1.5.6.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-mustache', version: '1.5.6.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-freemarker'
+    compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.6.1'
+    compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.6.1'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '1.5.6.RELEASE'
+    compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212'
+//    compile group: 'org.springframework.boot', name: 'spring-boot-devtools', version: '1.5.6.RELEASE'
+    compile group: 'com.github.jmnarloch', name: 'modelmapper-spring-boot-starter', version: '1.1.0'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '1.5.6.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-cache', version: '1.5.6.RELEASE'
+//    compile group: 'org.springframework.session', name: 'spring-session', version: '1.3.1.RELEASE'
+//    compile group: 'com.hazelcast', name: 'hazelcast', version: '3.8.6'
+    //compile group: 'com.hazelcast', name: 'hazelcast-wm', version: '3.8'
+//    compile group: 'com.hazelcast', name: 'hazelcast-spring', version: '3.8.6'
+//    compile group: 'com.hazelcast', name: 'hazelcast-client', version: '3.8.6'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '1.5.6.RELEASE'
+    compile group: 'org.pac4j', name: 'spring-webmvc-pac4j', version: '2.0.0'
+    compile group: 'org.pac4j', name: 'pac4j-core', version: '2.0.0'
+    compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.7.0'
+    compile group: 'org.pac4j', name: 'pac4j-oidc', version: '2.0.0'
+    compile group: 'de.siegmar', name: 'logback-gelf', version: '1.0.4'
+    testCompile(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.5.6.RELEASE') {
+        exclude(module: 'commons-logging')
+    }
+}
+
+jar {
+    manifest {
+        attributes("Specification-Title": "insight-server",
+                "Specification-Version": version)
+    }
+}
+
+bootRepackage {
+    mainClass = 'com.navis.insightserver.MyApplication'
+    classifier = 'uber'
+}
+
+ospackage {
+    packageName 'insight-server'
+    packageDescription 'Installs the insight-server for allowing the client to interact with the server to build and maintain surveys'
+    version rpmVersionString
+    release insightServerRelease
+    user 'insight-server'
+    permissionGroup 'daemon'
+    os 'LINUX'
+    arch 'X86_64'
+
+    into '/opt/insight-server'
+
+    from(bootRepackage.outputs.files) {
+        into ''
+        rename(/^(insight-server)-.*-uber(\.jar)$/, '$1$2')
+    }
+}
+
+tasks.buildRpm.dependsOn 'bootRepackage'
+// tasks.build.finalizedBy 'buildRpm'
+
+
+publishing.publications.create('insight-server-yum', IvyPublication) {
+    artifact buildRpm.outputs.getFiles().getSingleFile()
+}
+
+task deployRpm() {
+    dependsOn buildRpm
+    artifactory {
+        contextUrl = 'https://artifacts.buehner-fry.com/artifactory'
+        publish {
+            repository {
+                repoKey = 'navis-yum-devel'
+                username = "dshofstall"
+                password = "AP4jndWjTTqhiCSeLy7PvvTdswe"
+                ivy {
+                    artifactLayout = "com/navis/insight-server/${insightServerVersion}/${buildRpm.outputs.getFiles().getSingleFile().getName()}"
+                }
+            }
+            defaults {
+                publications('insight-server-yum')
+
+                publishBuildInfo = false
+                publishArtifacts = true
+                publishPom = false
+                publishIvy = false
+            }
+        }
+    }
+
+    finalizedBy artifactoryPublish
+}
+
+bootRun {
+    systemProperties = System.properties
+}
+
+springBoot  {
+    buildInfo()
+}
+
+
+
+

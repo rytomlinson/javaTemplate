@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <springProperty scope="context" name="ACTIVE_PROFILE" source="spring.profiles.active"/>
+
+        <springProperty scope="context" name="graylogHost" source="logging.graylog.host"/>
+        <springProperty scope="context" name="graylogPort" source="logging.graylog.port"/>
+    <springProperty scope="context" name="loggingControllerLevel" source="logging.controller.level"/>
+    <springProperty scope="context" name="loggingServiceLevel" source="logging.service.level"/>
+    <springProperty scope="context" name="loggingHandlersLevel" source="logging.handlers.level"/>
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+    <appender name="GELF" class="de.siegmar.logbackgelf.GelfUdpAppender">
+        <graylogHost>${graylogHost}</graylogHost>
+        <graylogPort>${graylogPort}</graylogPort>
+        <layout class="de.siegmar.logbackgelf.GelfLayout">
+            <staticField>facility:qvue-server</staticField>
+        </layout>
+    </appender>
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="com.navis.qvueserver.controller" level="${loggingControllerLevel}"/>
+    <logger name="com.navis.qvueserver.service" level="${loggingServiceLevel}"/>
+    <logger name="com.navis.qvueserver.handlers" level="${loggingHandlersLevel}"/>
+    <root level="info">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="GELF" />
+    </root>
+</configuration>
