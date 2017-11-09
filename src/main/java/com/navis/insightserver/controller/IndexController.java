@@ -37,7 +37,7 @@ public class IndexController {
     private
     String logoutRedirectUri;
 
-    @Value("${qvueclient.sourcepath}")
+    @Value("${insightclient.sourcepath}")
     private
     String sourcePath;
 

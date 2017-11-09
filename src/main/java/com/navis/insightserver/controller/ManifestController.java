@@ -17,11 +17,11 @@ import org.springframework.web.client.RestTemplate;
 
 @Controller
 @RequestMapping("secure")
-@Api(value="QVue", description="Operations pertaining retrieving the QVue client manifest from the CDN")
+@Api(value="Insight", description="Operations pertaining retrieving the Insight client manifest from the CDN")
 public class ManifestController {
     private static final Logger log = LoggerFactory.getLogger(AccountController.class);
 
-    @Value("${qvueclient.cdn}")
+    @Value("${insightclient.cdn}")
     private
     String sourcePath;
 

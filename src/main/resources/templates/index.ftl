@@ -10,7 +10,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <title>NAVIS - QVue</title>
+    <title>NAVIS - Insight</title>
 </head>
 <body>
 <!-- Display a message if JS has been disabled on the browser. -->
@@ -18,7 +18,8 @@
 
 <!-- The app hooks into this div -->
 <div id="app"></div>
+<h1 Hello work... />
 <!-- A lot of magic happens in this file. HtmlWebpackPlugin automatically includes all assets (e.g. bundle.js, main.css) with the correct HTML tags, which is why they are missing in this HTML file. Don't add any assets here! (Check out webpackconfig.js if you want to know more) -->
-<script data-dll="true" src="${sourcePath}reactBoilerplateDeps.dll.js"></script><script type="text/javascript" src="${sourcePath}qvue-client-ui.js"></script></body>
+<#--<script data-dll="true" src="${sourcePath}reactBoilerplateDeps.dll.js"></script><script type="text/javascript" src="${sourcePath}insight-client-ui.js"></script></body>-->
 </html>
 
