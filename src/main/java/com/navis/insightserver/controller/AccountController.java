@@ -2,7 +2,10 @@ package com.navis.insightserver.controller;
 
 import com.navis.insightserver.Utils.ISecurity;
 import com.navis.insightserver.dto.AccountDTO;
+import com.navis.insightserver.dto.ProductDTO;
+import com.navis.insightserver.dto.TagDTO;
 import com.navis.insightserver.dto.UserProfileDTO;
+import com.navis.insightserver.service.ITagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.pac4j.core.context.J2EContext;
@@ -38,11 +41,17 @@ import java.util.stream.Collectors;
 public class AccountController {
     private static final Logger log = LoggerFactory.getLogger(AccountController.class);
 
-    @Value("${properties.endpoint}")
+    @Value("${navis.properties.api.propertiesEndpoint}")
+    private String propertiesEndpoint;
+
+    @Value("${reach.api.endpoint}")
     private String endpoint;
 
     @Autowired
     private ISecurity security;
+
+    @Autowired
+    private ITagService tagService;
 
     @RequestMapping(value = "accounts", method = RequestMethod.GET)
     @ApiOperation(value = "View a list of Insight Accounts")
@@ -51,16 +60,49 @@ public class AccountController {
         UserProfileDTO user = security.GetUserProfile(context);
         log.info("View a list of Insight Accounts for UserProfileDTO: " + user.getUserId());
 
-        URI uri = URI.create(UriComponentsBuilder.fromUriString(endpoint).queryParam("user_uuid",user.getUserId()).toUriString());
+        URI uri = URI.create(UriComponentsBuilder.fromUriString(propertiesEndpoint).queryParam("user_uuid",user.getUserId()).toUriString());
 
         RestTemplate restTemplate = new RestTemplate();
         Object[]  accountsObjectList = restTemplate.getForObject(uri.toString(), Object[].class);
-        List<AccountDTO> listDto = Arrays.asList(accountsObjectList).stream().map(item -> convertToDto(item)).collect(Collectors.toList());
+        List<AccountDTO> listDto = Arrays.asList(accountsObjectList).stream().map(item -> convertAccountsToDto(item)).collect(Collectors.toList());
         return new ResponseEntity<>(listDto, HttpStatus.OK);
     }
 
-    private AccountDTO convertToDto(Object account) {
+    @RequestMapping(value = "products/accounts/{id}", method = RequestMethod.GET)
+    @ApiOperation(value = "View a list of NAVIS products")
+    public ResponseEntity<List<ProductDTO>> getAccountsByUserId(@PathVariable("id") String id, HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+        final WebContext context = new J2EContext(request, response);
+        UserProfileDTO user = security.GetUserProfile(context);
+        log.info("View a list of Insight Accounts for UserProfileDTO: " + user.getUserId());
+
+        URI uri = URI.create(UriComponentsBuilder.fromUriString(endpoint).pathSegment("UserProducts")
+                .queryParam("accountNumber", id )
+                .queryParam("userId",user.getUserId()).toUriString());
+
+        RestTemplate restTemplate = new RestTemplate();
+        Object[]  accountsObjectList = restTemplate.getForObject(uri.toString(), Object[].class);
+        List<ProductDTO> listDto = Arrays.asList(accountsObjectList).stream().map(item -> convertProductsToDto(item)).collect(Collectors.toList());
+        return new ResponseEntity<>(listDto, HttpStatus.OK);
+    }
+
+    private AccountDTO convertAccountsToDto(Object account) {
         AccountDTO accountDTO = new AccountDTO(account);
         return accountDTO;
+    }
+
+    private ProductDTO convertProductsToDto(Object product) {
+        ProductDTO productDTO = new ProductDTO(product);
+        return productDTO;
+    }
+
+    @RequestMapping(value = "tags", method = RequestMethod.GET)
+    public ResponseEntity<List<TagDTO>> getTags(HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+        final WebContext context = new J2EContext(request, response);
+        UserProfileDTO user = security.GetUserProfile(context);
+        log.info("View a list of Insight Tags for UserProfileDTO: " + user.getUserId());
+
+        return new ResponseEntity<List<TagDTO>>(tagService.getTags(), HttpStatus.OK);
+
+
     }
 }

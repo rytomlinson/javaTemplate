@@ -59,6 +59,8 @@ dependencies {
     compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.7.0'
     compile group: 'org.pac4j', name: 'pac4j-oidc', version: '2.0.0'
     compile group: 'de.siegmar', name: 'logback-gelf', version: '1.0.4'
+    compile group: 'org.flywaydb', name: 'flyway-core', version: '4.2.0'
+    compile group: 'org.hibernate', name: 'hibernate-core', version: '5.0.4.Final'
     testCompile(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.5.6.RELEASE') {
         exclude(module: 'commons-logging')
     }
