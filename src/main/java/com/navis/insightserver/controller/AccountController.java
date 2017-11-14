@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("secure")
-@Api(value="QVue", description="Operations pertaining to QVue Account Users")
+@Api(value="Insight", description="Operations pertaining to Insight Account Users")
 public class AccountController {
     private static final Logger log = LoggerFactory.getLogger(AccountController.class);
 
@@ -49,9 +49,6 @@ public class AccountController {
 
     @Autowired
     private ISecurity security;
-
-    @Autowired
-    private ITagService tagService;
 
     @RequestMapping(value = "accounts", method = RequestMethod.GET)
     @ApiOperation(value = "View a list of Insight Accounts")
@@ -93,16 +90,5 @@ public class AccountController {
     private ProductDTO convertProductsToDto(Object product) {
         ProductDTO productDTO = new ProductDTO(product);
         return productDTO;
-    }
-
-    @RequestMapping(value = "tags", method = RequestMethod.GET)
-    public ResponseEntity<List<TagDTO>> getTags(HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
-        final WebContext context = new J2EContext(request, response);
-        UserProfileDTO user = security.GetUserProfile(context);
-        log.info("View a list of Insight Tags for UserProfileDTO: " + user.getUserId());
-
-        return new ResponseEntity<List<TagDTO>>(tagService.getTags(), HttpStatus.OK);
-
-
     }
 }
