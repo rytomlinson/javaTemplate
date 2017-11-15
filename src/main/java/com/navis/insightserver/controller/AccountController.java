@@ -65,7 +65,7 @@ public class AccountController {
         return new ResponseEntity<>(listDto, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "products/accounts/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "accounts/{id}/products", method = RequestMethod.GET)
     @ApiOperation(value = "View a list of NAVIS products")
     public ResponseEntity<List<ProductDTO>> getAccountsByUserId(@PathVariable("id") String id, HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
         final WebContext context = new J2EContext(request, response);
