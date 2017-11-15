@@ -52,18 +52,19 @@ Insert into tag_tag (owner, tag_id, parent_tag_id) values (DisneyUuid(), returnT
 END;
 $$ LANGUAGE plpgsql volatile cost 100;
 
-create or replace function insertQuestion(_display_title text, _short_label text, _benefit text, _tip text, _render_as question_render_as, _type text )
+create or replace function insertQuestion(_display_title text, _short_label text, _benefit text, _tip text, _render_as question_render_as, _type question_type)
 returns bigint as $$
     DECLARE question_id BIGINT;
 BEGIN
 
-INSERT into question(display_title_id, short_label_id, semantic_title_id, benefit_id, tip_id, render_as, is_template, is_library, owner)
+INSERT into question(display_title_id, short_label_id, semantic_title_id, benefit_id, tip_id, render_as, type, is_template, is_library, owner)
 values((select CreateTranslation(_display_title, 'en-US'))
  , (select CreateTranslation(_short_label, 'en-US'))
  , (select CreateTranslation(_display_title, 'en-US'))
  , (select CreateTranslation(_benefit, 'en-US'))
  , (select CreateTranslation(_tip, 'en-US'))
  , _render_as
+ , _type
  , TRUE
  , TRUE
  , NavisUuid()) returning id into question_id;
@@ -72,12 +73,40 @@ values((select CreateTranslation(_display_title, 'en-US'))
 END;
 $$ LANGUAGE plpgsql volatile cost 100;
 
-CREATE OR replace function insertTextQuestion(_display_title text, _short_label text, _benefit text, _tip text, _render_as question_render_as, _type text ) returns void as $$
+CREATE OR replace function insertTextQuestion(_display_title text, _short_label text, _benefit text, _tip text
+, _render_as question_render_as, _type question_type) returns void as $$
 BEGIN
 Insert into text_question(text_columns, text_rows, question_id)
 values (50, 5, insertQuestion(_display_title, _short_label, _benefit, _tip, _render_as, _type));
 END;
 $$ LANGUAGE plpgsql volatile cost 100;
+
+
+CREATE OR replace function insertBooleanQuestion(_display_title text, _short_label text, _benefit text
+, _tip text, _render_as question_render_as, _type question_type) returns void as $$
+BEGIN
+Insert into boolean_question(question_id)
+values (insertQuestion(_display_title, _short_label, _benefit, _tip, _render_as, _type));
+END;
+$$ LANGUAGE plpgsql volatile cost 100;
+
+CREATE OR replace function insertRangeQuestion(_display_title text, _short_label text, _benefit text
+, _tip text, _render_as question_render_as, _type question_type, _low_range_label text, _medium_range_label text
+, _high_range_label text, _min_value integer, _max_value integer) returns void as $$
+BEGIN
+Insert into range_question(question_id, low_range_label_id, medium_range_label_id, high_range_label_id, minimum_value, maximum_value)
+values (insertQuestion(_display_title, _short_label, _benefit, _tip, _render_as, _type)
+, (select CreateTranslation(_low_range_label, 'en-US'))
+, (select CreateTranslation(_medium_range_label, 'en-US'))
+, (select CreateTranslation(_high_range_label, 'en-US'))
+, _min_value
+, _max_value
+);
+END;
+$$ LANGUAGE plpgsql volatile cost 100;
+
+
+-- data seed section --
 
 -- survey tags
 select * from insertSurveyTag('primary rating');
@@ -128,5 +157,29 @@ select * from insertTextQuestion(
 , 'Follow up with a question to answer the why behind their rating.'
 , 'textarea'
 , 'text');
+
+-- boolean questions
+select * from insertBooleanQuestion(
+'Did you experience any problems during your stay with us?'
+, 'Any problems during stay'
+, 'Reliable trendlines that tell you when things are good, bad, or status quo.'
+, 'Follow up with a question to answer the why behind their rating.'
+, 'boolean'
+, 'boolean');
+
+-- range questions
+select * from insertRangeQuestion(
+'How would you rate your booking experience?'
+, 'Booking experience'
+, 'Reliable trendlines that tell you when things are good, bad, or status quo.'
+, 'Follow up with a question to answer the why behind their rating.'
+, 'radio'
+, 'range'
+, 'Unacceptable'
+, 'Okay'
+, 'Fantastic'
+, 1
+, 5);
+
 
 
