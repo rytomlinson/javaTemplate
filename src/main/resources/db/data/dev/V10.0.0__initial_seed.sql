@@ -3,6 +3,19 @@ SET SCHEMA 'insight';
 
 
 -- support functions for seeding
+CREATE OR replace function NavisTagType() returns tag_type AS $$
+  BEGIN
+  return 'navis';
+  END;
+  $$ LANGUAGE plpgsql;
+
+CREATE OR replace function en_US() returns text as $$
+  BEGIN
+  return 'en-US';
+  END;
+  $$ LANGUAGE plpgsql;
+
+
 CREATE OR REPLACE FUNCTION NavisUuid() RETURNS uuid AS $$
         BEGIN
             return 'eb2e731e-4cdc-495f-91a5-9ddee7189b28';
@@ -17,25 +30,25 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR replace function insertSurveyTag(_name text ) returns void as $$
 BEGIN
-Insert into tag (type, name_id, is_survey, owner) values ('navis', (Select CreateTranslation(_name, 'en-US')), true, NavisUuid() );
+Insert into tag (type, name_id, is_survey, owner) values (NavisTagType(), (Select CreateTranslation(_name, en_US())), true, NavisUuid() );
 END;
 $$ LANGUAGE plpgsql volatile cost 100;
 
 CREATE OR replace function insertMarketSegmentTag(_name text ) returns void as $$
 BEGIN
-Insert into tag (type, name_id, is_market_segment, owner) values ('navis', (Select CreateTranslation(_name, 'en-US')), true, NavisUuid() );
+Insert into tag (type, name_id, is_market_segment, owner) values (NavisTagType(), (Select CreateTranslation(_name, en_US())), true, NavisUuid() );
 END;
 $$ LANGUAGE plpgsql volatile cost 100;
 
 CREATE OR replace function insertSurveyTypeTag(_name text ) returns void as $$
 BEGIN
-Insert into tag (type, name_id, is_survey_type, owner) values ('navis', (Select CreateTranslation(_name, 'en-US')), true, NavisUuid() );
+Insert into tag (type, name_id, is_survey_type, owner) values (NavisTagType(), (Select CreateTranslation(_name, en_US())), true, NavisUuid() );
 END;
 $$ LANGUAGE plpgsql volatile cost 100;
 
 CREATE OR replace function insertDepartmentTag(_name text ) returns void as $$
 BEGIN
-Insert into tag (name_id, owner) values ((Select CreateTranslation(_name, 'en-US')), NavisUuid() );
+Insert into tag (name_id, owner) values ((Select CreateTranslation(_name, en_US())), NavisUuid() );
 END;
 $$ LANGUAGE plpgsql volatile cost 100;
 
@@ -58,11 +71,11 @@ returns bigint as $$
 BEGIN
 
 INSERT into question(display_title_id, short_label_id, semantic_title_id, benefit_id, tip_id, render_as, type, is_template, is_library, owner)
-values((select CreateTranslation(_display_title, 'en-US'))
- , (select CreateTranslation(_short_label, 'en-US'))
- , (select CreateTranslation(_display_title, 'en-US'))
- , (select CreateTranslation(_benefit, 'en-US'))
- , (select CreateTranslation(_tip, 'en-US'))
+values((select CreateTranslation(_display_title, en_US()))
+ , (select CreateTranslation(_short_label, en_US()))
+ , (select CreateTranslation(_display_title, en_US()))
+ , (select CreateTranslation(_benefit, en_US()))
+ , (select CreateTranslation(_tip, en_US()))
  , _render_as
  , _type
  , TRUE
@@ -96,15 +109,55 @@ CREATE OR replace function insertRangeQuestion(_display_title text, _short_label
 BEGIN
 Insert into range_question(question_id, low_range_label_id, medium_range_label_id, high_range_label_id, minimum_value, maximum_value)
 values (insertQuestion(_display_title, _short_label, _benefit, _tip, _render_as, _type)
-, (select CreateTranslation(_low_range_label, 'en-US'))
-, (select CreateTranslation(_medium_range_label, 'en-US'))
-, (select CreateTranslation(_high_range_label, 'en-US'))
+, (select CreateTranslation(_low_range_label, en_US()))
+, (select CreateTranslation(_medium_range_label, en_US()))
+, (select CreateTranslation(_high_range_label, en_US()))
 , _min_value
 , _max_value
 );
 END;
 $$ LANGUAGE plpgsql volatile cost 100;
 
+CREATE OR replace function insertSelectionList(_description_title text, _placeholder_title text, _owner uuid, _is_library boolean) returns void as $$
+  BEGIN
+    INSERT into selection_list(description_id, placeholder_id, owner, is_library)
+    VALUES((select CreateTranslation(_description_title, en_US())), (select CreateTranslation(_placeholder_title, en_US())), _owner, _is_library);
+  END;
+  $$ LANGUAGE plpgsql volatile cost 100;
+
+
+CREATE OR replace function returnSelectionListId(_name text ) returns bigint as $$
+BEGIN
+return (
+select sl.id from selection_list sl join translation t on sl.description_id = t.i18n_string_id where t.localized_string = _name);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR replace function insertSelection(_display_title text, _selection_list_description text) returns void as $$
+  BEGIN
+    INSERT into selection(display_title_id, semantic_title_id, selection_list_id)
+      VALUES((select CreateTranslation(_display_title, en_US())), (select CreateTranslation(_display_title, en_US()))
+      , returnSelectionListId(_selection_list_description));
+  END;
+  $$ LANGUAGE plpgsql volatile cost 100;
+
+CREATE OR replace function insertSelectQuestion(_display_title text, _short_label text, _benefit text
+, _tip text, _render_as question_render_as, _type question_type, _allowed_selection_count integer, _selection_list_description text)
+returns void as $$
+  BEGIN
+  insert into select_question(question_id, allowed_selection_count, selection_list_id)
+    values(insertQuestion(_display_title, _short_label, _benefit, _tip, _render_as, _type)
+    ,_allowed_selection_count
+    ,returnSelectionListId(_selection_list_description));
+  END;
+  $$ LANGUAGE plpgsql volatile cost 100;
+
+CREATE OR replace function insertSurvey(_display_title text, _description text, _enabled boolean, _owner uuid) returns void as $$
+  BEGIN
+    insert into survey(display_title_id, description_id, enabled, owner)
+      values((select CreateTranslation(_display_title, en_US())), (select CreateTranslation(_description, en_US())), _enabled, _owner);
+  END;
+  $$ LANGUAGE plpgsql volatile cost 100;
 
 -- data seed section --
 
@@ -181,5 +234,78 @@ select * from insertRangeQuestion(
 , 1
 , 5);
 
+-- selection lists
+select * from insertSelectionList(
+'outdoor activities'
+, 'choose activities...'
+, DisneyUuid()
+, false
+);
 
+select * from insertSelectionList(
+'pillow types'
+, 'pillow type selections'
+, NavisUuid()
+, true
+);
 
+-- selection list selections
+select * from insertSelection(
+'road biking'
+, 'outdoor activities'
+);
+select * from insertSelection(
+'mountain biking'
+, 'outdoor activities'
+);
+select * from insertSelection(
+'golf'
+, 'outdoor activities'
+);
+
+select * from insertSelection(
+'feather'
+, 'pillow types'
+);
+select * from insertSelection(
+'memory foam'
+, 'pillow types'
+);
+
+-- select questions
+select * from insertSelectQuestion(
+'What is your pillow preference?'
+, 'Pillow preference'
+, 'Learning what pillow type most people like to find in their room when they arrive.'
+, 'Follow up with a question to answer the why behind their rating.'
+, 'dropdown'
+, 'select'
+, 1
+, 'pillow types'
+);
+
+select * from insertSelectQuestion(
+'What outdoor activities are you interested in?'
+, 'Outdoor Activities'
+, 'Learning what outdoor activities most people like to find at or around the given property'
+, 'Use the patrons response to provide a customized experience on their next visit..'
+, 'checkbox'
+, 'select'
+, 1
+, 'outdoor activities'
+);
+
+-- surveys
+select * from insertSurvey(
+'Post Stay - Crux Ranch'
+, 'Post Stay Survey'
+, TRUE
+, DisneyUuid()
+);
+
+select * from insertSurvey(
+'Mid Stay - Crux Ranch'
+, 'Mid Stay Survey'
+, TRUE
+, DisneyUuid()
+);
