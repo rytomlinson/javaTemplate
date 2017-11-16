@@ -24,6 +24,7 @@
 		<mapping class="com.navis.insightserver.entity.I18NStringEntity"/>
 		<mapping class="com.navis.insightserver.entity.TranslationEntity"/>
 		<mapping class="com.navis.insightserver.entity.TagEntity"/>
+        <mapping class="com.navis.insightserver.entity.SurveyEntity"/>
 
 		<!-- mapping file, we can use Bean annotations too
 		<mapping resource="reachEventTypes.hbm.xml" /> -->

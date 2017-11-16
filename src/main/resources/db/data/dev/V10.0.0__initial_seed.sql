@@ -152,10 +152,10 @@ returns void as $$
   END;
   $$ LANGUAGE plpgsql volatile cost 100;
 
-CREATE OR replace function insertSurvey(_display_title text, _description text, _enabled boolean, _owner uuid) returns void as $$
+CREATE OR replace function insertSurvey(_display_title text, _description text, _enabled boolean, _owner uuid, _deleted boolean) returns void as $$
   BEGIN
-    insert into survey(display_title_id, description_id, enabled, owner)
-      values((select CreateTranslation(_display_title, en_US())), (select CreateTranslation(_description, en_US())), _enabled, _owner);
+    insert into survey(display_title_id, description_id, enabled, owner, deleted)
+      values((select CreateTranslation(_display_title, en_US())), (select CreateTranslation(_description, en_US())), _enabled, _owner, _deleted);
   END;
   $$ LANGUAGE plpgsql volatile cost 100;
 
@@ -301,6 +301,7 @@ select * from insertSurvey(
 , 'Post Stay Survey'
 , TRUE
 , DisneyUuid()
+, FALSE
 );
 
 select * from insertSurvey(
@@ -308,4 +309,13 @@ select * from insertSurvey(
 , 'Mid Stay Survey'
 , TRUE
 , DisneyUuid()
+, FALSE
+);
+
+select * from insertSurvey(
+    'Deleted survey - Test'
+    , 'Deleted Survey'
+    , TRUE
+    , DisneyUuid()
+    , TRUE
 );

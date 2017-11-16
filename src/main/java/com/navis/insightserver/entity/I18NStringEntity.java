@@ -16,6 +16,8 @@ public class I18NStringEntity {
     private Collection<TagEntity> tagsById;
     private Collection<TagEntity> tagsById_0;
     private Collection<TranslationEntity> translationsById;
+    private Collection<SurveyEntity> surveysById;
+    private Collection<SurveyEntity> surveysById_0;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -94,5 +96,23 @@ public class I18NStringEntity {
 
     public void setTranslationsById(Collection<TranslationEntity> translationsById) {
         this.translationsById = translationsById;
+    }
+
+    @OneToMany(mappedBy = "i18NStringByDescriptionId")
+    public Collection<SurveyEntity> getSurveysById() {
+        return surveysById;
+    }
+
+    public void setSurveysById(Collection<SurveyEntity> surveysById) {
+        this.surveysById = surveysById;
+    }
+
+    @OneToMany(mappedBy = "i18NStringByDisplayTitleId")
+    public Collection<SurveyEntity> getSurveysById_0() {
+        return surveysById_0;
+    }
+
+    public void setSurveysById_0(Collection<SurveyEntity> surveysById_0) {
+        this.surveysById_0 = surveysById_0;
     }
 }
