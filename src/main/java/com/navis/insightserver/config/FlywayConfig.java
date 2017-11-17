@@ -17,6 +17,7 @@ public class FlywayConfig {
         Flyway flyway = new Flyway();
         flyway.setDataSource(dataSource);
         flyway.setLocations("classpath:/db/migration/dev", "classpath:/db/data/dev");
+        flyway.setAllowMixedMigrations(true);
         flyway.clean();
         flyway.migrate();
 

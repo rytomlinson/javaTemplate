@@ -1,6 +1,7 @@
 package com.navis.insightserver.entity;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
 
@@ -22,6 +23,8 @@ public class SurveyEntity {
     private Date updatedAt;
     private I18NStringEntity i18NStringByDescriptionId;
     private I18NStringEntity i18NStringByDisplayTitleId;
+    private Collection<ReportSendsEntity> reportSendssById;
+    private Collection<SurveyReportRecipientsEntity> surveyReportRecipientssById;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -177,5 +180,23 @@ public class SurveyEntity {
 
     public void setI18NStringByDisplayTitleId(I18NStringEntity i18NStringByDisplayTitleId) {
         this.i18NStringByDisplayTitleId = i18NStringByDisplayTitleId;
+    }
+
+    @OneToMany(mappedBy = "surveyBySurveyId")
+    public Collection<ReportSendsEntity> getReportSendssById() {
+        return reportSendssById;
+    }
+
+    public void setReportSendssById(Collection<ReportSendsEntity> reportSendssById) {
+        this.reportSendssById = reportSendssById;
+    }
+
+    @OneToMany(mappedBy = "surveyBySurveyId")
+    public Collection<SurveyReportRecipientsEntity> getSurveyReportRecipientssById() {
+        return surveyReportRecipientssById;
+    }
+
+    public void setSurveyReportRecipientssById(Collection<SurveyReportRecipientsEntity> surveyReportRecipientssById) {
+        this.surveyReportRecipientssById = surveyReportRecipientssById;
     }
 }

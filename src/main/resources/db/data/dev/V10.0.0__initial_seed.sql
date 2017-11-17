@@ -159,6 +159,29 @@ CREATE OR replace function insertSurvey(_display_title text, _description text, 
   END;
   $$ LANGUAGE plpgsql volatile cost 100;
 
+
+CREATE OR REPLACE FUNCTION insertReportFrequencyType(_code text, _description text) RETURNS VOID AS $$
+BEGIN
+  insert into report_frequency_type(code, description)
+  values(_code, _description);
+END;
+$$ LANGUAGE plpgsql volatile cost 100;
+
+CREATE OR REPLACE FUNCTION returnReportFrequencyTypeId(_code text) RETURNS BIGINT as $$
+BEGIN
+  return (
+    select id from report_frequency_type where code = _code);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR replace function insertReportType(_code text, _description text, _report_frequency_type_code text) returns void as $$
+BEGIN
+  INSERT into report_type(code, description, report_frequency_type_id)
+  VALUES(_code, _description, returnReportFrequencyTypeId(_report_frequency_type_code));
+END;
+$$ LANGUAGE plpgsql volatile cost 100;
+
+
 -- data seed section --
 
 -- survey tags
@@ -319,3 +342,29 @@ select * from insertSurvey(
     , DisneyUuid()
     , TRUE
 );
+
+-- report frequency types
+select * from insertReportFrequencyType(
+  'HOURLY'
+  ,'Hourly distribution'
+);
+select * from insertReportFrequencyType(
+    'DAILY'
+    ,'Daily distribution'
+);
+select * from insertReportFrequencyType(
+    'WEEKLY'
+    ,'Weekly distribution'
+);
+select * from insertReportFrequencyType(
+    'MONTHLY'
+    ,'Monthly distribution'
+);
+
+-- report types
+SELECT * FROM insertReportType(
+  'INDIVIDUAL_RESPONSE'
+  ,'Individual response report'
+  ,'HOURLY'
+);
+

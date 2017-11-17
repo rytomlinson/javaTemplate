@@ -48,7 +48,7 @@ public class SurveysController {
             , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
         final WebContext context = new J2EContext(request, response);
         UserProfileDTO user = security.GetUserProfile(context);
-        log.info("View a list of Insight Tags for UserProfileDTO: " + user.getUserId());
+        log.info("View a list of Insight Surveys for UserProfileDTO: " + user.getUserId());
 
         return new ResponseEntity<List<SurveyDTO>>(surveysService.getSurveys(propertyId, locale, includeDeleted), HttpStatus.OK);
 
