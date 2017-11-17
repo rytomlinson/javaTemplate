@@ -1,5 +1,6 @@
 package com.navis.insightserver.dto;
 
+import com.navis.insightserver.entity.SurveyReportRecipientsEntity;
 import com.navis.insightserver.entity.TagEntity;
 
 /**
@@ -18,6 +19,12 @@ public class EmailDTO extends BaseDTO {
 
     public EmailDTO(String email) {
         this.email = email;
+    }
+
+    public EmailDTO(SurveyReportRecipientsEntity surveyReportRecipientsEntity) {
+        super();
+        this.id = surveyReportRecipientsEntity.getId();
+        this.email = surveyReportRecipientsEntity.getEmailByEmailId().getEmail();
     }
 
     public Long getId()

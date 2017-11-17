@@ -2,16 +2,20 @@ package com.navis.insightserver.service;
 
 import com.navis.insightserver.Repository.IReportFrequencyTypeRepository;
 import com.navis.insightserver.Repository.IReportTypeRepository;
+import com.navis.insightserver.Repository.ISurveysRepository;
 import com.navis.insightserver.dto.ReportFrequencyTypeDTO;
 import com.navis.insightserver.dto.ReportTypeDTO;
+import com.navis.insightserver.dto.SurveyAlertDTO;
 import com.navis.insightserver.entity.ReportFrequencyTypeEntity;
 import com.navis.insightserver.entity.ReportTypeEntity;
+import com.navis.insightserver.entity.SurveyEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -24,6 +28,9 @@ public class AlertsService implements IAlertsService {
 
     @Autowired
     private IReportTypeRepository reportTypeRepository;
+
+    @Autowired
+    private ISurveysRepository surveysRepository;
 
     @Autowired
     private IReportFrequencyTypeRepository reportFrequencyTypeRepository;
@@ -39,6 +46,11 @@ public class AlertsService implements IAlertsService {
     public List<ReportFrequencyTypeDTO> getReportFrequencyTypes() {
         log.debug("In getReportFrequencyTypes Service:");
         return buildReportFrequencyTypesDTO();
+    }
+
+    @Override
+    public SurveyAlertDTO getSurveyAlerts(UUID owner, Long id, String locale) {
+        return buildSurveyAlertsDTO(owner, id, locale);
     }
 
 
@@ -58,6 +70,12 @@ public class AlertsService implements IAlertsService {
         return listDto;
     }
 
+    private SurveyAlertDTO buildSurveyAlertsDTO(UUID owner, Long id, String locale) {
+        SurveyEntity surveyEntity = surveysRepository.findByOwnerAndId(owner, id);
+
+        return convertToDto(surveyEntity, locale);
+    }
+
     private ReportTypeDTO convertToDto(ReportTypeEntity reportTypeEntity) {
         ReportTypeDTO reportTypeDTO = new ReportTypeDTO(reportTypeEntity);
         return reportTypeDTO;
@@ -66,5 +84,10 @@ public class AlertsService implements IAlertsService {
     private ReportFrequencyTypeDTO convertToDto(ReportFrequencyTypeEntity reportFrequencyTypeEntity) {
         ReportFrequencyTypeDTO reportFrequencyTypeDTO = new ReportFrequencyTypeDTO(reportFrequencyTypeEntity);
         return reportFrequencyTypeDTO;
+    }
+
+    private SurveyAlertDTO convertToDto(SurveyEntity surveyEntity, String locale) {
+        SurveyAlertDTO surveyAlertDTO = new SurveyAlertDTO(surveyEntity, locale);
+        return surveyAlertDTO;
     }
 }

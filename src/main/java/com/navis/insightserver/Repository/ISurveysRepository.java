@@ -14,4 +14,5 @@ public interface ISurveysRepository extends CrudRepository<SurveyEntity, Long> {
 
     List<SurveyEntity> findByOwner(UUID owner);
     List<SurveyEntity> findByOwnerAndDeletedFalse(UUID owner);
+    SurveyEntity findByOwnerAndId(UUID owner, Long id);
 }

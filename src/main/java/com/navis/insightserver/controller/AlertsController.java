@@ -46,21 +46,17 @@ public class AlertsController {
     private IAlertsService alertsService;
 
     @RequestMapping(value = "properties/{propertyId}/surveys/{surveyId}/alerts", method = RequestMethod.GET)
-    public ResponseEntity<List<EmailDTO>> getSurveys(
+    public ResponseEntity<SurveyAlertDTO> getSurveys(
             @PathVariable("propertyId") UUID propertyId
-            , @PathVariable("surveyId") BigInteger surveyId
-            , @RequestParam(value = "frequency", required = false, defaultValue = "hourly") String frequency
+            , @PathVariable("surveyId") Long surveyId
+            , @RequestParam(value = "frequency", required = false, defaultValue = "HOURLY") String frequency
+            , @RequestParam(value = "locale", required = false, defaultValue = "en-US") String locale
             , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
         final WebContext context = new J2EContext(request, response);
         UserProfileDTO user = security.GetUserProfile(context);
         log.info("View a list of Insight Email Recipients for UserProfileDTO: " + user.getUserId());
 
-         List<EmailDTO> emails = new ArrayList<>();
-         emails.add(new EmailDTO("x@x.com"));
-
-         return new ResponseEntity<List<EmailDTO>>(emails, HttpStatus.OK);
-
-//        return new ResponseEntity<List<SurveyDTO>>(surveysService.getSurveys(propertyId, locale), HttpStatus.OK);
+        return new ResponseEntity<SurveyAlertDTO>(alertsService.getSurveyAlerts(propertyId, surveyId, locale), HttpStatus.OK);
 
 
     }

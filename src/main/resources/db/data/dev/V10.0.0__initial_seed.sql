@@ -181,6 +181,40 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql volatile cost 100;
 
+CREATE OR replace function insertEmail(_email text) returns void as $$
+BEGIN
+  INSERT into email(email)
+  VALUES(_email);
+END;
+$$ LANGUAGE plpgsql volatile cost 100;
+
+CREATE OR REPLACE FUNCTION returnEmailId(_email text) RETURNS BIGINT as $$
+BEGIN
+  return (
+    select id from email where email = _email);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION returnReportTypeId(_code text) RETURNS BIGINT as $$
+BEGIN
+  return (
+    select id from report_type where code = _code);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION returnSurveyId(_display_title text) RETURNS BIGINT as $$
+BEGIN
+  return (
+    select s.id from survey s join translation t on s.display_title_id = t.i18n_string_id where t.localized_string = _display_title);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION insertSurveyReportRecipients(_email text, _survey_name text, _report_type_name text) RETURNS VOID AS $$
+BEGIN
+  INSERT into survey_report_recipients(email_id, survey_id, report_type_id)
+  VALUES(returnEmailId(_email), returnSurveyId(_survey_name), returnReportTypeId(_report_type_name));
+END;
+$$ LANGUAGE plpgsql volatile cost 100;
 
 -- data seed section --
 
@@ -366,5 +400,26 @@ SELECT * FROM insertReportType(
   'INDIVIDUAL_RESPONSE'
   ,'Individual response report'
   ,'HOURLY'
+);
+
+-- email recipients
+SELECT * FROM insertEmail(
+  'cdagostino@thenavisway.com'
+);
+SELECT * FROM insertEmail(
+    'dshofstall@thenavisway.com'
+);
+
+-- survey report recipients
+SELECT * from insertSurveyReportRecipients(
+  'dshofstall@thenavisway.com'
+  , 'Post Stay - Crux Ranch'
+  , 'INDIVIDUAL_RESPONSE'
+);
+
+SELECT * from insertSurveyReportRecipients(
+    'cdagostino@thenavisway.com'
+    , 'Post Stay - Crux Ranch'
+    , 'INDIVIDUAL_RESPONSE'
 );
 
