@@ -8,7 +8,7 @@ import java.util.Date;
  * Created by darrell-shofstall on 11/16/17.
  */
 @Entity
-@Table(name = "email", schema = "insight", catalog = "test_navis")
+@Table(name = "email")
 public class EmailEntity {
     private long id;
     private Date createdAt;
@@ -19,6 +19,7 @@ public class EmailEntity {
 
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     public long getId() {
         return id;
     }

@@ -7,7 +7,7 @@ import java.util.Date;
  * Created by darrell-shofstall on 11/17/17.
  */
 @Entity
-@Table(name = "survey_report_recipients", schema = "insight", catalog = "test_navis")
+@Table(name = "survey_report_recipients")
 public class SurveyReportRecipientsEntity {
     private long id;
     private Date createdAt;
@@ -18,6 +18,7 @@ public class SurveyReportRecipientsEntity {
 
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     public long getId() {
         return id;
     }

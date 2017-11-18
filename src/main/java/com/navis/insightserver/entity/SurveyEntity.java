@@ -9,7 +9,7 @@ import java.util.UUID;
  * Created by darrell-shofstall on 11/16/17.
  */
 @Entity
-@Table(name = "survey", schema = "insight", catalog = "test_navis")
+@Table(name = "survey")
 public class SurveyEntity {
     private long id;
     private Date createdAt;
@@ -28,6 +28,7 @@ public class SurveyEntity {
 
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     public long getId() {
         return id;
     }
