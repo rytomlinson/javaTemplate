@@ -45,7 +45,7 @@ public class AlertsController {
     @Autowired
     private IAlertsService alertsService;
 
-    @RequestMapping(value = "properties/{propertyId}/surveys/{surveyId}/reportTypes{reportTypeId}/recipients", method = RequestMethod.GET)
+    @RequestMapping(value = "properties/{propertyId}/surveys/{surveyId}/reportTypes/{reportTypeId}/recipients", method = RequestMethod.GET)
     public ResponseEntity<SurveyAlertDTO> getSurveys(
             @PathVariable("propertyId") UUID propertyId
             , @PathVariable("surveyId") Long surveyId
@@ -57,7 +57,7 @@ public class AlertsController {
         UserProfileDTO user = security.GetUserProfile(context);
         log.info("View a list of Insight Email Recipients for UserProfileDTO: " + user.getUserId());
 
-        return new ResponseEntity<SurveyAlertDTO>(alertsService.getSurveyAlerts(propertyId, surveyId, locale), HttpStatus.OK);
+        return new ResponseEntity<SurveyAlertDTO>(alertsService.getSurveyAlerts(propertyId, surveyId, reportTypeId, locale), HttpStatus.OK);
 
 
     }

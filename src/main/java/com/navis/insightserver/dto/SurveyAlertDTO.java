@@ -24,11 +24,12 @@ public class SurveyAlertDTO extends BaseDTO {
     public SurveyAlertDTO() {
     }
 
-    public SurveyAlertDTO(SurveyEntity surveyEntity, String locale) {
+    public SurveyAlertDTO(SurveyEntity surveyEntity, Long reportTypeId, String locale) {
         super();
         List<TranslationEntity> displayTitleEntities;
         TranslationEntity displayTitleEntity;
         List<SurveyReportRecipientsEntity> emailEntities;
+        List<SurveyReportRecipientsEntity> reportTypeEmailEntities;
 
         this.surveyId = surveyEntity.getId();
         displayTitleEntities = new ArrayList(surveyEntity.getI18NStringByDisplayTitleId().getTranslationsById());
@@ -36,9 +37,11 @@ public class SurveyAlertDTO extends BaseDTO {
 
         emailEntities = new ArrayList(surveyEntity.getSurveyReportRecipientssById());
 
+        reportTypeEmailEntities = emailEntities.stream().filter(e -> e.getReportTypeByReportTypeId().getId() == reportTypeId).collect(Collectors.toList());
+
         this.surveyName = (null != displayTitleEntity) ? displayTitleEntity.getLocalizedString() : null;
 
-        List<EmailDTO> listDto = emailEntities.stream().map(item -> convertToDto(item)).collect(Collectors.toList());
+        List<EmailDTO> listDto = reportTypeEmailEntities.stream().map(item -> convertToDto(item)).collect(Collectors.toList());
         this.recipients = listDto;
     }
 

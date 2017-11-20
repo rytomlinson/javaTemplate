@@ -49,8 +49,8 @@ public class AlertsService implements IAlertsService {
     }
 
     @Override
-    public SurveyAlertDTO getSurveyAlerts(UUID owner, Long id, String locale) {
-        return buildSurveyAlertsDTO(owner, id, locale);
+    public SurveyAlertDTO getSurveyAlerts(UUID owner, Long surveyId, Long reportTypeId, String locale) {
+        return buildSurveyAlertsDTO(owner, surveyId, reportTypeId, locale);
     }
 
 
@@ -70,10 +70,10 @@ public class AlertsService implements IAlertsService {
         return listDto;
     }
 
-    private SurveyAlertDTO buildSurveyAlertsDTO(UUID owner, Long id, String locale) {
-        SurveyEntity surveyEntity = surveysRepository.findByOwnerAndId(owner, id);
+    private SurveyAlertDTO buildSurveyAlertsDTO(UUID owner, Long surveyId, Long reportTypeId, String locale) {
+        SurveyEntity surveyEntity = surveysRepository.findByOwnerAndId(owner, surveyId);
 
-        return convertToDto(surveyEntity, locale);
+        return convertToDto(surveyEntity, reportTypeId, locale);
     }
 
     private ReportTypeDTO convertToDto(ReportTypeEntity reportTypeEntity) {
@@ -86,8 +86,8 @@ public class AlertsService implements IAlertsService {
         return reportFrequencyTypeDTO;
     }
 
-    private SurveyAlertDTO convertToDto(SurveyEntity surveyEntity, String locale) {
-        SurveyAlertDTO surveyAlertDTO = new SurveyAlertDTO(surveyEntity, locale);
+    private SurveyAlertDTO convertToDto(SurveyEntity surveyEntity, Long reportTypeId,String locale) {
+        SurveyAlertDTO surveyAlertDTO = new SurveyAlertDTO(surveyEntity, reportTypeId, locale);
         return surveyAlertDTO;
     }
 }

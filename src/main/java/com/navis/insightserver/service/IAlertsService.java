@@ -15,5 +15,5 @@ public interface IAlertsService {
 
     List<ReportTypeDTO> getReportTypes();
     List<ReportFrequencyTypeDTO> getReportFrequencyTypes();
-    SurveyAlertDTO getSurveyAlerts(UUID owner, Long id, String locale);
+    SurveyAlertDTO getSurveyAlerts(UUID owner, Long surveyId, Long reportTypeId,  String locale);
 }

@@ -414,6 +414,11 @@ SELECT * FROM insertReportType(
   ,'Individual response report'
   ,'HOURLY'
 );
+SELECT * FROM insertReportType(
+    'INDIVIDUAL_RESPONSE_SUMMARY'
+    ,'Individual response summary report'
+    ,'DAILY'
+);
 
 -- email recipients
 SELECT * FROM insertEmail(
@@ -421,6 +426,9 @@ SELECT * FROM insertEmail(
 );
 SELECT * FROM insertEmail(
     'dshofstall@thenavisway.com'
+);
+SELECT * FROM insertEmail(
+    'x@x.com'
 );
 
 -- survey report recipients
@@ -436,4 +444,9 @@ SELECT * from insertSurveyReportRecipients(
     , 'INDIVIDUAL_RESPONSE'
 );
 
+SELECT * from insertSurveyReportRecipients(
+    'x@x.com'
+    , 'Post Stay - Crux Ranch'
+    , 'INDIVIDUAL_RESPONSE_SUMMARY'
+);
 
