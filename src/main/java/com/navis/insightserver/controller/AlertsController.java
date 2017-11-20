@@ -45,10 +45,11 @@ public class AlertsController {
     @Autowired
     private IAlertsService alertsService;
 
-    @RequestMapping(value = "properties/{propertyId}/surveys/{surveyId}/alerts", method = RequestMethod.GET)
+    @RequestMapping(value = "properties/{propertyId}/surveys/{surveyId}/reportTypes{reportTypeId}/recipients", method = RequestMethod.GET)
     public ResponseEntity<SurveyAlertDTO> getSurveys(
             @PathVariable("propertyId") UUID propertyId
             , @PathVariable("surveyId") Long surveyId
+            , @PathVariable("reportTypeId") Long reportTypeId
             , @RequestParam(value = "frequency", required = false, defaultValue = "HOURLY") String frequency
             , @RequestParam(value = "locale", required = false, defaultValue = "en-US") String locale
             , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
