@@ -13,4 +13,5 @@ import java.util.List;
 public interface IReportTypeRepository extends CrudRepository<ReportTypeEntity, Long> {
 
     List<ReportTypeEntity> findAll();
+    ReportTypeEntity findById(Long id);
 }
