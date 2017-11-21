@@ -87,7 +87,7 @@ public class AlertsController {
         final WebContext context = new J2EContext(request, response);
         UserProfileDTO userProfileDTO = security.GetUserProfile(context);
 
-        //  statEventService.addStatEventThresholds(userProfileDTO, userSettingsDTO);
+        alertsService.addSurveyReportRecipients(surveyAlertDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("");
     }

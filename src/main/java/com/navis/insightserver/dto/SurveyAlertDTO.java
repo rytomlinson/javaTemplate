@@ -2,6 +2,7 @@ package com.navis.insightserver.dto;
 
 import com.navis.insightserver.entity.*;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -14,11 +15,13 @@ public class SurveyAlertDTO extends BaseDTO {
 
     private static final long serialVersionUID = 1L;
 
-//    @NotNull(message = "user.settings.stat.event.type.notnull")
+    @NotNull(message = "survey.alert.survey.id.notnull")
     private Long surveyId;
     private String surveyName;
+    @NotNull(message = "survey.alert.report.type.id.notnull")
     private Long reportTypeId;
     private String reportTypeName;
+    @NotNull(message = "survey.alert.property.id.notnull")
     private UUID propertyId;
     private List<EmailDTO> recipients;
 
