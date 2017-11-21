@@ -5,6 +5,7 @@ import com.navis.insightserver.dto.*;
 import com.navis.insightserver.service.IAlertsService;
 import com.navis.insightserver.service.ISurveysService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.slf4j.Logger;
@@ -13,10 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -78,5 +77,18 @@ public class AlertsController {
         log.info("View a list of Insight Report Frequency Types for UserProfileDTO: " + user.getUserId());
 
         return new ResponseEntity<List<ReportFrequencyTypeDTO>>(alertsService.getReportFrequencyTypes(), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "surveyReportRecipients", method = RequestMethod.POST)
+    @ApiOperation(value = "Add survey/reportType specific email recipient Setting")
+    public ResponseEntity addSurveyReportRecipients(@Validated @RequestBody SurveyAlertDTO surveyAlertDTO, HttpServletRequest request, HttpServletResponse response) {
+        log.debug("Add an account/user specific StatDTO Event Threshold Setting");
+
+        final WebContext context = new J2EContext(request, response);
+        UserProfileDTO userProfileDTO = security.GetUserProfile(context);
+
+        //  statEventService.addStatEventThresholds(userProfileDTO, userSettingsDTO);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("");
     }
 }
