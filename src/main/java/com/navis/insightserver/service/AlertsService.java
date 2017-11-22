@@ -37,10 +37,6 @@ public class AlertsService implements IAlertsService {
     @Autowired
     private SurveyReportRecipientsRepository SurveyReportRecipientsRepository;
 
-    @Autowired
-    private IEmailRepository emailRepository;
-
-
     @Override
     public List<ReportTypeDTO> getReportTypes() {
         log.debug("In getReportTypes Service:");
@@ -125,7 +121,7 @@ public class AlertsService implements IAlertsService {
         SurveyReportRecipientsEntity surveyReportRecipientsEntity = new SurveyReportRecipientsEntity();
         surveyReportRecipientsEntity.setSurveyBySurveyId(surveysRepository.findOne(surveyId));
         surveyReportRecipientsEntity.setReportTypeByReportTypeId(reportTypeRepository.findOne(reportTypeId));
-        surveyReportRecipientsEntity.setEmailByEmailId(emailRepository.findOne(emailDTO.getId()));
+        surveyReportRecipientsEntity.setEmail(emailDTO.getEmail());
         surveyReportRecipientsEntity.setCreatedAt(now);
         surveyReportRecipientsEntity.setUpdatedAt(now);
         return surveyReportRecipientsEntity;

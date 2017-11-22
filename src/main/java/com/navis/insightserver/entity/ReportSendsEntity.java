@@ -14,7 +14,7 @@ public class ReportSendsEntity {
     private boolean success;
     private String errorMessage;
     private Date updatedAt;
-    private EmailEntity emailByEmailId;
+    private String email;
     private SurveyEntity surveyBySurveyId;
     private ReportTypeEntity reportTypeByReportTypeId;
     private SurveyRequestEntity surveyRequestBySurveyRequestId;
@@ -70,40 +70,24 @@ public class ReportSendsEntity {
         this.updatedAt = updatedAt;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    @Basic
+    @Column(name = "email", nullable = false, length = -1)
+    public String getEmail() {
+        return email;
+    }
 
-        ReportSendsEntity that = (ReportSendsEntity) o;
-
-        if (id != that.id) return false;
-        if (success != that.success) return false;
-        if (createdAt != null ? !createdAt.equals(that.createdAt) : that.createdAt != null) return false;
-        if (errorMessage != null ? !errorMessage.equals(that.errorMessage) : that.errorMessage != null) return false;
-        if (updatedAt != null ? !updatedAt.equals(that.updatedAt) : that.updatedAt != null) return false;
-
-        return true;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
-        result = 31 * result + (success ? 1 : 0);
-        result = 31 * result + (errorMessage != null ? errorMessage.hashCode() : 0);
-        result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
-        return result;
+        return super.hashCode();
     }
 
-    @ManyToOne
-    @JoinColumn(name = "email_id", referencedColumnName = "id", nullable = false)
-    public EmailEntity getEmailByEmailId() {
-        return emailByEmailId;
-    }
-
-    public void setEmailByEmailId(EmailEntity emailByEmailId) {
-        this.emailByEmailId = emailByEmailId;
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
     }
 
     @ManyToOne

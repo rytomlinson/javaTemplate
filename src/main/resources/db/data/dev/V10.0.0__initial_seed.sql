@@ -190,13 +190,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql volatile cost 100;
 
-CREATE OR replace function insertEmail(_email text) returns void as $$
-BEGIN
-  INSERT into email(email)
-  VALUES(_email);
-END;
-$$ LANGUAGE plpgsql volatile cost 100;
-
 CREATE OR REPLACE FUNCTION returnEmailId(_email text) RETURNS BIGINT as $$
 BEGIN
   return (
@@ -220,8 +213,8 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION insertSurveyReportRecipients(_email text, _survey_name text, _report_type_name text) RETURNS VOID AS $$
 BEGIN
-  INSERT into survey_report_recipients(email_id, survey_id, report_type_id)
-  VALUES(returnEmailId(_email), returnSurveyId(_survey_name), returnReportTypeId(_report_type_name));
+  INSERT into survey_report_recipients(email, survey_id, report_type_id)
+  VALUES(_email, returnSurveyId(_survey_name), returnReportTypeId(_report_type_name));
 END;
 $$ LANGUAGE plpgsql volatile cost 100;
 
@@ -418,17 +411,6 @@ SELECT * FROM insertReportType(
     'INDIVIDUAL_RESPONSE_SUMMARY'
     ,'Individual response summary report'
     ,'DAILY'
-);
-
--- email recipients
-SELECT * FROM insertEmail(
-  'cdagostino@thenavisway.com'
-);
-SELECT * FROM insertEmail(
-    'dshofstall@thenavisway.com'
-);
-SELECT * FROM insertEmail(
-    'x@x.com'
 );
 
 -- survey report recipients

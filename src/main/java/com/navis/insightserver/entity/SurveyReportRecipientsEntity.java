@@ -12,7 +12,7 @@ public class SurveyReportRecipientsEntity {
     private long id;
     private Date createdAt;
     private Date updatedAt;
-    private EmailEntity emailByEmailId;
+    private String email;
     private SurveyEntity surveyBySurveyId;
     private ReportTypeEntity reportTypeByReportTypeId;
 
@@ -47,6 +47,16 @@ public class SurveyReportRecipientsEntity {
         this.updatedAt = updatedAt;
     }
 
+    @Basic
+    @Column(name = "email", nullable = false)
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -67,16 +77,6 @@ public class SurveyReportRecipientsEntity {
         result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
         result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
         return result;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "email_id", referencedColumnName = "id", nullable = false)
-    public EmailEntity getEmailByEmailId() {
-        return emailByEmailId;
-    }
-
-    public void setEmailByEmailId(EmailEntity emailByEmailId) {
-        this.emailByEmailId = emailByEmailId;
     }
 
     @ManyToOne

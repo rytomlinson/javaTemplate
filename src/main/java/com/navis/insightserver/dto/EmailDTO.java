@@ -24,7 +24,7 @@ public class EmailDTO extends BaseDTO {
     public EmailDTO(SurveyReportRecipientsEntity surveyReportRecipientsEntity) {
         super();
         this.id = surveyReportRecipientsEntity.getId();
-        this.email = surveyReportRecipientsEntity.getEmailByEmailId().getEmail();
+        this.email = surveyReportRecipientsEntity.getEmail();
     }
 
     public Long getId()

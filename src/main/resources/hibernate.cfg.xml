@@ -25,7 +25,6 @@
 		<mapping class="com.navis.insightserver.entity.TranslationEntity"/>
 		<mapping class="com.navis.insightserver.entity.TagEntity"/>
         <mapping class="com.navis.insightserver.entity.SurveyEntity"/>
-        <mapping class="com.navis.insightserver.entity.EmailEntity"/>
         <mapping class="com.navis.insightserver.entity.ReportFrequencyTypeEntity"/>
         <mapping class="com.navis.insightserver.entity.ReportSendsEntity"/>
         <mapping class="com.navis.insightserver.entity.ReportTypeEntity"/>
