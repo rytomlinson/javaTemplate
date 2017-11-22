@@ -58,23 +58,12 @@ public class IndexController {
         return "index";
     }
 
-    @RequestMapping("/secure/stats/")
-    public String Stats(Model model) throws HttpAction {
+    @RequestMapping(value = "/secure/responseAlerts/{surveyId}/{reportTypeId}")
+    public String StatsWithId(@PathVariable("surveyId") String surveyId, @PathVariable("reportTypeId") String reportTypeId, Model model) throws HttpAction {
         model.addAttribute("sourcePath", sourcePath);
         return "index";
     }
 
-    @RequestMapping(value = "/secure/stats/{id}")
-    public String StatsWithId(@PathVariable("id") String id, Model model) throws HttpAction {
-        model.addAttribute("sourcePath", sourcePath);
-        return "index";
-    }
-
-    @RequestMapping(value = "/secure/config/statConfiguration/{eventTypeId}/{accountNumber}")
-    public String getStatConfiguration(@PathVariable("eventTypeId") String id, @PathVariable("accountNumber") String accountNumber, Model model) throws HttpAction {
-        model.addAttribute("sourcePath", sourcePath);
-        return "index";
-    }
     @RequestMapping("/loggedOut/")
     protected String loggedOut(Model model) {
         model.addAttribute("sourcePath", sourcePath);

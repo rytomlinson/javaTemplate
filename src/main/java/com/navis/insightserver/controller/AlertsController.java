@@ -81,11 +81,8 @@ public class AlertsController {
 
     @RequestMapping(value = "surveyReportRecipients", method = RequestMethod.POST)
     @ApiOperation(value = "Add survey/reportType specific email recipient Setting")
-    public ResponseEntity addSurveyReportRecipients(@Validated @RequestBody SurveyAlertDTO surveyAlertDTO, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity addSurveyReportRecipients(@RequestBody SurveyAlertDTO surveyAlertDTO) {
         log.debug("Add an account/user specific StatDTO Event Threshold Setting");
-
-        final WebContext context = new J2EContext(request, response);
-        UserProfileDTO userProfileDTO = security.GetUserProfile(context);
 
         alertsService.addSurveyReportRecipients(surveyAlertDTO);
 
