@@ -29,8 +29,8 @@ public class SwaggerConfig {
 
 	private ApiInfo apiInfo() {
 		ApiInfo apiInfo = new ApiInfo(
-				"QVue REST API",
-				"QVue REST APIs - The following are a collection of APIs to interact with the QVue product.",
+				"Insight REST API",
+				"Insight REST APIs - The following are a collection of APIs to interact with the Insight product.",
 				"version-1",
 				"API TOS",
 				"Support@thenavisway.com",
