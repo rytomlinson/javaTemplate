@@ -1,10 +1,7 @@
 package com.navis.insightserver.service;
 
 import com.navis.insightserver.Repository.*;
-import com.navis.insightserver.dto.EmailDTO;
-import com.navis.insightserver.dto.ReportFrequencyTypeDTO;
-import com.navis.insightserver.dto.ReportTypeDTO;
-import com.navis.insightserver.dto.SurveyAlertDTO;
+import com.navis.insightserver.dto.*;
 import com.navis.insightserver.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,11 +57,13 @@ public class AlertsService implements IAlertsService {
         log.debug("In addSurveyReportRecipients Service:");
         List<EmailDTO> emailDTOList = surveyAlertDTO.getRecipients();
 
-        //Validate current SurveyAlertDTO against userId in payload
+        //Validate current SurveyAlertDTO payload
+        validateSurveyAlertsPayload(surveyAlertDTO);
 
-        // Delete existing StatEventThresholdsEntity rows
+        // Delete existing SurveyReportRecipientsEntity rows
         deleteSurveyReportRecipients(surveyAlertDTO.getSurveyId(), surveyAlertDTO.getReportTypeId());
-        // Save StatEventThresholdsEntity rows
+
+        // Save SurveyReportRecipientsEntity rows
         for(EmailDTO emailDTO : emailDTOList) {
             SurveyReportRecipientsEntity surveyReportRecipientsEntity
                     = convertToEntity(surveyAlertDTO.getSurveyId(), surveyAlertDTO.getReportTypeId(), emailDTO);
@@ -125,5 +124,18 @@ public class AlertsService implements IAlertsService {
         surveyReportRecipientsEntity.setCreatedAt(now);
         surveyReportRecipientsEntity.setUpdatedAt(now);
         return surveyReportRecipientsEntity;
+    }
+
+    private void validateSurveyAlertsPayload(SurveyAlertDTO surveyAlertDTO) {
+
+        if (!reportTypeRepository.exists(surveyAlertDTO.getReportTypeId())) {
+
+            throw new ResourceNotFoundExceptionDTO(surveyAlertDTO.getReportTypeId().toString(), "survey.alert.report.type.id.invalid");
+        }
+
+        if (!reportTypeRepository.exists(surveyAlertDTO.getSurveyId())) {
+
+            throw new ResourceNotFoundExceptionDTO(surveyAlertDTO.getSurveyId().toString(), "survey.alert.survey.id.invalid");
+        }
     }
 }

@@ -3,6 +3,8 @@ package com.navis.insightserver.dto;
 import com.navis.insightserver.entity.SurveyReportRecipientsEntity;
 import com.navis.insightserver.entity.TagEntity;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Created by darrell-shofstall on 8/11/17.
  */
@@ -10,8 +12,7 @@ public class EmailDTO extends BaseDTO {
 
     private static final long serialVersionUID = 1L;
 
-//    @NotNull(message = "user.settings.stat.event.type.notnull")
-    private Long id;
+    @NotNull(message = "survey.alert.email.notnull")
     private String email;
 
     public EmailDTO() {
@@ -23,21 +24,11 @@ public class EmailDTO extends BaseDTO {
 
     public EmailDTO(SurveyReportRecipientsEntity surveyReportRecipientsEntity) {
         super();
-        this.id = surveyReportRecipientsEntity.getId();
         this.email = surveyReportRecipientsEntity.getEmail();
-    }
-
-    public Long getId()
-    {
-        return id;
     }
 
     public String getEmail() {
         return email;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public void setEmail(String email) {

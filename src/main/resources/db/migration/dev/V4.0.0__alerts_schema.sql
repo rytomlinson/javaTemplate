@@ -4,7 +4,7 @@ SET SCHEMA 'insight';
 
 -- Primary Tables
 create table report_frequency_type (
-  id bigserial primary key
+    id bigserial primary key
   , created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
   , code text not null default ''
   , description text not null default ''

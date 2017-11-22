@@ -19,13 +19,13 @@
         <graylogHost>${graylogHost}</graylogHost>
         <graylogPort>${graylogPort}</graylogPort>
         <layout class="de.siegmar.logbackgelf.GelfLayout">
-            <staticField>facility:qvue-server</staticField>
+            <staticField>facility:insight-server</staticField>
         </layout>
     </appender>
     <logger name="org.springframework" level="INFO"/>
-    <logger name="com.navis.qvueserver.controller" level="${loggingControllerLevel}"/>
-    <logger name="com.navis.qvueserver.service" level="${loggingServiceLevel}"/>
-    <logger name="com.navis.qvueserver.handlers" level="${loggingHandlersLevel}"/>
+    <logger name="com.navis.insightserver.controller" level="${loggingControllerLevel}"/>
+    <logger name="com.navis.insightserver.service" level="${loggingServiceLevel}"/>
+    <logger name="com.navis.insightserver.handlers" level="${loggingHandlersLevel}"/>
     <root level="info">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="GELF" />
