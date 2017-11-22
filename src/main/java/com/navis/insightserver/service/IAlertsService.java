@@ -17,5 +17,5 @@ public interface IAlertsService {
     List<ReportFrequencyTypeDTO> getReportFrequencyTypes();
     SurveyAlertDTO getSurveyAlerts(UUID owner, Long surveyId, Long reportTypeId,  String locale);
     void addSurveyReportRecipients(SurveyAlertDTO surveyAlertDTO);
-    Long deleteSurveyReportRecipientsBySurveyBySurveyId(Long surveyId);
+    Long deleteSurveyReportRecipients(Long surveyId, Long reportTypeId);
 }

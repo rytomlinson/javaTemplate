@@ -1,22 +1,18 @@
 package com.navis.insightserver.service;
 
-import com.navis.insightserver.Repository.IReportFrequencyTypeRepository;
-import com.navis.insightserver.Repository.IReportTypeRepository;
-import com.navis.insightserver.Repository.ISurveyReportRecipientsRepository;
-import com.navis.insightserver.Repository.ISurveysRepository;
+import com.navis.insightserver.Repository.*;
 import com.navis.insightserver.dto.EmailDTO;
 import com.navis.insightserver.dto.ReportFrequencyTypeDTO;
 import com.navis.insightserver.dto.ReportTypeDTO;
 import com.navis.insightserver.dto.SurveyAlertDTO;
-import com.navis.insightserver.entity.ReportFrequencyTypeEntity;
-import com.navis.insightserver.entity.ReportTypeEntity;
-import com.navis.insightserver.entity.SurveyEntity;
-import com.navis.insightserver.entity.SurveyReportRecipientsEntity;
+import com.navis.insightserver.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -24,7 +20,7 @@ import java.util.stream.Collectors;
 /**
  * Created by darrell-shofstall on 8/9/17.
  */
-
+@Transactional
 @Service
 public class AlertsService implements IAlertsService {
     private static final Logger log = LoggerFactory.getLogger(AlertsService.class);
@@ -39,7 +35,10 @@ public class AlertsService implements IAlertsService {
     private IReportFrequencyTypeRepository reportFrequencyTypeRepository;
 
     @Autowired
-    private ISurveyReportRecipientsRepository reportRecipientsRepository;
+    private SurveyReportRecipientsRepository SurveyReportRecipientsRepository;
+
+    @Autowired
+    private IEmailRepository emailRepository;
 
 
     @Override
@@ -68,20 +67,19 @@ public class AlertsService implements IAlertsService {
         //Validate current SurveyAlertDTO against userId in payload
 
         // Delete existing StatEventThresholdsEntity rows
-        deleteSurveyReportRecipientsBySurveyBySurveyId(surveyAlertDTO.getSurveyId());
+        deleteSurveyReportRecipients(surveyAlertDTO.getSurveyId(), surveyAlertDTO.getReportTypeId());
         // Save StatEventThresholdsEntity rows
         for(EmailDTO emailDTO : emailDTOList) {
             SurveyReportRecipientsEntity surveyReportRecipientsEntity
                     = convertToEntity(surveyAlertDTO.getSurveyId(), surveyAlertDTO.getReportTypeId(), emailDTO);
+            SurveyReportRecipientsRepository.save(surveyReportRecipientsEntity);
         }
     }
 
     @Override
-    public Long deleteSurveyReportRecipientsBySurveyBySurveyId(Long surveyId) {
+    public Long deleteSurveyReportRecipients(Long surveyId, Long reportTypeId) {
         log.debug("In deleteSurveyReportRecipientsBySurveyBySurveyId Service:");
-        reportRecipientsRepository.delete(1L);
-//        return reportRecipientsRepository.deleteByBlaBlaBla();
-        return null;
+        return SurveyReportRecipientsRepository.deleteSurveyReportRecipients(surveyId, reportTypeId);
     }
 
     private List<ReportTypeDTO> buildReportTypesDTO() {
@@ -123,8 +121,13 @@ public class AlertsService implements IAlertsService {
     }
 
     private SurveyReportRecipientsEntity convertToEntity(Long surveyId, Long reportTypeId, EmailDTO emailDTO) {
+        Date now = new Date();
         SurveyReportRecipientsEntity surveyReportRecipientsEntity = new SurveyReportRecipientsEntity();
-//        surveyReportRecipientsEntity.setSurveyBySurveyId();
+        surveyReportRecipientsEntity.setSurveyBySurveyId(surveysRepository.findOne(surveyId));
+        surveyReportRecipientsEntity.setReportTypeByReportTypeId(reportTypeRepository.findOne(reportTypeId));
+        surveyReportRecipientsEntity.setEmailByEmailId(emailRepository.findOne(emailDTO.getId()));
+        surveyReportRecipientsEntity.setCreatedAt(now);
+        surveyReportRecipientsEntity.setUpdatedAt(now);
         return surveyReportRecipientsEntity;
     }
 }

@@ -11,6 +11,12 @@ create table email (
   , email text not null default ''
   , updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW());
 
+CREATE TRIGGER update_email_updated_at
+BEFORE UPDATE
+  ON email
+FOR EACH ROW
+EXECUTE PROCEDURE public.update_updated_at_column();
+
 create table report_frequency_type (
     id bigserial primary key
   , created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
@@ -33,6 +39,12 @@ create table survey_report_recipients (
   , survey_id BIGINT NOT NULL REFERENCES survey (id) ON DELETE CASCADE
   , report_type_id BIGINT NOT NULL REFERENCES report_type (id) ON DELETE CASCADE
   , updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW());
+
+CREATE TRIGGER update_survey_report_recipients_updated_at
+BEFORE UPDATE
+  ON survey_report_recipients
+FOR EACH ROW
+EXECUTE PROCEDURE public.update_updated_at_column();
 
 create table report_sends (
     id bigserial primary key

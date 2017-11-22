@@ -2,12 +2,12 @@ package com.navis.insightserver.Repository;
 
 import com.navis.insightserver.entity.SurveyReportRecipientsEntity;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.NoRepositoryBean;
 
 /**
  * Created by darrell-shofstall on 11/20/17.
  */
-public interface ISurveyReportRecipientsRepository extends CrudRepository<SurveyReportRecipientsEntity, Long> {
+public interface SurveyReportRecipientsRepositoryCustom {
 
-    SurveyReportRecipientsEntity save(SurveyReportRecipientsEntity entity);
-//    Long deleteByBlaBlaBla();
+    Long deleteSurveyReportRecipients(Long surveyId, Long reportTypeId);
 }
