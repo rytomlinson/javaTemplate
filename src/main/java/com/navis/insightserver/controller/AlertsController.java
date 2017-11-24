@@ -63,18 +63,14 @@ public class AlertsController {
 
     @RequestMapping(value = "reportTypes", method = RequestMethod.GET)
     public ResponseEntity<List<ReportTypeDTO>> getReportTypes( HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
-        final WebContext context = new J2EContext(request, response);
-        UserProfileDTO user = security.GetUserProfile(context);
-        log.info("View a list of Insight Report Types for UserProfileDTO: " + user.getUserId());
+        log.info("View a list of Insight Report Types: ");
 
         return new ResponseEntity<List<ReportTypeDTO>>(alertsService.getReportTypes(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "reportFrequencyTypes", method = RequestMethod.GET)
     public ResponseEntity<List<ReportFrequencyTypeDTO>> getReportFrequencyTypes(HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
-        final WebContext context = new J2EContext(request, response);
-        UserProfileDTO user = security.GetUserProfile(context);
-        log.info("View a list of Insight Report Frequency Types for UserProfileDTO: " + user.getUserId());
+        log.info("View a list of Insight Report Frequency Types: ");
 
         return new ResponseEntity<List<ReportFrequencyTypeDTO>>(alertsService.getReportFrequencyTypes(), HttpStatus.OK);
     }
