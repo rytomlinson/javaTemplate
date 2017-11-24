@@ -34,41 +34,24 @@ public class HazelcastConfiguration {
     private String groupPassword;
     @Value("${hazelcast.network.networkMembers}")
     private String networkMembers;
-    @Value("${hazelcast.connectionAttemptLimit}")
-    private Integer connectionAttemptLimit;
+    @Value("${hazelcast.multicast.trustedInterfaces}")
+    private String trustedInterfaces;
 
-//    @Order(value = 1)
-//    @Bean
-//    public HazelcastInstance getHazelcastClientInstance() throws IOException {
-//
-//        final GroupConfig groupConfig = new GroupConfig(trim(groupName), trim(groupPassword));
-//        final List<String> members = Arrays.stream(trim(networkMembers).split(","))
-//                .map(Util::trim).collect(Collectors.toList());
-//        final ClientNetworkConfig networkConfig = new ClientNetworkConfig()
-//                .setAddresses(members).setRedoOperation(true)
-//                .setConnectionAttemptLimit(connectionAttemptLimit);
-//        final ClientConfig clientConfig = new ClientConfig()
-//                .setGroupConfig(groupConfig).setNetworkConfig(networkConfig);
-//
-//        HazelcastInstance hazelcastInstance = HazelcastClient.newHazelcastClient(clientConfig);
-//
-//        return hazelcastInstance;
-//    }
-
-    @Order(value = 2)
     @Bean
     public HazelcastInstance hazelcastInstance() {
 
         final GroupConfig groupConfig = new GroupConfig(trim(groupName), trim(groupPassword));
         final List<String> members = Arrays.stream(trim(networkMembers).split(","))
                 .map(Util::trim).collect(Collectors.toList());
+        final List<String> interfaces = Arrays.stream(trim(trustedInterfaces).split(","))
+                .map(Util::trim).collect(Collectors.toList());
         final List<Integer> outboundPorts = new ArrayList<>();
         outboundPorts.add(0);
         final Set<String> trustedInterfaces = new HashSet<String>();
-        trustedInterfaces.add("127.0.0.1");
+        trustedInterfaces.addAll(interfaces);
 
         final MulticastConfig multicastConfig = new MulticastConfig();
-        multicastConfig.setEnabled(true)
+        multicastConfig.setEnabled(false)
                 .setMulticastGroup("224.2.2.3")
                 .setMulticastPort(54327)
                 .setMulticastTimeToLive(32)
@@ -76,7 +59,7 @@ public class HazelcastConfiguration {
                 .setTrustedInterfaces(trustedInterfaces);
 
         final TcpIpConfig tcpIpConfig = new TcpIpConfig();
-        tcpIpConfig.setEnabled(true).setConnectionTimeoutSeconds(10).setMembers(members).setEnabled(false);
+        tcpIpConfig.setEnabled(true).setConnectionTimeoutSeconds(10).setMembers(members);
 
         final JoinConfig joinConfig = new JoinConfig();
         joinConfig.setMulticastConfig(multicastConfig).setTcpIpConfig(tcpIpConfig);

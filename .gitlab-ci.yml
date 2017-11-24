@@ -1,0 +1,29 @@
+before_script:
+  - ./gradlew clean
+
+# The default is build, test, deploy
+stages:
+  - build
+  - test
+  - deploy
+
+gradle_build:
+  script: './gradlew build --no-daemon'
+  tags:
+    - Linux
+  stage: test
+  only:
+    - master
+    - develop
+    - /^feature\/.*$/
+    - /^release\/.*$/
+
+gradle_deploy_rpm:
+  script: './gradlew deployRpm --no-daemon'
+  tags:
+    - Linux
+  stage: deploy
+  only:
+    - master
+    - develop
+
