@@ -1,11 +1,6 @@
 package com.navis.insightserver.dto;
 
-import com.navis.insightserver.entity.TagEntity;
-
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedHashMap;
 
 /**
