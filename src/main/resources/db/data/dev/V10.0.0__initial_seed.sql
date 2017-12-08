@@ -28,6 +28,12 @@ CREATE OR REPLACE FUNCTION DisneyUuid() RETURNS uuid AS $$
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION Now() RETURNS uuid AS $$
+BEGIN
+  return current_timestamp;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE OR replace function insertSurveyTag(_name text ) returns void as $$
 BEGIN
 Insert into tag (type, name_id, is_survey, owner) values (NavisTagType(), (Select CreateTranslation(_name, en_US())), true, NavisUuid() );
@@ -89,6 +95,30 @@ values((select CreateTranslation(_display_title, en_US()))
 END;
 $$ LANGUAGE plpgsql volatile cost 100;
 
+create or replace function insertQuestionInstance(_question_id BIGINT, _display_title text, _short_label text, _benefit text, _tip text
+  , _render_as question_render_as, _type question_type, _source_id BIGINT, _is_template BOOLEAN, _is_library BOOLEAN, _owner uuid)
+  returns bigint as $$
+DECLARE question_id BIGINT;
+BEGIN
+
+  INSERT into question(id, display_title_id, short_label_id, semantic_title_id, benefit_id, tip_id, render_as, type
+    , source_id, is_template, is_library, owner)
+  values(_question_id, (select CreateTranslation(_display_title, en_US()))
+    , (select CreateTranslation(_short_label, en_US()))
+    , (select CreateTranslation(_display_title, en_US()))
+    , (select CreateTranslation(_benefit, en_US()))
+    , (select CreateTranslation(_tip, en_US()))
+    , _render_as
+    , _type
+    , _question_id
+    , _is_template
+    , _is_library
+    , _owner) returning id into question_id;
+
+  return (select question_id);
+END;
+$$ LANGUAGE plpgsql volatile cost 100;
+
 CREATE OR replace function insertTextQuestion(_display_title text, _short_label text, _benefit text, _tip text
 , _render_as question_render_as, _type question_type, _source_id BIGINT, _is_template BOOLEAN, _is_library BOOLEAN, _owner uuid) returns void as $$
 BEGIN
@@ -97,12 +127,16 @@ values (50, 5, insertQuestion(_display_title, _short_label, _benefit, _tip, _ren
 END;
 $$ LANGUAGE plpgsql volatile cost 100;
 
-create OR REPLACE FUNCTION insertTextQuestionInstance(_display_title text, _short_label text, _benefit text, _tip text
-  , _render_as question_render_as, _type question_type, _source_id BIGINT, _is_template BOOLEAN, _is_library BOOLEAN, _owner uuid) RETURNS VOID AS $$
+CREATE OR replace function insertTextQuestionInstance(_display_title text, _short_label text, _benefit text, _tip text
+  , _render_as question_render_as, _type question_type, _source_id BIGINT, _is_template BOOLEAN, _is_library BOOLEAN, _owner uuid) returns void as $$
+
+DECLARE _question_id BIGINT;
 BEGIN
-  PERFORM insertTextQuestion(_display_title, _short_label, _benefit, _tip, _render_as,  _type, _source_id, _is_template, _is_library, _owner) ;
+  select nextval('question_id_seq') into _question_id;
+  Insert into text_question(text_columns, text_rows, question_id)
+  values (50, 5, insertQuestionInstance(_question_id, _display_title, _short_label, _benefit, _tip, _render_as, _type, _source_id, _is_template, _is_library, _owner));
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql volatile cost 100;
 
 CREATE OR replace function insertBooleanQuestion(_display_title text, _short_label text, _benefit text
 , _tip text, _render_as question_render_as, _type question_type) returns void as $$
@@ -168,6 +202,33 @@ CREATE OR replace function insertSurvey(_display_title text, _description text, 
   END;
   $$ LANGUAGE plpgsql volatile cost 100;
 
+CREATE OR replace function returnSurveyId(_name text ) returns bigint as $$
+BEGIN
+  return (
+    select s.id from survey s join translation t on s.display_title_id = t.i18n_string_id where t.localized_string = _name);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR replace function returnQuestionId(_name text ) returns bigint as $$
+BEGIN
+  return (
+    select q.id from question q join translation t on q.display_title_id = t.i18n_string_id where t.localized_string = _name);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION insertSurveyQuestion(_question_title TEXT, _survey_title TEXT) RETURNS VOID as $$
+  BEGIN
+    insert into survey_question(survey_question_id, survey_id)
+      VALUES (returnQuestionId(_question_title), returnSurveyId(_survey_title));
+  END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION insertSurveyRequest(_completion_status survey_request_completion_status, _crm_stay_id BIGINT, _email text, _send_date TIMESTAMPTZ, _completion_date TIMESTAMPTZ, _survey_id BIGINT) RETURNS VOID as $$
+  BEGIN
+    insert into survey_request(completion_status, crm_stay_id, email, sent_date, completion_date, survey_id)
+      VALUES(_completion_status, _crm_stay_id, _email, _send_date, _completion_date, _survey_id);
+  END;
+$$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION insertReportFrequencyType(_code text, _description text) RETURNS VOID AS $$
 BEGIN
@@ -201,13 +262,6 @@ CREATE OR REPLACE FUNCTION returnReportTypeId(_code text) RETURNS BIGINT as $$
 BEGIN
   return (
     select id from report_type where code = _code);
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION returnSurveyId(_display_title text) RETURNS BIGINT as $$
-BEGIN
-  return (
-    select s.id from survey s join translation t on s.display_title_id = t.i18n_string_id where t.localized_string = _display_title);
 END;
 $$ LANGUAGE plpgsql;
 
@@ -383,10 +437,37 @@ select * from insertSurvey(
     , TRUE
 );
 
+-- text questions Instances
+select * from insertTextQuestionInstance(
+    'What was the primary reason for choosing this resort-Instance'
+    , 'Reason for choosing this resort'
+    , 'Reliable trendlines that tell you when things are good, bad, or status quo.'
+    , 'Follow up with a question to answer the why behind their rating.'
+    , 'textarea'
+    , 'text'
+    , NULL
+    , FALSE
+    , FALSE
+    , DisneyUuid());
+
+select * from insertSurveyQuestion(
+  'What was the primary reason for choosing this resort-Instance'
+  , 'Post Stay - Crux Ranch'
+);
+
+select * from insertSurveyRequest(
+  'completed'
+  , 1234
+  , 'test@test.com'
+  , Now()
+  , Now()
+  , 1
+);
+
 -- report frequency types
 select * from insertReportFrequencyType(
-  'HOURLY'
-  ,'Hourly distribution'
+  'ON_DEMAND'
+  ,'On Demand distribution'
 );
 select * from insertReportFrequencyType(
     'DAILY'
@@ -405,7 +486,7 @@ select * from insertReportFrequencyType(
 SELECT * FROM insertReportType(
   'INDIVIDUAL_RESPONSE'
   ,'Individual response report'
-  ,'HOURLY'
+  ,'ON_DEMAND'
 );
 SELECT * FROM insertReportType(
     'INDIVIDUAL_RESPONSE_SUMMARY'

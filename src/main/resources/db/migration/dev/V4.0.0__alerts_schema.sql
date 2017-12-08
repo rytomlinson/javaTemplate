@@ -50,9 +50,10 @@ create table report_sends (
   , email text NOT NULL DEFAULT ''
   , survey_id BIGINT NOT NULL REFERENCES survey (id) ON DELETE CASCADE
   , report_type_id BIGINT NOT NULL REFERENCES report_type (id) ON DELETE CASCADE
+  , report_frequency_type_id BIGINT NOT NULL REFERENCES report_frequency_type (id) ON DELETE CASCADE
   , survey_request_id BIGINT NOT NULL REFERENCES survey_request (id) ON DELETE CASCADE
   , success BOOLEAN NOT NULL DEFAULT FALSE
-  , error_message text not null default ''
+  , error_message text
   , updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW());
 
 CREATE TRIGGER update_report_sends_updated_at
