@@ -275,194 +275,194 @@ $$ LANGUAGE plpgsql volatile cost 100;
 -- data seed section --
 
 -- survey tags
-select * from insertSurveyTag('primary rating');
-select * from insertSurveyTag('stay');
-select * from insertSurveyTag('event');
-select * from insertSurveyTag('department');
+-- select * from insertSurveyTag('primary rating');
+-- select * from insertSurveyTag('stay');
+-- select * from insertSurveyTag('event');
+-- select * from insertSurveyTag('department');
 
 -- market segment tags
-select * from insertMarketSegmentTag('leisure');
-select * from insertMarketSegmentTag('group');
-select * from insertMarketSegmentTag('corporate');
-select * from insertMarketSegmentTag('homeowner');
-select * from insertMarketSegmentTag('vacation');
+-- select * from insertMarketSegmentTag('leisure');
+-- select * from insertMarketSegmentTag('group');
+-- select * from insertMarketSegmentTag('corporate');
+-- select * from insertMarketSegmentTag('homeowner');
+-- select * from insertMarketSegmentTag('vacation');
 
 -- survey type tags
-select * from insertSurveyTypeTag('pre event');
-select * from insertSurveyTypeTag('post event');
-select * from insertSurveyTypeTag('pre stay');
-select * from insertSurveyTypeTag('mid stay');
-select * from insertSurveyTypeTag('post stay');
+-- select * from insertSurveyTypeTag('pre event');
+-- select * from insertSurveyTypeTag('post event');
+-- select * from insertSurveyTypeTag('pre stay');
+-- select * from insertSurveyTypeTag('mid stay');
+-- select * from insertSurveyTypeTag('post stay');
 
 -- department tags
-select * from insertDepartmentTag('rooms');
-select * from insertDepartmentTag('activities');
-select * from insertDepartmentTag('indoor activities');
-select * from insertDepartmentTag('outdoor activities');
-select * from insertDepartmentTag('reservations');
-select * from insertDepartmentTag('front desk');
-select * from insertDepartmentTag('check in');
-select * from insertDepartmentTag('check out');
-select * from insertDepartmentTag('housekeeping');
-select * from insertDepartmentTag('golf');
-select * from insertDepartmentTag('spa');
+-- select * from insertDepartmentTag('rooms');
+-- select * from insertDepartmentTag('activities');
+-- select * from insertDepartmentTag('indoor activities');
+-- select * from insertDepartmentTag('outdoor activities');
+-- select * from insertDepartmentTag('reservations');
+-- select * from insertDepartmentTag('front desk');
+-- select * from insertDepartmentTag('check in');
+-- select * from insertDepartmentTag('check out');
+-- select * from insertDepartmentTag('housekeeping');
+-- select * from insertDepartmentTag('golf');
+-- select * from insertDepartmentTag('spa');
 
 -- tag tags
-select * from insertTagTag('activities', 'department');
-select * from insertTagTag('indoor activities', 'activities');
-select * from insertTagTag('outdoor activities', 'activities');
-select * from insertTagTag('rooms', 'department');
-select * from insertTagTag('reservations', 'rooms');
-select * from insertTagTag('housekeeping', 'rooms');
+-- select * from insertTagTag('activities', 'department');
+-- select * from insertTagTag('indoor activities', 'activities');
+-- select * from insertTagTag('outdoor activities', 'activities');
+-- select * from insertTagTag('rooms', 'department');
+-- select * from insertTagTag('reservations', 'rooms');
+-- select * from insertTagTag('housekeeping', 'rooms');
 
 -- text questions
-select * from insertTextQuestion(
-'What was the primary reason for choosing this resort'
-, 'Reason for choosing this resort'
-, 'Reliable trendlines that tell you when things are good, bad, or status quo.'
-, 'Follow up with a question to answer the why behind their rating.'
-, 'textarea'
-, 'text'
-, NULL
-, TRUE
-, TRUE
-, NavisUuid());
+-- select * from insertTextQuestion(
+-- 'What was the primary reason for choosing this resort'
+-- , 'Reason for choosing this resort'
+-- , 'Reliable trendlines that tell you when things are good, bad, or status quo.'
+-- , 'Follow up with a question to answer the why behind their rating.'
+-- , 'textarea'
+-- , 'text'
+-- , NULL
+-- , TRUE
+-- , TRUE
+-- , NavisUuid());
 
 -- boolean questions
-select * from insertBooleanQuestion(
-'Did you experience any problems during your stay with us?'
-, 'Any problems during stay'
-, 'Reliable trendlines that tell you when things are good, bad, or status quo.'
-, 'Follow up with a question to answer the why behind their rating.'
-, 'boolean'
-, 'boolean');
+-- select * from insertBooleanQuestion(
+-- 'Did you experience any problems during your stay with us?'
+-- , 'Any problems during stay'
+-- , 'Reliable trendlines that tell you when things are good, bad, or status quo.'
+-- , 'Follow up with a question to answer the why behind their rating.'
+-- , 'boolean'
+-- , 'boolean');
 
 -- range questions
-select * from insertRangeQuestion(
-'How would you rate your booking experience?'
-, 'Booking experience'
-, 'Reliable trendlines that tell you when things are good, bad, or status quo.'
-, 'Follow up with a question to answer the why behind their rating.'
-, 'radio'
-, 'range'
-, 'Unacceptable'
-, 'Okay'
-, 'Fantastic'
-, 1
-, 5);
-
--- selection lists
-select * from insertSelectionList(
-'outdoor activities'
-, 'choose activities...'
-, DisneyUuid()
-, false
-);
-
-select * from insertSelectionList(
-'pillow types'
-, 'pillow type selections'
-, NavisUuid()
-, true
-);
-
--- selection list selections
-select * from insertSelection(
-'road biking'
-, 'outdoor activities'
-);
-select * from insertSelection(
-'mountain biking'
-, 'outdoor activities'
-);
-select * from insertSelection(
-'golf'
-, 'outdoor activities'
-);
-
-select * from insertSelection(
-'feather'
-, 'pillow types'
-);
-select * from insertSelection(
-'memory foam'
-, 'pillow types'
-);
-
--- select questions
-select * from insertSelectQuestion(
-'What is your pillow preference?'
-, 'Pillow preference'
-, 'Learning what pillow type most people like to find in their room when they arrive.'
-, 'Follow up with a question to answer the why behind their rating.'
-, 'dropdown'
-, 'select'
-, 1
-, 'pillow types'
-);
-
-select * from insertSelectQuestion(
-'What outdoor activities are you interested in?'
-, 'Outdoor Activities'
-, 'Learning what outdoor activities most people like to find at or around the given property'
-, 'Use the patrons response to provide a customized experience on their next visit..'
-, 'checkbox'
-, 'select'
-, 1
-, 'outdoor activities'
-);
-
--- surveys
-select * from insertSurvey(
-'Post Stay - Crux Ranch'
-, 'Post Stay Survey'
-, TRUE
-, DisneyUuid()
-, FALSE
-);
-
-select * from insertSurvey(
-'Mid Stay - Crux Ranch'
-, 'Mid Stay Survey'
-, TRUE
-, DisneyUuid()
-, FALSE
-);
-
-select * from insertSurvey(
-    'Deleted survey - Test'
-    , 'Deleted Survey'
-    , TRUE
-    , DisneyUuid()
-    , TRUE
-);
-
--- text questions Instances
-select * from insertTextQuestionInstance(
-    'What was the primary reason for choosing this resort-Instance'
-    , 'Reason for choosing this resort'
-    , 'Reliable trendlines that tell you when things are good, bad, or status quo.'
-    , 'Follow up with a question to answer the why behind their rating.'
-    , 'textarea'
-    , 'text'
-    , NULL
-    , FALSE
-    , FALSE
-    , DisneyUuid());
-
-select * from insertSurveyQuestion(
-  'What was the primary reason for choosing this resort-Instance'
-  , 'Post Stay - Crux Ranch'
-);
-
-select * from insertSurveyRequest(
-  'completed'
-  , 1234
-  , 'test@test.com'
-  , Now()
-  , Now()
-  , 1
-);
+-- select * from insertRangeQuestion(
+-- 'How would you rate your booking experience?'
+-- , 'Booking experience'
+-- , 'Reliable trendlines that tell you when things are good, bad, or status quo.'
+-- , 'Follow up with a question to answer the why behind their rating.'
+-- , 'radio'
+-- , 'range'
+-- , 'Unacceptable'
+-- , 'Okay'
+-- , 'Fantastic'
+-- , 1
+-- , 5);
+--
+-- -- selection lists
+-- select * from insertSelectionList(
+-- 'outdoor activities'
+-- , 'choose activities...'
+-- , DisneyUuid()
+-- , false
+-- );
+--
+-- select * from insertSelectionList(
+-- 'pillow types'
+-- , 'pillow type selections'
+-- , NavisUuid()
+-- , true
+-- );
+--
+-- -- selection list selections
+-- select * from insertSelection(
+-- 'road biking'
+-- , 'outdoor activities'
+-- );
+-- select * from insertSelection(
+-- 'mountain biking'
+-- , 'outdoor activities'
+-- );
+-- select * from insertSelection(
+-- 'golf'
+-- , 'outdoor activities'
+-- );
+--
+-- select * from insertSelection(
+-- 'feather'
+-- , 'pillow types'
+-- );
+-- select * from insertSelection(
+-- 'memory foam'
+-- , 'pillow types'
+-- );
+--
+-- -- select questions
+-- select * from insertSelectQuestion(
+-- 'What is your pillow preference?'
+-- , 'Pillow preference'
+-- , 'Learning what pillow type most people like to find in their room when they arrive.'
+-- , 'Follow up with a question to answer the why behind their rating.'
+-- , 'dropdown'
+-- , 'select'
+-- , 1
+-- , 'pillow types'
+-- );
+--
+-- select * from insertSelectQuestion(
+-- 'What outdoor activities are you interested in?'
+-- , 'Outdoor Activities'
+-- , 'Learning what outdoor activities most people like to find at or around the given property'
+-- , 'Use the patrons response to provide a customized experience on their next visit..'
+-- , 'checkbox'
+-- , 'select'
+-- , 1
+-- , 'outdoor activities'
+-- );
+--
+-- -- surveys
+-- select * from insertSurvey(
+-- 'Post Stay - Crux Ranch'
+-- , 'Post Stay Survey'
+-- , TRUE
+-- , DisneyUuid()
+-- , FALSE
+-- );
+--
+-- select * from insertSurvey(
+-- 'Mid Stay - Crux Ranch'
+-- , 'Mid Stay Survey'
+-- , TRUE
+-- , DisneyUuid()
+-- , FALSE
+-- );
+--
+-- select * from insertSurvey(
+--     'Deleted survey - Test'
+--     , 'Deleted Survey'
+--     , TRUE
+--     , DisneyUuid()
+--     , TRUE
+-- );
+--
+-- -- text questions Instances
+-- select * from insertTextQuestionInstance(
+--     'What was the primary reason for choosing this resort-Instance'
+--     , 'Reason for choosing this resort'
+--     , 'Reliable trendlines that tell you when things are good, bad, or status quo.'
+--     , 'Follow up with a question to answer the why behind their rating.'
+--     , 'textarea'
+--     , 'text'
+--     , NULL
+--     , FALSE
+--     , FALSE
+--     , DisneyUuid());
+--
+-- select * from insertSurveyQuestion(
+--   'What was the primary reason for choosing this resort-Instance'
+--   , 'Post Stay - Crux Ranch'
+-- );
+--
+-- select * from insertSurveyRequest(
+--   'completed'
+--   , 1234
+--   , 'test@test.com'
+--   , Now()
+--   , Now()
+--   , 1
+-- );
 
 -- report frequency types
 select * from insertReportFrequencyType(
