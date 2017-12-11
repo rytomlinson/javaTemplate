@@ -111,7 +111,7 @@ task deployRpm() {
             repository {
                 repoKey = 'navis-yum-devel'
                 username = "dshofstall"
-                password = "AP4jndWjTTqhiCSeLy7PvvTdswe"
+                password = "AP94ZFVNooFJAQaLNCshbg6uS6L"
                 ivy {
                     artifactLayout = "com/navis/insight-server/${insightServerVersion}/${buildRpm.outputs.getFiles().getSingleFile().getName()}"
                 }
