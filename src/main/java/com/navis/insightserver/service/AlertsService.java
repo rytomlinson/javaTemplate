@@ -133,7 +133,7 @@ public class AlertsService implements IAlertsService {
             throw new ResourceNotFoundExceptionDTO(surveyAlertDTO.getReportTypeId().toString(), "survey.alert.report.type.id.invalid");
         }
 
-        if (!reportTypeRepository.exists(surveyAlertDTO.getSurveyId())) {
+        if (!surveysRepository.exists(surveyAlertDTO.getSurveyId())) {
 
             throw new ResourceNotFoundExceptionDTO(surveyAlertDTO.getSurveyId().toString(), "survey.alert.survey.id.invalid");
         }
