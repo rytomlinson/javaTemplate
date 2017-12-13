@@ -33,7 +33,7 @@ public class Pac4JConfig {
         oidcConfiguration.setDiscoveryURI(authority + "/.well-known/openid-configuration");
         oidcConfiguration.setResponseType("id_token");
         oidcConfiguration.setResponseMode("form_post");
-        oidcConfiguration.setScope("openid email realm");
+        oidcConfiguration.setScope("openid email name");
         oidcConfiguration.setUseNonce(true);
         oidcConfiguration.setClientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_JWT);
 
