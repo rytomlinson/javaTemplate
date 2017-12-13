@@ -70,6 +70,8 @@ public class IndexController {
         return "index";
     }
 
+
+
     public String BuildEndSessionRedirectUri(WebContext context) {
 
         UserProfileDTO userProfileDTO = security.GetUserProfile(context);
@@ -92,6 +94,12 @@ public class IndexController {
 
         request.getSession().invalidate();
         return new RedirectView(url);
+    }
+
+    @RequestMapping("/reports/completedSurvey")
+    protected String completedSurvey(Model model) {
+        model.addAttribute("sourcePath", sourcePath);
+        return "reports";
     }
 
 
