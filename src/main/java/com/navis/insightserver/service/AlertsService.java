@@ -32,7 +32,10 @@ public class AlertsService implements IAlertsService {
     private IReportFrequencyTypeRepository reportFrequencyTypeRepository;
 
     @Autowired
-    private SurveyReportRecipientsRepository SurveyReportRecipientsRepository;
+    private SurveyReportRecipientsRepository surveyReportRecipientsRepository;
+
+    @Autowired
+    private SurveyReportSchedulerRepository surveyReportSchedulerRepository;
 
     @Override
     public List<ReportTypeDTO> getReportTypes() {
@@ -60,6 +63,9 @@ public class AlertsService implements IAlertsService {
         //Validate current SurveyAlertDTO payload
         validateSurveyAlertsPayload(surveyAlertDTO);
 
+        // upsert SurveyReportScheduler
+        upsertSurveyReportScheduler(surveyAlertDTO.getSurveyId(), surveyAlertDTO.getReportTypeId());
+
         // Delete existing SurveyReportRecipientsEntity rows
         deleteSurveyReportRecipients(surveyAlertDTO.getSurveyId(), surveyAlertDTO.getReportTypeId());
 
@@ -67,14 +73,27 @@ public class AlertsService implements IAlertsService {
         for(EmailDTO emailDTO : emailDTOList) {
             SurveyReportRecipientsEntity surveyReportRecipientsEntity
                     = convertToEntity(surveyAlertDTO.getSurveyId(), surveyAlertDTO.getReportTypeId(), emailDTO);
-            SurveyReportRecipientsRepository.save(surveyReportRecipientsEntity);
+            surveyReportRecipientsRepository.save(surveyReportRecipientsEntity);
+        }
+    }
+
+    private void upsertSurveyReportScheduler(Long surveyId, Long reportTypeId) {
+
+        SurveyReportSchedulerEntity surveyReportSchedulerEntity = null;
+
+        surveyReportSchedulerEntity = surveyReportSchedulerRepository
+                .findBySurveyBySurveyId_IdAndReportTypeByReportTypeId_Id(surveyId, reportTypeId);
+
+        if(null == surveyReportSchedulerEntity) {
+            surveyReportSchedulerEntity = convertToEntity(surveyId, reportTypeId);
+            surveyReportSchedulerRepository.save(surveyReportSchedulerEntity);
         }
     }
 
     @Override
     public Long deleteSurveyReportRecipients(Long surveyId, Long reportTypeId) {
         log.debug("In deleteSurveyReportRecipientsBySurveyBySurveyId Service:");
-        return SurveyReportRecipientsRepository.deleteSurveyReportRecipients(surveyId, reportTypeId);
+        return surveyReportRecipientsRepository.deleteSurveyReportRecipients(surveyId, reportTypeId);
     }
 
     private List<ReportTypeDTO> buildReportTypesDTO() {
@@ -124,6 +143,18 @@ public class AlertsService implements IAlertsService {
         surveyReportRecipientsEntity.setCreatedAt(now);
         surveyReportRecipientsEntity.setUpdatedAt(now);
         return surveyReportRecipientsEntity;
+    }
+
+    private SurveyReportSchedulerEntity convertToEntity(Long surveyId, Long reportTypeId) {
+        Date now = new Date();
+        SurveyReportSchedulerEntity surveyReportSchedulerEntity = new SurveyReportSchedulerEntity();
+        surveyReportSchedulerEntity.setCreatedAt(now);
+        surveyReportSchedulerEntity.setUpdatedAt(now);
+        surveyReportSchedulerEntity.setSurveyBySurveyId(surveysRepository.findOne(surveyId));
+        surveyReportSchedulerEntity.setReportTypeByReportTypeId(reportTypeRepository.findOne(reportTypeId));
+
+        return surveyReportSchedulerEntity;
+
     }
 
     private void validateSurveyAlertsPayload(SurveyAlertDTO surveyAlertDTO) {

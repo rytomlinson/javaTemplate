@@ -30,6 +30,7 @@
         <mapping class="com.navis.insightserver.entity.ReportTypeEntity"/>
         <mapping class="com.navis.insightserver.entity.SurveyReportRecipientsEntity"/>
         <mapping class="com.navis.insightserver.entity.SurveyRequestEntity"/>
+        <mapping class="com.navis.insightserver.entity.SurveyReportSchedulerEntity"/>
 
         <!-- mapping file, we can use Bean annotations too
         <mapping resource="reachEventTypes.hbm.xml" /> -->

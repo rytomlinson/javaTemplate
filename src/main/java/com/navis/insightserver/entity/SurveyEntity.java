@@ -9,7 +9,7 @@ import java.util.UUID;
  * Created by darrell-shofstall on 11/16/17.
  */
 @Entity
-@Table(name = "survey")
+@Table(name = "survey", schema = "insight", catalog = "test_navis")
 public class SurveyEntity {
     private long id;
     private Date createdAt;
@@ -25,6 +25,11 @@ public class SurveyEntity {
     private I18NStringEntity i18NStringByDisplayTitleId;
     private Collection<ReportSendsEntity> reportSendssById;
     private Collection<SurveyReportRecipientsEntity> surveyReportRecipientssById;
+    private Collection<SurveyReportSchedulerEntity> surveyReportSchedulersById;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     @Id
     @Column(name = "id", nullable = false)
@@ -199,5 +204,14 @@ public class SurveyEntity {
 
     public void setSurveyReportRecipientssById(Collection<SurveyReportRecipientsEntity> surveyReportRecipientssById) {
         this.surveyReportRecipientssById = surveyReportRecipientssById;
+    }
+
+    @OneToMany(mappedBy = "surveyBySurveyId")
+    public Collection<SurveyReportSchedulerEntity> getSurveyReportSchedulersById() {
+        return surveyReportSchedulersById;
+    }
+
+    public void setSurveyReportSchedulersById(Collection<SurveyReportSchedulerEntity> surveyReportSchedulersById) {
+        this.surveyReportSchedulersById = surveyReportSchedulersById;
     }
 }

@@ -8,7 +8,7 @@ import java.util.Date;
  * Created by darrell-shofstall on 11/17/17.
  */
 @Entity
-@Table(name = "report_type")
+@Table(name = "report_type", schema = "insight", catalog = "test_navis")
 public class ReportTypeEntity {
     private long id;
     private Date createdAt;
@@ -18,6 +18,10 @@ public class ReportTypeEntity {
     private Collection<ReportSendsEntity> reportSendssById;
     private ReportFrequencyTypeEntity reportFrequencyTypeByReportFrequencyTypeId;
     private Collection<SurveyReportRecipientsEntity> surveyReportRecipientssById;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     @Id
     @Column(name = "id", nullable = false)
