@@ -1,5 +1,8 @@
 package com.navis.insightserver.entity;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -7,13 +10,13 @@ import java.util.Date;
  * Created by darrell-shofstall on 11/29/17.
  */
 @Entity
-@Table(name = "report_frequency_type", schema = "insight", catalog = "test_navis")
-public class ReportFrequencyTypeEntity {
+@Table(name = "question_group_member_question", schema = "insight", catalog = "test_navis")
+public class QuestionGroupMemberQuestionEntity {
     private Long id;
     private Date createdAt;
-    private String code;
-    private String description;
     private Date updatedAt;
+    private QuestionEntity questionByGroupMemberQuestionId;
+    private QuestionEntity questionByGroupQuestionId;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -37,26 +40,6 @@ public class ReportFrequencyTypeEntity {
     }
 
     @Basic
-    @Column(name = "code", nullable = false, length = -1)
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    @Basic
-    @Column(name = "description", nullable = false, length = -1)
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Basic
     @Column(name = "updated_at", nullable = false)
     public Date getUpdatedAt() {
         return updatedAt;
@@ -71,12 +54,10 @@ public class ReportFrequencyTypeEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ReportFrequencyTypeEntity that = (ReportFrequencyTypeEntity) o;
+        QuestionGroupMemberQuestionEntity that = (QuestionGroupMemberQuestionEntity) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (createdAt != null ? !createdAt.equals(that.createdAt) : that.createdAt != null) return false;
-        if (code != null ? !code.equals(that.code) : that.code != null) return false;
-        if (description != null ? !description.equals(that.description) : that.description != null) return false;
         if (updatedAt != null ? !updatedAt.equals(that.updatedAt) : that.updatedAt != null) return false;
 
         return true;
@@ -86,9 +67,29 @@ public class ReportFrequencyTypeEntity {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
-        result = 31 * result + (code != null ? code.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
         return result;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Fetch(value = FetchMode.SELECT)
+    @JoinColumn(name = "group_member_question_id", referencedColumnName = "id", nullable = false)
+    public QuestionEntity getQuestionByGroupMemberQuestionId() {
+        return questionByGroupMemberQuestionId;
+    }
+
+    public void setQuestionByGroupMemberQuestionId(QuestionEntity questionByGroupMemberQuestionId) {
+        this.questionByGroupMemberQuestionId = questionByGroupMemberQuestionId;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Fetch(value = FetchMode.SELECT)
+    @JoinColumn(name = "group_question_id", referencedColumnName = "id", nullable = false)
+    public QuestionEntity getQuestionByGroupQuestionId() {
+        return questionByGroupQuestionId;
+    }
+
+    public void setQuestionByGroupQuestionId(QuestionEntity questionByGroupQuestionId) {
+        this.questionByGroupQuestionId = questionByGroupQuestionId;
     }
 }

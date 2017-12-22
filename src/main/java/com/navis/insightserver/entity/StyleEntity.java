@@ -10,14 +10,15 @@ import java.util.Date;
  * Created by darrell-shofstall on 11/29/17.
  */
 @Entity
-@Table(name = "report_type", schema = "insight", catalog = "test_navis")
-public class ReportTypeEntity {
+@Table(name = "style", schema = "insight", catalog = "test_navis")
+public class StyleEntity {
     private Long id;
     private Date createdAt;
-    private String code;
-    private String description;
+    private Long externalId;
     private Date updatedAt;
-    private ReportFrequencyTypeEntity reportFrequencyTypeByReportFrequencyTypeId;
+    private ImageEntity imageByImageId;
+    private I18NStringEntity i18NStringByNameId;
+    private I18NStringEntity i18NStringByDescriptionId;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -41,23 +42,13 @@ public class ReportTypeEntity {
     }
 
     @Basic
-    @Column(name = "code", nullable = false, length = -1)
-    public String getCode() {
-        return code;
+    @Column(name = "external_id", nullable = true)
+    public Long getExternalId() {
+        return externalId;
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    @Basic
-    @Column(name = "description", nullable = false, length = -1)
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public void setExternalId(Long externalId) {
+        this.externalId = externalId;
     }
 
     @Basic
@@ -75,12 +66,11 @@ public class ReportTypeEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ReportTypeEntity that = (ReportTypeEntity) o;
+        StyleEntity that = (StyleEntity) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (createdAt != null ? !createdAt.equals(that.createdAt) : that.createdAt != null) return false;
-        if (code != null ? !code.equals(that.code) : that.code != null) return false;
-        if (description != null ? !description.equals(that.description) : that.description != null) return false;
+        if (externalId != null ? !externalId.equals(that.externalId) : that.externalId != null) return false;
         if (updatedAt != null ? !updatedAt.equals(that.updatedAt) : that.updatedAt != null) return false;
 
         return true;
@@ -90,20 +80,41 @@ public class ReportTypeEntity {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
-        result = 31 * result + (code != null ? code.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (externalId != null ? externalId.hashCode() : 0);
         result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
         return result;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @Fetch(value = FetchMode.SELECT)
-    @JoinColumn(name = "report_frequency_type_id", referencedColumnName = "id", nullable = false)
-    public ReportFrequencyTypeEntity getReportFrequencyTypeByReportFrequencyTypeId() {
-        return reportFrequencyTypeByReportFrequencyTypeId;
+    @JoinColumn(name = "image_id", referencedColumnName = "id")
+    public ImageEntity getImageByImageId() {
+        return imageByImageId;
     }
 
-    public void setReportFrequencyTypeByReportFrequencyTypeId(ReportFrequencyTypeEntity reportFrequencyTypeByReportFrequencyTypeId) {
-        this.reportFrequencyTypeByReportFrequencyTypeId = reportFrequencyTypeByReportFrequencyTypeId;
+    public void setImageByImageId(ImageEntity imageByImageId) {
+        this.imageByImageId = imageByImageId;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Fetch(value = FetchMode.SELECT)
+    @JoinColumn(name = "name_id", referencedColumnName = "id", nullable = false)
+    public I18NStringEntity getI18NStringByNameId() {
+        return i18NStringByNameId;
+    }
+
+    public void setI18NStringByNameId(I18NStringEntity i18NStringByNameId) {
+        this.i18NStringByNameId = i18NStringByNameId;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Fetch(value = FetchMode.SELECT)
+    @JoinColumn(name = "description_id", referencedColumnName = "id")
+    public I18NStringEntity getI18NStringByDescriptionId() {
+        return i18NStringByDescriptionId;
+    }
+
+    public void setI18NStringByDescriptionId(I18NStringEntity i18NStringByDescriptionId) {
+        this.i18NStringByDescriptionId = i18NStringByDescriptionId;
     }
 }

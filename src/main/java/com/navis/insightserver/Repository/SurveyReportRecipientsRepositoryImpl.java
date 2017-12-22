@@ -3,6 +3,7 @@ package com.navis.insightserver.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.UUID;
 
 
 /**
@@ -22,5 +23,11 @@ public class SurveyReportRecipientsRepositoryImpl implements SurveyReportRecipie
         int deletedCount = query.setParameter("sid", surveyId).setParameter("rid", reportTypeId).executeUpdate();
 
         return Long.valueOf(deletedCount);
+    }
+
+    public void testing() {
+
+        Query query = entityManager.createNativeQuery("select id, owner  from survey where id = 2" );
+        Object stuff = query.getSingleResult();
     }
 }

@@ -10,7 +10,7 @@ import java.util.UUID;
  * Created by darrell-shofstall on 9/29/17.
  */
 
-public interface ISurveysRepository extends CrudRepository<SurveyEntity, Long> {
+public interface SurveyRepository extends CrudRepository<SurveyEntity, Long> , SurveyRepositoryCustom {
 
     List<SurveyEntity> findByOwner(UUID owner);
     List<SurveyEntity> findByOwnerAndDeletedFalse(UUID owner);

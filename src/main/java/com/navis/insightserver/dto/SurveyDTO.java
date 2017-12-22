@@ -33,8 +33,13 @@ public class SurveyDTO extends BaseDTO {
         this.id = surveyEntity.getId();
         displayTitleEntities = new ArrayList(surveyEntity.getI18NStringByDisplayTitleId().getTranslationsById());
         displayTitleEntity = displayTitleEntities.stream().filter(e -> e.getLocale().equals(locale)).findFirst().orElse(null);
-        descriptionEntities = new ArrayList(surveyEntity.getI18NStringByDescriptionId().getTranslationsById());
-        descriptionEntity = descriptionEntities.stream().filter(e -> e.getLocale().equals(locale)).findFirst().orElse(null);
+        descriptionEntities =
+                (null != surveyEntity.getI18NStringByDescriptionId())
+                        ? new ArrayList(surveyEntity.getI18NStringByDescriptionId().getTranslationsById())
+                        : null;
+        descriptionEntity = (null != descriptionEntities)
+                ? descriptionEntities.stream().filter(e -> e.getLocale().equals(locale)).findFirst().orElse(null)
+                : null;
 
         this.displayTitle = (null != displayTitleEntity) ? displayTitleEntity.getLocalizedString() : null;
         this.description = (null != descriptionEntity) ? descriptionEntity.getLocalizedString() : null;

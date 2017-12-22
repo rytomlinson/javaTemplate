@@ -10,14 +10,15 @@ import java.util.Date;
  * Created by darrell-shofstall on 11/29/17.
  */
 @Entity
-@Table(name = "report_type", schema = "insight", catalog = "test_navis")
-public class ReportTypeEntity {
+@Table(name = "text_question", schema = "insight", catalog = "test_navis")
+public class TextQuestionEntity {
     private Long id;
     private Date createdAt;
-    private String code;
-    private String description;
+    private Integer textColumns;
+    private Integer textRows;
     private Date updatedAt;
-    private ReportFrequencyTypeEntity reportFrequencyTypeByReportFrequencyTypeId;
+    private I18NStringEntity i18NStringByPlaceholderId;
+    private QuestionEntity questionByQuestionId;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -41,23 +42,23 @@ public class ReportTypeEntity {
     }
 
     @Basic
-    @Column(name = "code", nullable = false, length = -1)
-    public String getCode() {
-        return code;
+    @Column(name = "text_columns", nullable = true)
+    public Integer getTextColumns() {
+        return textColumns;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setTextColumns(Integer textColumns) {
+        this.textColumns = textColumns;
     }
 
     @Basic
-    @Column(name = "description", nullable = false, length = -1)
-    public String getDescription() {
-        return description;
+    @Column(name = "text_rows", nullable = true)
+    public Integer getTextRows() {
+        return textRows;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setTextRows(Integer textRows) {
+        this.textRows = textRows;
     }
 
     @Basic
@@ -75,12 +76,12 @@ public class ReportTypeEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ReportTypeEntity that = (ReportTypeEntity) o;
+        TextQuestionEntity that = (TextQuestionEntity) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (createdAt != null ? !createdAt.equals(that.createdAt) : that.createdAt != null) return false;
-        if (code != null ? !code.equals(that.code) : that.code != null) return false;
-        if (description != null ? !description.equals(that.description) : that.description != null) return false;
+        if (textColumns != null ? !textColumns.equals(that.textColumns) : that.textColumns != null) return false;
+        if (textRows != null ? !textRows.equals(that.textRows) : that.textRows != null) return false;
         if (updatedAt != null ? !updatedAt.equals(that.updatedAt) : that.updatedAt != null) return false;
 
         return true;
@@ -90,20 +91,31 @@ public class ReportTypeEntity {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
-        result = 31 * result + (code != null ? code.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (textColumns != null ? textColumns.hashCode() : 0);
+        result = 31 * result + (textRows != null ? textRows.hashCode() : 0);
         result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
         return result;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @Fetch(value = FetchMode.SELECT)
-    @JoinColumn(name = "report_frequency_type_id", referencedColumnName = "id", nullable = false)
-    public ReportFrequencyTypeEntity getReportFrequencyTypeByReportFrequencyTypeId() {
-        return reportFrequencyTypeByReportFrequencyTypeId;
+    @JoinColumn(name = "placeholder_id", referencedColumnName = "id")
+    public I18NStringEntity getI18NStringByPlaceholderId() {
+        return i18NStringByPlaceholderId;
     }
 
-    public void setReportFrequencyTypeByReportFrequencyTypeId(ReportFrequencyTypeEntity reportFrequencyTypeByReportFrequencyTypeId) {
-        this.reportFrequencyTypeByReportFrequencyTypeId = reportFrequencyTypeByReportFrequencyTypeId;
+    public void setI18NStringByPlaceholderId(I18NStringEntity i18NStringByPlaceholderId) {
+        this.i18NStringByPlaceholderId = i18NStringByPlaceholderId;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Fetch(value = FetchMode.SELECT)
+    @JoinColumn(name = "question_id", referencedColumnName = "id")
+    public QuestionEntity getQuestionByQuestionId() {
+        return questionByQuestionId;
+    }
+
+    public void setQuestionByQuestionId(QuestionEntity questionByQuestionId) {
+        this.questionByQuestionId = questionByQuestionId;
     }
 }

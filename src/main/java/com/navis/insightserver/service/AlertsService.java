@@ -26,7 +26,7 @@ public class AlertsService implements IAlertsService {
     private IReportTypeRepository reportTypeRepository;
 
     @Autowired
-    private ISurveysRepository surveysRepository;
+    private SurveyRepository surveyRepository;
 
     @Autowired
     private IReportFrequencyTypeRepository reportFrequencyTypeRepository;
@@ -113,7 +113,8 @@ public class AlertsService implements IAlertsService {
     }
 
     private SurveyAlertDTO buildSurveyAlertsDTO(UUID owner, Long surveyId, Long reportTypeId, String locale) {
-        SurveyEntity surveyEntity = surveysRepository.findByOwnerAndId(owner, surveyId);
+        log.debug("In buildSurveyAlertsDTO Service:");
+        SurveyEntity surveyEntity = surveyRepository.findByOwnerAndId(owner, surveyId);
         ReportTypeEntity reportTypeEntity = reportTypeRepository.findById(reportTypeId);
 
         return convertToDto(owner, surveyEntity, reportTypeEntity, locale);
@@ -137,7 +138,7 @@ public class AlertsService implements IAlertsService {
     private SurveyReportRecipientsEntity convertToEntity(Long surveyId, Long reportTypeId, EmailDTO emailDTO) {
         Date now = new Date();
         SurveyReportRecipientsEntity surveyReportRecipientsEntity = new SurveyReportRecipientsEntity();
-        surveyReportRecipientsEntity.setSurveyBySurveyId(surveysRepository.findOne(surveyId));
+        surveyReportRecipientsEntity.setSurveyBySurveyId(surveyRepository.findOne(surveyId));
         surveyReportRecipientsEntity.setReportTypeByReportTypeId(reportTypeRepository.findOne(reportTypeId));
         surveyReportRecipientsEntity.setEmail(emailDTO.getEmail());
         surveyReportRecipientsEntity.setCreatedAt(now);
@@ -150,7 +151,7 @@ public class AlertsService implements IAlertsService {
         SurveyReportSchedulerEntity surveyReportSchedulerEntity = new SurveyReportSchedulerEntity();
         surveyReportSchedulerEntity.setCreatedAt(now);
         surveyReportSchedulerEntity.setUpdatedAt(now);
-        surveyReportSchedulerEntity.setSurveyBySurveyId(surveysRepository.findOne(surveyId));
+        surveyReportSchedulerEntity.setSurveyBySurveyId(surveyRepository.findOne(surveyId));
         surveyReportSchedulerEntity.setReportTypeByReportTypeId(reportTypeRepository.findOne(reportTypeId));
 
         return surveyReportSchedulerEntity;
@@ -164,7 +165,7 @@ public class AlertsService implements IAlertsService {
             throw new ResourceNotFoundExceptionDTO(surveyAlertDTO.getReportTypeId().toString(), "survey.alert.report.type.id.invalid");
         }
 
-        if (!surveysRepository.exists(surveyAlertDTO.getSurveyId())) {
+        if (!surveyRepository.exists(surveyAlertDTO.getSurveyId())) {
 
             throw new ResourceNotFoundExceptionDTO(surveyAlertDTO.getSurveyId().toString(), "survey.alert.survey.id.invalid");
         }

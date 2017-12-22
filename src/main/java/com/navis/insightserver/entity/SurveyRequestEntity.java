@@ -1,17 +1,19 @@
 package com.navis.insightserver.entity;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Date;
 
 /**
- * Created by darrell-shofstall on 11/17/17.
+ * Created by darrell-shofstall on 11/29/17.
  */
 @Entity
-@Table(name = "survey_request")
+@Table(name = "survey_request", schema = "insight", catalog = "test_navis")
 public class SurveyRequestEntity {
-    private Collection<ReportSendsEntity> reportSendssById;
-    private long id;
+    private Long id;
     private Date createdAt;
     private Date activeUntil;
     private Date completionDate;
@@ -24,24 +26,23 @@ public class SurveyRequestEntity {
     private Date sentDate;
     private Date updatedAt;
     private Long externalId;
-
-    @OneToMany(mappedBy = "surveyRequestBySurveyRequestId")
-    public Collection<ReportSendsEntity> getReportSendssById() {
-        return reportSendssById;
-    }
-
-    public void setReportSendssById(Collection<ReportSendsEntity> reportSendssById) {
-        this.reportSendssById = reportSendssById;
-    }
+    private SurveyEntity surveyBySurveyId;
+    private SurveyRequestReachableQuestionsEntity reachableQuestionsEntity;
+    private Collection<SurveyRequestReachableQuestionsEntity> surveyRequestReachableQuestionssById;
+    private Collection<SurveyRequestFormFieldAnswerEntity> surveyRequestFormFieldAnswersById;
+    private Collection<SurveyRequestBoolAnswerEntity> surveyRequestBoolAnswersById;
+    private Collection<SurveyRequestRangeAnswerEntity> surveyRequestRangeAnswersById;
+    private Collection<SurveyRequestSelectAnswerEntity> surveyRequestSelectAnswersById;
+    private Collection<SurveyRequestTextAnswerEntity> surveyRequestTextAnswersById;
 
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -172,7 +173,7 @@ public class SurveyRequestEntity {
 
         SurveyRequestEntity that = (SurveyRequestEntity) o;
 
-        if (id != that.id) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (createdAt != null ? !createdAt.equals(that.createdAt) : that.createdAt != null) return false;
         if (activeUntil != null ? !activeUntil.equals(that.activeUntil) : that.activeUntil != null) return false;
         if (completionDate != null ? !completionDate.equals(that.completionDate) : that.completionDate != null)
@@ -194,7 +195,7 @@ public class SurveyRequestEntity {
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
+        int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
         result = 31 * result + (activeUntil != null ? activeUntil.hashCode() : 0);
         result = 31 * result + (completionDate != null ? completionDate.hashCode() : 0);
@@ -208,5 +209,76 @@ public class SurveyRequestEntity {
         result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
         result = 31 * result + (externalId != null ? externalId.hashCode() : 0);
         return result;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Fetch(value = FetchMode.SELECT)
+    @JoinColumn(name = "survey_id", referencedColumnName = "id")
+    public SurveyEntity getSurveyBySurveyId() {
+        return surveyBySurveyId;
+    }
+
+    public void setSurveyBySurveyId(SurveyEntity surveyBySurveyId) {
+        this.surveyBySurveyId = surveyBySurveyId;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "surveyRequestBySurveyRequestId")
+    @Fetch(value = FetchMode.SELECT)
+    public Collection<SurveyRequestReachableQuestionsEntity> getSurveyRequestReachableQuestionssById() {
+        return surveyRequestReachableQuestionssById;
+    }
+
+    public void setSurveyRequestReachableQuestionssById(Collection<SurveyRequestReachableQuestionsEntity> surveyRequestReachableQuestionssById) {
+        this.surveyRequestReachableQuestionssById = surveyRequestReachableQuestionssById;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "surveyRequestBySurveyRequestId")
+    @Fetch(value = FetchMode.SELECT)
+    public Collection<SurveyRequestFormFieldAnswerEntity> getSurveyRequestFormFieldAnswersById() {
+        return surveyRequestFormFieldAnswersById;
+    }
+
+    public void setSurveyRequestFormFieldAnswersById(Collection<SurveyRequestFormFieldAnswerEntity> surveyRequestFormFieldAnswersById) {
+        this.surveyRequestFormFieldAnswersById = surveyRequestFormFieldAnswersById;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "surveyRequestBySurveyRequestId")
+    @Fetch(value = FetchMode.SELECT)
+    public Collection<SurveyRequestBoolAnswerEntity> getSurveyRequestBoolAnswersById() {
+        return surveyRequestBoolAnswersById;
+    }
+
+    public void setSurveyRequestBoolAnswersById(Collection<SurveyRequestBoolAnswerEntity> surveyRequestBoolAnswersById) {
+        this.surveyRequestBoolAnswersById = surveyRequestBoolAnswersById;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "surveyRequestBySurveyRequestId")
+    @Fetch(value = FetchMode.SELECT)
+    public Collection<SurveyRequestRangeAnswerEntity> getSurveyRequestRangeAnswersById() {
+        return surveyRequestRangeAnswersById;
+    }
+
+    public void setSurveyRequestRangeAnswersById(Collection<SurveyRequestRangeAnswerEntity> surveyRequestRangeAnswersById) {
+        this.surveyRequestRangeAnswersById = surveyRequestRangeAnswersById;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "surveyRequestBySurveyRequestId")
+    @Fetch(value = FetchMode.SELECT)
+    public Collection<SurveyRequestSelectAnswerEntity> getSurveyRequestSelectAnswersById() {
+        return surveyRequestSelectAnswersById;
+    }
+
+    public void setSurveyRequestSelectAnswersById(Collection<SurveyRequestSelectAnswerEntity> surveyRequestSelectAnswersById) {
+        this.surveyRequestSelectAnswersById = surveyRequestSelectAnswersById;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "surveyRequestBySurveyRequestId")
+    @Fetch(value = FetchMode.SELECT)
+    public Collection<SurveyRequestTextAnswerEntity> getSurveyRequestTextAnswersById() {
+        return surveyRequestTextAnswersById;
+    }
+
+    public void setSurveyRequestTextAnswersById(Collection<SurveyRequestTextAnswerEntity> surveyRequestTextAnswersById) {
+        this.surveyRequestTextAnswersById = surveyRequestTextAnswersById;
     }
 }

@@ -1,37 +1,38 @@
 package com.navis.insightserver.entity;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 
 /**
- * Created by darrell-shofstall on 11/10/17.
+ * Created by darrell-shofstall on 11/29/17.
  */
 @Entity
-@Table(name = "tag")
+@Table(name = "tag", schema = "insight", catalog = "test_navis")
 public class TagEntity {
-    private long id;
+    private Long id;
     private Date createdAt;
     private String type;
-    private boolean isMarketSegment;
-    private boolean isSurvey;
-    private boolean isSurveyType;
-    private boolean isQuestion;
-    private String owner;
+    private Boolean isMarketSegment;
+    private Boolean isSurvey;
+    private Boolean isSurveyType;
+    private Boolean isQuestion;
+    private UUID owner;
     private Long externalId;
     private Date updatedAt;
-    private long nameId;
-    private Long descriptionId;
     private I18NStringEntity i18NStringByNameId;
     private I18NStringEntity i18NStringByDescriptionId;
 
     @Id
     @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -57,51 +58,51 @@ public class TagEntity {
 
     @Basic
     @Column(name = "is_market_segment", nullable = false)
-    public boolean isMarketSegment() {
+    public Boolean getMarketSegment() {
         return isMarketSegment;
     }
 
-    public void setMarketSegment(boolean marketSegment) {
+    public void setMarketSegment(Boolean marketSegment) {
         isMarketSegment = marketSegment;
     }
 
     @Basic
     @Column(name = "is_survey", nullable = false)
-    public boolean isSurvey() {
+    public Boolean getSurvey() {
         return isSurvey;
     }
 
-    public void setSurvey(boolean survey) {
+    public void setSurvey(Boolean survey) {
         isSurvey = survey;
     }
 
     @Basic
     @Column(name = "is_survey_type", nullable = false)
-    public boolean isSurveyType() {
+    public Boolean getSurveyType() {
         return isSurveyType;
     }
 
-    public void setSurveyType(boolean surveyType) {
+    public void setSurveyType(Boolean surveyType) {
         isSurveyType = surveyType;
     }
 
     @Basic
     @Column(name = "is_question", nullable = false)
-    public boolean isQuestion() {
+    public Boolean getQuestion() {
         return isQuestion;
     }
 
-    public void setQuestion(boolean question) {
+    public void setQuestion(Boolean question) {
         isQuestion = question;
     }
 
     @Basic
     @Column(name = "owner", nullable = false)
-    public String getOwner() {
+    public UUID getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner(UUID owner) {
         this.owner = owner;
     }
 
@@ -132,13 +133,15 @@ public class TagEntity {
 
         TagEntity tagEntity = (TagEntity) o;
 
-        if (id != tagEntity.id) return false;
-        if (isMarketSegment != tagEntity.isMarketSegment) return false;
-        if (isSurvey != tagEntity.isSurvey) return false;
-        if (isSurveyType != tagEntity.isSurveyType) return false;
-        if (isQuestion != tagEntity.isQuestion) return false;
+        if (id != null ? !id.equals(tagEntity.id) : tagEntity.id != null) return false;
         if (createdAt != null ? !createdAt.equals(tagEntity.createdAt) : tagEntity.createdAt != null) return false;
         if (type != null ? !type.equals(tagEntity.type) : tagEntity.type != null) return false;
+        if (isMarketSegment != null ? !isMarketSegment.equals(tagEntity.isMarketSegment) : tagEntity.isMarketSegment != null)
+            return false;
+        if (isSurvey != null ? !isSurvey.equals(tagEntity.isSurvey) : tagEntity.isSurvey != null) return false;
+        if (isSurveyType != null ? !isSurveyType.equals(tagEntity.isSurveyType) : tagEntity.isSurveyType != null)
+            return false;
+        if (isQuestion != null ? !isQuestion.equals(tagEntity.isQuestion) : tagEntity.isQuestion != null) return false;
         if (owner != null ? !owner.equals(tagEntity.owner) : tagEntity.owner != null) return false;
         if (externalId != null ? !externalId.equals(tagEntity.externalId) : tagEntity.externalId != null) return false;
         if (updatedAt != null ? !updatedAt.equals(tagEntity.updatedAt) : tagEntity.updatedAt != null) return false;
@@ -148,22 +151,21 @@ public class TagEntity {
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
+        int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (isMarketSegment ? 1 : 0);
-        result = 31 * result + (isSurvey ? 1 : 0);
-        result = 31 * result + (isSurveyType ? 1 : 0);
-        result = 31 * result + (isQuestion ? 1 : 0);
+        result = 31 * result + (isMarketSegment != null ? isMarketSegment.hashCode() : 0);
+        result = 31 * result + (isSurvey != null ? isSurvey.hashCode() : 0);
+        result = 31 * result + (isSurveyType != null ? isSurveyType.hashCode() : 0);
+        result = 31 * result + (isQuestion != null ? isQuestion.hashCode() : 0);
         result = 31 * result + (owner != null ? owner.hashCode() : 0);
         result = 31 * result + (externalId != null ? externalId.hashCode() : 0);
         result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
         return result;
     }
 
-
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Fetch(value = FetchMode.SELECT)
     @JoinColumn(name = "name_id", referencedColumnName = "id", nullable = false)
     public I18NStringEntity getI18NStringByNameId() {
         return i18NStringByNameId;
@@ -173,7 +175,8 @@ public class TagEntity {
         this.i18NStringByNameId = i18NStringByNameId;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Fetch(value = FetchMode.SELECT)
     @JoinColumn(name = "description_id", referencedColumnName = "id")
     public I18NStringEntity getI18NStringByDescriptionId() {
         return i18NStringByDescriptionId;

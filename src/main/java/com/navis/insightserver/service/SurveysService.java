@@ -1,6 +1,6 @@
 package com.navis.insightserver.service;
 
-import com.navis.insightserver.Repository.ISurveysRepository;
+import com.navis.insightserver.Repository.SurveyRepository;
 import com.navis.insightserver.dto.SurveyDTO;
 import com.navis.insightserver.entity.SurveyEntity;
 import org.slf4j.Logger;
@@ -21,7 +21,7 @@ public class SurveysService implements ISurveysService {
     private static final Logger log = LoggerFactory.getLogger(SurveysService.class);
 
     @Autowired
-    private ISurveysRepository surveysRepository;
+    private SurveyRepository surveyRepository;
 
     @Override
     public List<SurveyDTO> getSurveys(UUID owner, String locale, Boolean includeDeleted) {
@@ -30,7 +30,7 @@ public class SurveysService implements ISurveysService {
     }
 
     private List<SurveyDTO> buildSurveysDTO(UUID owner, String locale, Boolean includeDeleted) {
-        List<SurveyEntity> list = includeDeleted ? surveysRepository.findByOwner(owner) : surveysRepository.findByOwnerAndDeletedFalse(owner);
+        List<SurveyEntity> list = includeDeleted ? surveyRepository.findByOwner(owner) : surveyRepository.findByOwnerAndDeletedFalse(owner);
 
         List<SurveyDTO> listDto = list.stream().map(item -> convertToDto(item, locale)).collect(Collectors.toList());
 

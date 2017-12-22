@@ -10,14 +10,15 @@ import java.util.Date;
  * Created by darrell-shofstall on 11/29/17.
  */
 @Entity
-@Table(name = "survey_report_recipients", schema = "insight", catalog = "test_navis")
-public class SurveyReportRecipientsEntity {
+@Table(name = "survey_request_bool_answer", schema = "insight", catalog = "test_navis")
+public class SurveyRequestBoolAnswerEntity {
     private Long id;
     private Date createdAt;
-    private String email;
+    private Boolean deleted;
+    private Boolean answer;
     private Date updatedAt;
-    private SurveyEntity surveyBySurveyId;
-    private ReportTypeEntity reportTypeByReportTypeId;
+    private SurveyRequestEntity surveyRequestBySurveyRequestId;
+    private QuestionEntity questionByQuestionId;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -41,13 +42,23 @@ public class SurveyReportRecipientsEntity {
     }
 
     @Basic
-    @Column(name = "email", nullable = false, length = -1)
-    public String getEmail() {
-        return email;
+    @Column(name = "deleted", nullable = false)
+    public Boolean getDeleted() {
+        return deleted;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    @Basic
+    @Column(name = "answer", nullable = true)
+    public Boolean getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(Boolean answer) {
+        this.answer = answer;
     }
 
     @Basic
@@ -65,11 +76,12 @@ public class SurveyReportRecipientsEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SurveyReportRecipientsEntity that = (SurveyReportRecipientsEntity) o;
+        SurveyRequestBoolAnswerEntity that = (SurveyRequestBoolAnswerEntity) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (createdAt != null ? !createdAt.equals(that.createdAt) : that.createdAt != null) return false;
-        if (email != null ? !email.equals(that.email) : that.email != null) return false;
+        if (deleted != null ? !deleted.equals(that.deleted) : that.deleted != null) return false;
+        if (answer != null ? !answer.equals(that.answer) : that.answer != null) return false;
         if (updatedAt != null ? !updatedAt.equals(that.updatedAt) : that.updatedAt != null) return false;
 
         return true;
@@ -79,30 +91,31 @@ public class SurveyReportRecipientsEntity {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
-        result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (deleted != null ? deleted.hashCode() : 0);
+        result = 31 * result + (answer != null ? answer.hashCode() : 0);
         result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
         return result;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @Fetch(value = FetchMode.SELECT)
-    @JoinColumn(name = "survey_id", referencedColumnName = "id", nullable = false)
-    public SurveyEntity getSurveyBySurveyId() {
-        return surveyBySurveyId;
+    @JoinColumn(name = "survey_request_id", referencedColumnName = "id", nullable = false)
+    public SurveyRequestEntity getSurveyRequestBySurveyRequestId() {
+        return surveyRequestBySurveyRequestId;
     }
 
-    public void setSurveyBySurveyId(SurveyEntity surveyBySurveyId) {
-        this.surveyBySurveyId = surveyBySurveyId;
+    public void setSurveyRequestBySurveyRequestId(SurveyRequestEntity surveyRequestBySurveyRequestId) {
+        this.surveyRequestBySurveyRequestId = surveyRequestBySurveyRequestId;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @Fetch(value = FetchMode.SELECT)
-    @JoinColumn(name = "report_type_id", referencedColumnName = "id", nullable = false)
-    public ReportTypeEntity getReportTypeByReportTypeId() {
-        return reportTypeByReportTypeId;
+    @JoinColumn(name = "question_id", referencedColumnName = "id", nullable = false)
+    public QuestionEntity getQuestionByQuestionId() {
+        return questionByQuestionId;
     }
 
-    public void setReportTypeByReportTypeId(ReportTypeEntity reportTypeByReportTypeId) {
-        this.reportTypeByReportTypeId = reportTypeByReportTypeId;
+    public void setQuestionByQuestionId(QuestionEntity questionByQuestionId) {
+        this.questionByQuestionId = questionByQuestionId;
     }
 }

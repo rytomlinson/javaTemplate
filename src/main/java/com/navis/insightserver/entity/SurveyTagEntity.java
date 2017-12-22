@@ -1,21 +1,21 @@
 package com.navis.insightserver.entity;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.Date;
 
 /**
- * Created by darrell-shofstall on 12/15/17.
+ * Created by darrell-shofstall on 11/29/17.
  */
 @Entity
-@Table(name = "survey_report_scheduler", schema = "insight", catalog = "test_navis")
-public class SurveyReportSchedulerEntity {
+@Table(name = "survey_tag", schema = "insight", catalog = "test_navis")
+public class SurveyTagEntity {
     private Long id;
-    private String runStatus;
-    private Date lastRunAt;
     private Date createdAt;
     private Date updatedAt;
     private SurveyEntity surveyBySurveyId;
-    private ReportTypeEntity reportTypeByReportTypeId;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -26,26 +26,6 @@ public class SurveyReportSchedulerEntity {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    @Basic
-    @Column(name = "run_status", nullable = true, length = -1)
-    public String getRunStatus() {
-        return runStatus;
-    }
-
-    public void setRunStatus(String runStatus) {
-        this.runStatus = runStatus;
-    }
-
-    @Basic
-    @Column(name = "last_run_at", nullable = true)
-    public Date getLastRunAt() {
-        return lastRunAt;
-    }
-
-    public void setLastRunAt(Date lastRunAt) {
-        this.lastRunAt = lastRunAt;
     }
 
     @Basic
@@ -73,11 +53,9 @@ public class SurveyReportSchedulerEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SurveyReportSchedulerEntity that = (SurveyReportSchedulerEntity) o;
+        SurveyTagEntity that = (SurveyTagEntity) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (runStatus != null ? !runStatus.equals(that.runStatus) : that.runStatus != null) return false;
-        if (lastRunAt != null ? !lastRunAt.equals(that.lastRunAt) : that.lastRunAt != null) return false;
         if (createdAt != null ? !createdAt.equals(that.createdAt) : that.createdAt != null) return false;
         if (updatedAt != null ? !updatedAt.equals(that.updatedAt) : that.updatedAt != null) return false;
 
@@ -87,14 +65,13 @@ public class SurveyReportSchedulerEntity {
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (runStatus != null ? runStatus.hashCode() : 0);
-        result = 31 * result + (lastRunAt != null ? lastRunAt.hashCode() : 0);
         result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
         result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
         return result;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Fetch(value = FetchMode.SELECT)
     @JoinColumn(name = "survey_id", referencedColumnName = "id", nullable = false)
     public SurveyEntity getSurveyBySurveyId() {
         return surveyBySurveyId;
@@ -102,15 +79,5 @@ public class SurveyReportSchedulerEntity {
 
     public void setSurveyBySurveyId(SurveyEntity surveyBySurveyId) {
         this.surveyBySurveyId = surveyBySurveyId;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "report_type_id", referencedColumnName = "id", nullable = false)
-    public ReportTypeEntity getReportTypeByReportTypeId() {
-        return reportTypeByReportTypeId;
-    }
-
-    public void setReportTypeByReportTypeId(ReportTypeEntity reportTypeByReportTypeId) {
-        this.reportTypeByReportTypeId = reportTypeByReportTypeId;
     }
 }

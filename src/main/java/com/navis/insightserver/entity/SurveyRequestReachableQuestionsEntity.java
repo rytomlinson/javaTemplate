@@ -4,19 +4,20 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.Date;
 
 /**
  * Created by darrell-shofstall on 11/29/17.
  */
 @Entity
-@Table(name = "i18n_string", schema = "insight", catalog = "test_navis")
-public class I18NStringEntity {
+@Table(name = "survey_request_reachable_questions", schema = "insight", catalog = "test_navis")
+public class SurveyRequestReachableQuestionsEntity {
     private Long id;
-    private Collection<TranslationEntity> translationsById;
     private Date createdAt;
+    private Boolean deleted;
     private Date updatedAt;
+    private SurveyRequestEntity surveyRequestBySurveyRequestId;
+    private QuestionEntity questionByQuestionId;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -40,6 +41,16 @@ public class I18NStringEntity {
     }
 
     @Basic
+    @Column(name = "deleted", nullable = false)
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    @Basic
     @Column(name = "updated_at", nullable = false)
     public Date getUpdatedAt() {
         return updatedAt;
@@ -54,10 +65,11 @@ public class I18NStringEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        I18NStringEntity that = (I18NStringEntity) o;
+        SurveyRequestReachableQuestionsEntity that = (SurveyRequestReachableQuestionsEntity) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (createdAt != null ? !createdAt.equals(that.createdAt) : that.createdAt != null) return false;
+        if (deleted != null ? !deleted.equals(that.deleted) : that.deleted != null) return false;
         if (updatedAt != null ? !updatedAt.equals(that.updatedAt) : that.updatedAt != null) return false;
 
         return true;
@@ -67,17 +79,30 @@ public class I18NStringEntity {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
+        result = 31 * result + (deleted != null ? deleted.hashCode() : 0);
         result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
         return result;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "i18NStringByI18NStringId")
+    @ManyToOne(fetch = FetchType.LAZY)
     @Fetch(value = FetchMode.SELECT)
-    public Collection<TranslationEntity> getTranslationsById() {
-        return translationsById;
+    @JoinColumn(name = "survey_request_id", referencedColumnName = "id", nullable = false)
+    public SurveyRequestEntity getSurveyRequestBySurveyRequestId() {
+        return surveyRequestBySurveyRequestId;
     }
 
-    public void setTranslationsById(Collection<TranslationEntity> translationsById) {
-        this.translationsById = translationsById;
+    public void setSurveyRequestBySurveyRequestId(SurveyRequestEntity surveyRequestBySurveyRequestId) {
+        this.surveyRequestBySurveyRequestId = surveyRequestBySurveyRequestId;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Fetch(value = FetchMode.SELECT)
+    @JoinColumn(name = "question_id", referencedColumnName = "id", nullable = false)
+    public QuestionEntity getQuestionByQuestionId() {
+        return questionByQuestionId;
+    }
+
+    public void setQuestionByQuestionId(QuestionEntity questionByQuestionId) {
+        this.questionByQuestionId = questionByQuestionId;
     }
 }

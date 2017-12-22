@@ -16,13 +16,13 @@ public class SurveyEntity {
     private Boolean enabled;
     private Date launchDate;
     private Date createDate;
-    private Date createdBy;
+    private UUID createdBy;
     private boolean deleted;
     private UUID owner;
     private Long externalId;
     private Date updatedAt;
-    private I18NStringEntity i18NStringByDescriptionId;
-    private I18NStringEntity i18NStringByDisplayTitleId;
+    private com.navis.insightserver.entity.I18NStringEntity i18NStringByDescriptionId;
+    private com.navis.insightserver.entity.I18NStringEntity i18NStringByDisplayTitleId;
     private Collection<ReportSendsEntity> reportSendssById;
     private Collection<SurveyReportRecipientsEntity> surveyReportRecipientssById;
     private Collection<SurveyReportSchedulerEntity> surveyReportSchedulersById;
@@ -84,11 +84,11 @@ public class SurveyEntity {
 
     @Basic
     @Column(name = "created_by", nullable = true)
-    public Date getCreatedBy() {
+    public UUID getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(Date createdBy) {
+    public void setCreatedBy(UUID createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -104,6 +104,7 @@ public class SurveyEntity {
 
     @Basic
     @Column(name = "owner", nullable = false)
+    @org.hibernate.annotations.Type(type = "pg-uuid")
     public UUID getOwner() {
         return owner;
     }
@@ -170,17 +171,17 @@ public class SurveyEntity {
 
     @ManyToOne
     @JoinColumn(name = "description_id", referencedColumnName = "id")
-    public I18NStringEntity getI18NStringByDescriptionId() {
+    public com.navis.insightserver.entity.I18NStringEntity getI18NStringByDescriptionId() {
         return i18NStringByDescriptionId;
     }
 
-    public void setI18NStringByDescriptionId(I18NStringEntity i18NStringByDescriptionId) {
+    public void setI18NStringByDescriptionId(com.navis.insightserver.entity.I18NStringEntity i18NStringByDescriptionId) {
         this.i18NStringByDescriptionId = i18NStringByDescriptionId;
     }
 
     @ManyToOne
     @JoinColumn(name = "display_title_id", referencedColumnName = "id", nullable = false)
-    public I18NStringEntity getI18NStringByDisplayTitleId() {
+    public com.navis.insightserver.entity.I18NStringEntity getI18NStringByDisplayTitleId() {
         return i18NStringByDisplayTitleId;
     }
 
