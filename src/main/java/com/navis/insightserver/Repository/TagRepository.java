@@ -13,4 +13,5 @@ import java.util.UUID;
 public interface TagRepository extends CrudRepository<TagEntity, Long>, TagRepositoryCustom {
 
     List<TagEntity> findByOwner(UUID propertyId);
+    List<TagEntity> findByOwnerAndSurveyTypeTrue(UUID owner);
 }

@@ -69,4 +69,14 @@ public class SettingsController {
 
         return new ResponseEntity<List<TagDTO>>(tagService.getDepartmentTags(propertyId), HttpStatus.OK);
     }
+
+    @RequestMapping(value = "surveyTypeTags", method = RequestMethod.GET)
+    public ResponseEntity<List<TagDTO>> getSurveyTypeTags(
+            HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+        final WebContext context = new J2EContext(request, response);
+        UserProfileDTO user = security.GetUserProfile(context);
+        log.info("View a list of Insight Survey Type Tags for UserProfileDTO: " + user.getUserId());
+
+        return new ResponseEntity<List<TagDTO>>(tagService.getSurveyTypeTags(), HttpStatus.OK);
+    }
 }

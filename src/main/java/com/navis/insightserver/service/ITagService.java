@@ -12,4 +12,5 @@ public interface ITagService {
 
     List<TagDTO> getTags(UUID propertyId);
     List<TagDTO> getDepartmentTags(UUID propertyId);
+    List<TagDTO> getSurveyTypeTags();
 }

@@ -29,9 +29,6 @@ public class TagService implements ITagService {
     @Autowired
     private TagRepository tagRepository;
 
-    @Autowired
-    private TagTagRepository tagTagRepository;
-
     @Override
     public List<TagDTO> getTags(UUID propertyId) {
         log.debug("In getTags Service:");
@@ -40,10 +37,17 @@ public class TagService implements ITagService {
 
     @Override
     public List<TagDTO> getDepartmentTags(UUID propertyId) {
-        log.debug("In getTags Service:");
+        log.debug("In getDepartmentTags Service:");
         TagEntity tagEntity = tagRepository.getDepartmentTag(uuid);
         return buildDepartmentTagsDTO(propertyId, tagEntity.getId());
     }
+
+    @Override
+    public List<TagDTO> getSurveyTypeTags() {
+        log.debug("In getSurveyTypeTags Service:");
+        return buildSurveyTypeTagsDTO(uuid);
+    }
+
 
     private List<TagDTO> buildTagsDTO(UUID propertyId) {
         List<TagEntity> list = tagRepository.findByOwner(propertyId);
@@ -55,6 +59,14 @@ public class TagService implements ITagService {
 
     private List<TagDTO> buildDepartmentTagsDTO(UUID propertyId, Long departmentTagId) {
         List<TagTagEntity> list = tagRepository.getDepartmentTagsByOwner(propertyId, departmentTagId);
+
+        List<TagDTO> listDto = list.stream().map(item -> convertToDto(item)).collect(Collectors.toList());
+
+        return listDto;
+    }
+
+    private List<TagDTO> buildSurveyTypeTagsDTO(UUID owner) {
+        List<TagEntity> list = tagRepository.findByOwnerAndSurveyTypeTrue(owner);
 
         List<TagDTO> listDto = list.stream().map(item -> convertToDto(item)).collect(Collectors.toList());
 
