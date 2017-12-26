@@ -1,10 +1,14 @@
 package com.navis.insightserver.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.navis.insightserver.converter.CustomDateDeserializer;
+import com.navis.insightserver.converter.CustomDateSerializer;
 import com.navis.insightserver.entity.SurveyEntity;
-import com.navis.insightserver.entity.TagEntity;
 import com.navis.insightserver.entity.TranslationEntity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -14,11 +18,11 @@ public class SurveyDTO extends BaseDTO {
 
     private static final long serialVersionUID = 1L;
 
-//    @NotNull(message = "user.settings.stat.event.type.notnull")
     private Long id;
     private String displayTitle;
     private String description;
     private Boolean enabled;
+    private Date launchDate;
 
     public SurveyDTO() {
     }
@@ -44,6 +48,7 @@ public class SurveyDTO extends BaseDTO {
         this.displayTitle = (null != displayTitleEntity) ? displayTitleEntity.getLocalizedString() : null;
         this.description = (null != descriptionEntity) ? descriptionEntity.getLocalizedString() : null;
         this.enabled = surveyEntity.getEnabled();
+        this.setLaunchDate(surveyEntity.getLaunchDate());
     }
 
     public Long getId() {
@@ -77,4 +82,15 @@ public class SurveyDTO extends BaseDTO {
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
+
+    @JsonSerialize(using = CustomDateSerializer.class)
+    public Date getLaunchDate() {
+        return launchDate;
+    }
+
+    @JsonDeserialize(using = CustomDateDeserializer.class)
+    public void setLaunchDate(Date launchDate) {
+        this.launchDate = launchDate;
+    }
+
 }

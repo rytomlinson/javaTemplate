@@ -29,6 +29,12 @@ public class SurveysService implements ISurveysService {
         return buildSurveysDTO(owner, locale, includeDeleted);
     }
 
+    @Override
+    public SurveyDTO getSurveyById(UUID owner, String locale, Long surveyId) {
+        log.debug("In getSurveyById Service:");
+        return buildSurveyDTO(owner, locale, surveyId);
+    }
+
     private List<SurveyDTO> buildSurveysDTO(UUID owner, String locale, Boolean includeDeleted) {
         List<SurveyEntity> list = includeDeleted ? surveyRepository.findByOwner(owner) : surveyRepository.findByOwnerAndDeletedFalse(owner);
 
@@ -37,6 +43,13 @@ public class SurveysService implements ISurveysService {
         return listDto;
     }
 
+    private SurveyDTO buildSurveyDTO(UUID owner, String locale, Long surveyId) {
+        SurveyEntity surveyEntity = surveyRepository.findByOwnerAndId(owner, surveyId);
+
+        SurveyDTO surveyDTO = convertToDto(surveyEntity, locale);
+
+        return surveyDTO;
+    }
     private SurveyDTO convertToDto(SurveyEntity surveyEntity, String locale) {
         SurveyDTO surveyDTO = new SurveyDTO(surveyEntity, locale);
         return surveyDTO;

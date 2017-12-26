@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface ISurveysService {
 
     List<SurveyDTO> getSurveys(UUID owner, String locale, Boolean includeDeleted);
+
+    SurveyDTO getSurveyById(UUID owner, String locale, Long surveyId);
 }
