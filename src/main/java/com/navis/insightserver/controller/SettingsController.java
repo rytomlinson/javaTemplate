@@ -29,6 +29,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -47,14 +48,25 @@ public class SettingsController {
     @Autowired
     private ITagService tagService;
 
-    @RequestMapping(value = "tags", method = RequestMethod.GET)
-    public ResponseEntity<List<TagDTO>> getTags(HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+    @RequestMapping(value = "properties/{propertyId}/tags", method = RequestMethod.GET)
+    public ResponseEntity<List<TagDTO>> getTags(
+            @PathVariable("propertyId") UUID propertyId,
+            HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
         final WebContext context = new J2EContext(request, response);
         UserProfileDTO user = security.GetUserProfile(context);
         log.info("View a list of Insight Tags for UserProfileDTO: " + user.getUserId());
 
-        return new ResponseEntity<List<TagDTO>>(tagService.getTags(), HttpStatus.OK);
+        return new ResponseEntity<List<TagDTO>>(tagService.getTags(propertyId), HttpStatus.OK);
+    }
 
+    @RequestMapping(value = "properties/{propertyId}/departmentTags", method = RequestMethod.GET)
+    public ResponseEntity<List<TagDTO>> getDepartmentTags(
+            @PathVariable("propertyId") UUID propertyId,
+            HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+        final WebContext context = new J2EContext(request, response);
+        UserProfileDTO user = security.GetUserProfile(context);
+        log.info("View a list of Insight Department Tags for UserProfileDTO: " + user.getUserId());
 
+        return new ResponseEntity<List<TagDTO>>(tagService.getDepartmentTags(propertyId), HttpStatus.OK);
     }
 }

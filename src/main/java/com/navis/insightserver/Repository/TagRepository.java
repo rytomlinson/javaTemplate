@@ -4,12 +4,13 @@ import com.navis.insightserver.entity.TagEntity;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by darrell-shofstall on 9/29/17.
  */
 
-public interface ITagRepository extends CrudRepository<TagEntity, Long> {
+public interface TagRepository extends CrudRepository<TagEntity, Long>, TagRepositoryCustom {
 
-    List<TagEntity> findAll();
+    List<TagEntity> findByOwner(UUID propertyId);
 }

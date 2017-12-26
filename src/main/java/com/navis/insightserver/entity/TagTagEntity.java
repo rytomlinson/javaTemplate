@@ -85,7 +85,7 @@ public class TagTagEntity {
         return result;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @Fetch(value = FetchMode.SELECT)
     @JoinColumn(name = "tag_id", referencedColumnName = "id", nullable = false)
     public TagEntity getTagByTagId() {
@@ -96,7 +96,7 @@ public class TagTagEntity {
         this.tagByTagId = tagByTagId;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @Fetch(value = FetchMode.SELECT)
     @JoinColumn(name = "parent_tag_id", referencedColumnName = "id", nullable = false)
     public TagEntity getTagByParentTagId() {

@@ -4,6 +4,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
 
@@ -25,6 +26,9 @@ public class TagEntity {
     private Date updatedAt;
     private I18NStringEntity i18NStringByNameId;
     private I18NStringEntity i18NStringByDescriptionId;
+    private Integer minimumValue;
+    private Integer maximumValue;
+    private Collection<TagTagEntity> tagTagsById_0;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -184,5 +188,34 @@ public class TagEntity {
 
     public void setI18NStringByDescriptionId(I18NStringEntity i18NStringByDescriptionId) {
         this.i18NStringByDescriptionId = i18NStringByDescriptionId;
+    }
+
+    @Basic
+    @Column(name = "minimum_value", nullable = true)
+    public Integer getMinimumValue() {
+        return minimumValue;
+    }
+
+    public void setMinimumValue(Integer minimumValue) {
+        this.minimumValue = minimumValue;
+    }
+
+    @Basic
+    @Column(name = "maximum_value", nullable = true)
+    public Integer getMaximumValue() {
+        return maximumValue;
+    }
+
+    public void setMaximumValue(Integer maximumValue) {
+        this.maximumValue = maximumValue;
+    }
+
+    @OneToMany(mappedBy = "tagByParentTagId")
+    public Collection<TagTagEntity> getTagTagsById_0() {
+        return tagTagsById_0;
+    }
+
+    public void setTagTagsById_0(Collection<TagTagEntity> tagTagsById_0) {
+        this.tagTagsById_0 = tagTagsById_0;
     }
 }
