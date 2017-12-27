@@ -7,7 +7,10 @@ import com.navis.insightserver.converter.CustomDateSerializer;
 import com.navis.insightserver.entity.SurveyEntity;
 import com.navis.insightserver.entity.SurveyTagEntity;
 import com.navis.insightserver.entity.TranslationEntity;
+import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,10 +23,13 @@ public class SurveyDTO extends BaseDTO {
     private static final long serialVersionUID = 1L;
 
     private Long id;
+    @NotNull(message = "survey.display.title.notnull")
     private String displayTitle;
     private String description;
     private Boolean enabled;
     private Date launchDate;
+    @NotNull(message = "survey.type.notnull")
+    @Valid
     private TagDTO surveyType;
 
     public SurveyDTO() {

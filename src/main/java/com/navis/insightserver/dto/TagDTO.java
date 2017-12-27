@@ -4,6 +4,7 @@ import com.navis.insightserver.entity.SurveyTagEntity;
 import com.navis.insightserver.entity.TagEntity;
 import com.navis.insightserver.entity.TagTagEntity;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,13 +17,14 @@ public class TagDTO extends BaseDTO {
 
     private static final long serialVersionUID = 1L;
 
-//    @NotNull(message = "user.settings.stat.event.type.notnull")
+    @NotNull(message = "tag.id.notnull")
     private Long id;
     private String type;
     private String name;
     private Integer minimumValue;
     private Integer maximumValue;
     private Long parentTagId;
+    @Valid
     private List<TagDTO> tags = new ArrayList<>();
 
     public TagDTO() {

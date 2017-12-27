@@ -2,8 +2,11 @@ package com.navis.insightserver.service;
 
 import com.navis.insightserver.Repository.I18nStringRepository;
 import com.navis.insightserver.Repository.SurveyRepository;
+import com.navis.insightserver.Repository.SurveyTagRepository;
+import com.navis.insightserver.Repository.TagRepository;
 import com.navis.insightserver.dto.SurveyDTO;
 import com.navis.insightserver.entity.SurveyEntity;
+import com.navis.insightserver.entity.SurveyTagEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +32,12 @@ public class SurveysService implements ISurveysService {
     @Autowired
     private I18nStringRepository i18nStringRepository;
 
+    @Autowired
+    private TagRepository tagRepository;
+
+    @Autowired
+    private SurveyTagRepository surveyTagRepository;
+
     @Override
     public List<SurveyDTO> getSurveys(UUID owner, String locale, Boolean includeDeleted) {
         log.debug("In getSurveys Service:");
@@ -44,9 +53,11 @@ public class SurveysService implements ISurveysService {
     @Override
     public Long upsertSurvey(UUID owner, SurveyDTO surveyDTO, String locale) {
         log.debug("In upsertSurvey Service:");
+        Date now = new Date();
         Long surveyId = surveyDTO.getId();
         Long displayTitleId;
         SurveyEntity surveyEntity;
+        Long surveyTypeId = surveyDTO.getSurveyType().getId();
 
         if(null != surveyId) {
             surveyEntity = surveyRepository.findOne(surveyId);
@@ -57,6 +68,15 @@ public class SurveysService implements ISurveysService {
         }
 
         surveyEntity = surveyRepository.save(surveyEntity);
+
+        //TODO: refactor code
+        SurveyTagEntity surveyTagEntity = new SurveyTagEntity();
+        surveyTagEntity.setSurveyBySurveyId(surveyEntity);
+        surveyTagEntity.setTagByTagId(tagRepository.findOne(surveyTypeId));
+        surveyTagEntity.setCreatedAt(now);
+        surveyTagEntity.setUpdatedAt(now);
+
+        surveyTagRepository.save(surveyTagEntity);
 
         return surveyEntity.getId();
     }
