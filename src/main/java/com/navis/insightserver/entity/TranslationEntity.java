@@ -11,6 +11,17 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "translation", schema = "insight", catalog = "test_navis")
+
+@NamedStoredProcedureQuery(
+        name = "createTranslation"
+        , procedureName = "createtranslation"
+        , parameters = {
+        @StoredProcedureParameter( name = "localized_string" , type = String.class , mode = ParameterMode.IN)
+        , @StoredProcedureParameter( name = "locale" , type = String.class , mode = ParameterMode.IN)
+        , @StoredProcedureParameter( name = "id" , type = Long.class , mode = ParameterMode.OUT)
+}
+)
+
 public class TranslationEntity {
     private Long id;
     private Date createdAt;

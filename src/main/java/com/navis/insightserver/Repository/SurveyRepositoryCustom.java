@@ -10,4 +10,6 @@ import java.util.UUID;
 public interface SurveyRepositoryCustom {
 
    SurveyEntity returnSurvey(UUID owner, Long id);
+
+    Long createTranslation(String displayTitle);
 }

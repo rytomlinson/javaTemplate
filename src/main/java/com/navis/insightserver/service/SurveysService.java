@@ -1,5 +1,6 @@
 package com.navis.insightserver.service;
 
+import com.navis.insightserver.Repository.I18nStringRepository;
 import com.navis.insightserver.Repository.SurveyRepository;
 import com.navis.insightserver.dto.SurveyDTO;
 import com.navis.insightserver.entity.SurveyEntity;
@@ -8,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -15,13 +18,16 @@ import java.util.stream.Collectors;
 /**
  * Created by darrell-shofstall on 8/9/17.
  */
-
+@Transactional
 @Service
 public class SurveysService implements ISurveysService {
     private static final Logger log = LoggerFactory.getLogger(SurveysService.class);
 
     @Autowired
     private SurveyRepository surveyRepository;
+
+    @Autowired
+    private I18nStringRepository i18nStringRepository;
 
     @Override
     public List<SurveyDTO> getSurveys(UUID owner, String locale, Boolean includeDeleted) {
@@ -33,6 +39,37 @@ public class SurveysService implements ISurveysService {
     public SurveyDTO getSurveyById(UUID owner, String locale, Long surveyId) {
         log.debug("In getSurveyById Service:");
         return buildSurveyDTO(owner, locale, surveyId);
+    }
+
+    @Override
+    public Long upsertSurvey(UUID owner, SurveyDTO surveyDTO, String locale) {
+        log.debug("In upsertSurvey Service:");
+        Long surveyId = surveyDTO.getId();
+        Long displayTitleId;
+        SurveyEntity surveyEntity;
+
+        if(null != surveyId) {
+            surveyEntity = surveyRepository.findOne(surveyId);
+        } else {
+            displayTitleId = surveyRepository.createTranslation(surveyDTO.getDisplayTitle());
+            surveyEntity = convertToEntity(owner, surveyDTO, locale);
+            surveyEntity.setI18NStringByDisplayTitleId(i18nStringRepository.findOne(displayTitleId));
+        }
+
+        surveyEntity = surveyRepository.save(surveyEntity);
+
+        return surveyEntity.getId();
+    }
+
+    private SurveyEntity convertToEntity(UUID owner, SurveyDTO surveyDTO, String locale) {
+     Date now = new Date();
+      SurveyEntity surveyEntity = new SurveyEntity();
+      surveyEntity.setOwner(owner);
+      surveyEntity.setCreatedAt(now);
+      surveyEntity.setUpdatedAt(now);
+      surveyEntity.setDeleted(false);
+
+      return surveyEntity;
     }
 
     private List<SurveyDTO> buildSurveysDTO(UUID owner, String locale, Boolean includeDeleted) {

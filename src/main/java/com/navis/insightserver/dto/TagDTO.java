@@ -1,5 +1,6 @@
 package com.navis.insightserver.dto;
 
+import com.navis.insightserver.entity.SurveyTagEntity;
 import com.navis.insightserver.entity.TagEntity;
 import com.navis.insightserver.entity.TagTagEntity;
 
@@ -21,19 +22,20 @@ public class TagDTO extends BaseDTO {
     private String name;
     private Integer minimumValue;
     private Integer maximumValue;
+    private Long parentTagId;
     private List<TagDTO> tags = new ArrayList<>();
 
     public TagDTO() {
     }
 
     public TagDTO(TagEntity tagEntity) {
-
         super();
-        this.id = tagEntity.getId();
-        this.type = tagEntity.getType();
-        this.name = tagEntity.getI18NStringByNameId().getTranslationsById().iterator().next().getLocalizedString();
-        this.minimumValue = (null != tagEntity.getMinimumValue()) ? tagEntity.getMinimumValue() : null;
-        this.maximumValue = (null != tagEntity.getMaximumValue()) ? tagEntity.getMaximumValue() : null;
+       buildDto(tagEntity, null);
+    }
+
+    public TagDTO(TagEntity tagEntity, Long parentTagId) {
+        super();
+        buildDto(tagEntity, parentTagId);
     }
 
     public TagDTO(TagTagEntity tagTagEntity) {
@@ -55,9 +57,17 @@ public class TagDTO extends BaseDTO {
                 : null;
 
         this.tags = tagDTOList;
+    }
 
+    public TagDTO(SurveyTagEntity surveyTagEntity) {
+        super();
+        TagEntity tagEntity = surveyTagEntity.getTagByTagId();
 
-
+        this.id = tagEntity.getId();
+        this.type = tagEntity.getType();
+        this.name = tagEntity.getI18NStringByNameId().getTranslationsById().iterator().next().getLocalizedString();
+        this.minimumValue = (null != tagEntity.getMinimumValue()) ? tagEntity.getMinimumValue() : null;
+        this.maximumValue = (null != tagEntity.getMaximumValue()) ? tagEntity.getMaximumValue() : null;
     }
 
     public Long getId() {
@@ -108,10 +118,28 @@ public class TagDTO extends BaseDTO {
         this.tags = tags;
     }
 
+    public Long getParentTagId() {
+        return parentTagId;
+    }
+
+    public void setParentTagId(Long parentTagId) {
+        this.parentTagId = parentTagId;
+    }
+
     private TagDTO convertToDto(TagTagEntity tagTagEntity) {
        TagEntity tagEntity = tagTagEntity.getTagByTagId();
-        TagDTO tagDTO = new TagDTO(tagEntity);
+       Long parentTagId = tagTagEntity.getTagByParentTagId().getId();
+        TagDTO tagDTO = new TagDTO(tagEntity, parentTagId);
 
         return tagDTO;
+    }
+
+    private void buildDto(TagEntity tagEntity, Long parentTagId ) {
+        this.id = tagEntity.getId();
+        this.type = tagEntity.getType();
+        this.name = tagEntity.getI18NStringByNameId().getTranslationsById().iterator().next().getLocalizedString();
+        this.minimumValue = (null != tagEntity.getMinimumValue()) ? tagEntity.getMinimumValue() : null;
+        this.maximumValue = (null != tagEntity.getMaximumValue()) ? tagEntity.getMaximumValue() : null;
+        this.parentTagId = parentTagId;
     }
 }
