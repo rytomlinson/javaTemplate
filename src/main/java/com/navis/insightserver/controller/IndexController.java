@@ -51,12 +51,14 @@ public class IndexController {
         return "redirect:/secure/";
     }
 
+
     @RequestMapping("/secure/")
     public String Index(HttpServletRequest request, HttpServletResponse response, Map<String, Object> map, Model model) throws HttpAction {
         final WebContext context = new J2EContext(request, response);
         model.addAttribute("sourcePath", sourcePath);
         return "index";
     }
+
 
     @RequestMapping(value = "/secure/responseAlerts/{surveyId}/{reportTypeId}")
     public String StatsWithId(@PathVariable("surveyId") String surveyId, @PathVariable("reportTypeId") String reportTypeId, Model model) throws HttpAction {
@@ -70,7 +72,12 @@ public class IndexController {
         return "index";
     }
 
-
+    @RequestMapping("/secure/settings")
+    public String Settings(HttpServletRequest request, HttpServletResponse response, Map<String, Object> map, Model model) throws HttpAction {
+        final WebContext context = new J2EContext(request, response);
+        model.addAttribute("sourcePath", sourcePath);
+        return "index";
+    }
 
     public String BuildEndSessionRedirectUri(WebContext context) {
 
