@@ -1,5 +1,7 @@
 package com.navis.insightserver.entity;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Date;
@@ -21,11 +23,12 @@ public class SurveyEntity {
     private UUID owner;
     private Long externalId;
     private Date updatedAt;
-    private com.navis.insightserver.entity.I18NStringEntity i18NStringByDescriptionId;
-    private com.navis.insightserver.entity.I18NStringEntity i18NStringByDisplayTitleId;
+    private I18NStringEntity i18NStringByDescriptionId;
+    private I18NStringEntity i18NStringByDisplayTitleId;
     private Collection<ReportSendsEntity> reportSendssById;
     private Collection<SurveyReportRecipientsEntity> surveyReportRecipientssById;
     private Collection<SurveyReportSchedulerEntity> surveyReportSchedulersById;
+    private Collection<SurveyTagEntity> surveyTagsById;
 
     public void setId(Long id) {
         this.id = id;
@@ -104,7 +107,7 @@ public class SurveyEntity {
 
     @Basic
     @Column(name = "owner", nullable = false)
-    @org.hibernate.annotations.Type(type = "pg-uuid")
+    @Type(type = "pg-uuid")
     public UUID getOwner() {
         return owner;
     }
@@ -171,17 +174,17 @@ public class SurveyEntity {
 
     @ManyToOne
     @JoinColumn(name = "description_id", referencedColumnName = "id")
-    public com.navis.insightserver.entity.I18NStringEntity getI18NStringByDescriptionId() {
+    public I18NStringEntity getI18NStringByDescriptionId() {
         return i18NStringByDescriptionId;
     }
 
-    public void setI18NStringByDescriptionId(com.navis.insightserver.entity.I18NStringEntity i18NStringByDescriptionId) {
+    public void setI18NStringByDescriptionId(I18NStringEntity i18NStringByDescriptionId) {
         this.i18NStringByDescriptionId = i18NStringByDescriptionId;
     }
 
     @ManyToOne
     @JoinColumn(name = "display_title_id", referencedColumnName = "id", nullable = false)
-    public com.navis.insightserver.entity.I18NStringEntity getI18NStringByDisplayTitleId() {
+    public I18NStringEntity getI18NStringByDisplayTitleId() {
         return i18NStringByDisplayTitleId;
     }
 
@@ -214,5 +217,14 @@ public class SurveyEntity {
 
     public void setSurveyReportSchedulersById(Collection<SurveyReportSchedulerEntity> surveyReportSchedulersById) {
         this.surveyReportSchedulersById = surveyReportSchedulersById;
+    }
+
+    @OneToMany(mappedBy = "surveyBySurveyId")
+    public Collection<SurveyTagEntity> getSurveyTagsById() {
+        return surveyTagsById;
+    }
+
+    public void setSurveyTagsById(Collection<SurveyTagEntity> surveyTagsById) {
+        this.surveyTagsById = surveyTagsById;
     }
 }

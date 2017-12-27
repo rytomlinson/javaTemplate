@@ -1,5 +1,6 @@
 package com.navis.insightserver.dto;
 
+import com.navis.insightserver.entity.SurveyTagEntity;
 import com.navis.insightserver.entity.TagEntity;
 import com.navis.insightserver.entity.TagTagEntity;
 
@@ -58,6 +59,17 @@ public class TagDTO extends BaseDTO {
 
 
 
+    }
+
+    public TagDTO(SurveyTagEntity surveyTagEntity) {
+        super();
+        TagEntity tagEntity = surveyTagEntity.getTagByTagId();
+
+        this.id = tagEntity.getId();
+        this.type = tagEntity.getType();
+        this.name = tagEntity.getI18NStringByNameId().getTranslationsById().iterator().next().getLocalizedString();
+        this.minimumValue = (null != tagEntity.getMinimumValue()) ? tagEntity.getMinimumValue() : null;
+        this.maximumValue = (null != tagEntity.getMaximumValue()) ? tagEntity.getMaximumValue() : null;
     }
 
     public Long getId() {

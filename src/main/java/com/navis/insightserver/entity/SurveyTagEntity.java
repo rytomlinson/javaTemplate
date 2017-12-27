@@ -16,6 +16,7 @@ public class SurveyTagEntity {
     private Date createdAt;
     private Date updatedAt;
     private SurveyEntity surveyBySurveyId;
+    private TagEntity tagByTagId;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -70,7 +71,7 @@ public class SurveyTagEntity {
         return result;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @Fetch(value = FetchMode.SELECT)
     @JoinColumn(name = "survey_id", referencedColumnName = "id", nullable = false)
     public SurveyEntity getSurveyBySurveyId() {
@@ -79,5 +80,15 @@ public class SurveyTagEntity {
 
     public void setSurveyBySurveyId(SurveyEntity surveyBySurveyId) {
         this.surveyBySurveyId = surveyBySurveyId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "tag_id", referencedColumnName = "id", nullable = false)
+    public TagEntity getTagByTagId() {
+        return tagByTagId;
+    }
+
+    public void setTagByTagId(TagEntity tagByTagId) {
+        this.tagByTagId = tagByTagId;
     }
 }

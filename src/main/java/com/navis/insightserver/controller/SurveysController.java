@@ -2,7 +2,6 @@ package com.navis.insightserver.controller;
 
 import com.navis.insightserver.Utils.ISecurity;
 import com.navis.insightserver.dto.SurveyDTO;
-import com.navis.insightserver.dto.TagDTO;
 import com.navis.insightserver.dto.UserProfileDTO;
 import com.navis.insightserver.service.ISurveysService;
 import io.swagger.annotations.Api;
@@ -11,13 +10,13 @@ import org.pac4j.core.context.WebContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,6 +50,24 @@ public class SurveysController {
         log.info("View a list of Insight Surveys for UserProfileDTO: " + user.getUserId());
 
         return new ResponseEntity<List<SurveyDTO>>(surveysService.getSurveys(propertyId, locale, includeDeleted), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "properties/{propertyId}/surveys", method = RequestMethod.POST)
+    public ResponseEntity<Void> getSurveys(@PathVariable("propertyId") UUID owner
+            , @RequestParam(value = "locale", required = false, defaultValue = "en-US") String locale
+            , @Validated @RequestBody SurveyDTO surveyDTO
+            , UriComponentsBuilder builder
+            , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+        final WebContext context = new J2EContext(request, response);
+        UserProfileDTO user = security.GetUserProfile(context);
+        log.info("Upsert a Insight Survey for UserProfileDTO: " + user.getUserId());
+
+        Long surveyId = surveysService.upsertSurvey(owner, surveyDTO, locale);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(builder.path("secure/surveys/{id}").buildAndExpand(surveyId).toUri());
+
+        return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "properties/{propertyId}/surveys/{surveyId}", method = RequestMethod.GET)

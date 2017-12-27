@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.navis.insightserver.converter.CustomDateDeserializer;
 import com.navis.insightserver.converter.CustomDateSerializer;
 import com.navis.insightserver.entity.SurveyEntity;
+import com.navis.insightserver.entity.SurveyTagEntity;
 import com.navis.insightserver.entity.TranslationEntity;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class SurveyDTO extends BaseDTO {
     private String description;
     private Boolean enabled;
     private Date launchDate;
+    private TagDTO surveyType;
 
     public SurveyDTO() {
     }
@@ -49,6 +51,15 @@ public class SurveyDTO extends BaseDTO {
         this.description = (null != descriptionEntity) ? descriptionEntity.getLocalizedString() : null;
         this.enabled = surveyEntity.getEnabled();
         this.setLaunchDate(surveyEntity.getLaunchDate());
+        this.surveyType = (null != surveyEntity.getSurveyTagsById() && !surveyEntity.getSurveyTagsById().isEmpty())
+        ? convertToDto(surveyEntity.getSurveyTagsById().iterator().next()) : null;
+
+    }
+
+    private TagDTO convertToDto(SurveyTagEntity surveyTagEntity) {
+        TagDTO tagDTO = new TagDTO(surveyTagEntity);
+
+        return tagDTO;
     }
 
     public Long getId() {
@@ -93,4 +104,11 @@ public class SurveyDTO extends BaseDTO {
         this.launchDate = launchDate;
     }
 
+    public TagDTO getSurveyType() {
+        return surveyType;
+    }
+
+    public void setSurveyType(TagDTO surveyType) {
+        this.surveyType = surveyType;
+    }
 }
