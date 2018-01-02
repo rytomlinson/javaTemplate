@@ -1,9 +1,6 @@
 package com.navis.insightserver.service;
 
-import com.navis.insightserver.Repository.I18nStringRepository;
-import com.navis.insightserver.Repository.SurveyRepository;
-import com.navis.insightserver.Repository.SurveyTagRepository;
-import com.navis.insightserver.Repository.TagRepository;
+import com.navis.insightserver.Repository.*;
 import com.navis.insightserver.dto.SurveyDTO;
 import com.navis.insightserver.entity.SurveyEntity;
 import com.navis.insightserver.entity.SurveyTagEntity;
@@ -38,6 +35,9 @@ public class SurveysService implements ISurveysService {
     @Autowired
     private SurveyTagRepository surveyTagRepository;
 
+    @Autowired
+    private TranslationRepository translationRepository;
+
     @Override
     public List<SurveyDTO> getSurveys(UUID owner, String locale, Boolean includeDeleted) {
         log.debug("In getSurveys Service:");
@@ -62,7 +62,7 @@ public class SurveysService implements ISurveysService {
         if(null != surveyId) {
             surveyEntity = surveyRepository.findOne(surveyId);
         } else {
-            displayTitleId = surveyRepository.createTranslation(surveyDTO.getDisplayTitle());
+            displayTitleId = translationRepository.createTranslation(surveyDTO.getDisplayTitle());
             surveyEntity = convertToEntity(owner, surveyDTO, locale);
             surveyEntity.setI18NStringByDisplayTitleId(i18nStringRepository.findOne(displayTitleId));
         }

@@ -65,7 +65,7 @@ public class SurveysController {
         Long surveyId = surveysService.upsertSurvey(owner, surveyDTO, locale);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(builder.path("secure/surveys/{id}").buildAndExpand(surveyId).toUri());
+        headers.setLocation(builder.path("secure/properties/{propertyId}/surveys/{surveyId}").buildAndExpand(owner, surveyId).toUri());
 
         return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
     }

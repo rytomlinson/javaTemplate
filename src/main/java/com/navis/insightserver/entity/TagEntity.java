@@ -32,6 +32,7 @@ public class TagEntity {
 
     @Id
     @Column(name = "id", nullable = false)
+
     public Long getId() {
         return id;
     }

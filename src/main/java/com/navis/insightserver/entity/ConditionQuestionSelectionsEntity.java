@@ -20,6 +20,7 @@ public class ConditionQuestionSelectionsEntity {
 
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }
@@ -30,7 +31,6 @@ public class ConditionQuestionSelectionsEntity {
 
     @Basic
     @Column(name = "created_at", nullable = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
     public Date getCreatedAt() {
         return createdAt;
     }

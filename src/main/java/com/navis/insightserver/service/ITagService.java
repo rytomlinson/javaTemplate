@@ -13,4 +13,5 @@ public interface ITagService {
     List<TagDTO> getTags(UUID propertyId);
     List<TagDTO> getDepartmentTags(UUID propertyId);
     List<TagDTO> getSurveyTypeTags();
+    Long upsertTag(UUID owner, TagDTO tagDTO, String locale);
 }

@@ -17,7 +17,7 @@ public class TagDTO extends BaseDTO {
 
     private static final long serialVersionUID = 1L;
 
-    @NotNull(message = "tag.id.notnull")
+//    @NotNull(message = "tag.id.notnull")
     private Long id;
     private String type;
     private String name;
