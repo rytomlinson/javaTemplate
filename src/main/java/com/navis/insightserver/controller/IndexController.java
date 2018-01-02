@@ -63,7 +63,7 @@ public class IndexController {
     @RequestMapping(value = "/secure/responseAlerts/{surveyId}/{reportTypeId}")
     public String StatsWithId(@PathVariable("surveyId") String surveyId, @PathVariable("reportTypeId") String reportTypeId, Model model) throws HttpAction {
         model.addAttribute("sourcePath", sourcePath);
-        return "index";
+        return "modalIndex";
     }
 
     @RequestMapping("/loggedOut/")
