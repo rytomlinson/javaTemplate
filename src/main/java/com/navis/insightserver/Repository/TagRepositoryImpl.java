@@ -41,4 +41,13 @@ public class TagRepositoryImpl implements TagRepositoryCustom {
 
         return (TagEntity) query.getSingleResult();
     }
+
+    @Override
+    public void deleteTagTag(Long id) {
+        Query query = entityManager.createQuery("delete from TagTagEntity tt " +
+        " where tt.tagByTagId.id = :id ")
+                .setParameter("id", id);
+
+        query.executeUpdate();
+    }
 }

@@ -12,5 +12,4 @@ import java.util.UUID;
  */
 
 public interface TranslationRepository extends CrudRepository<TranslationEntity, Long> , TranslationRepositoryCustom {
-
 }

@@ -7,4 +7,5 @@ public interface TranslationRepositoryCustom {
 
 
     Long createTranslation(String displayTitle);
+    void deleteTranslations(Long id);
 }

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
  */
 
 @Service
+@Transactional
 public class TagService implements ITagService {
     private static final Logger log = LoggerFactory.getLogger(TagService.class);
 
@@ -112,7 +114,10 @@ public class TagService implements ITagService {
 
     @Override
     public void deleteTag(UUID owner, Long id) {
+        TagEntity tagEntity = tagRepository.findOne(id);
+        tagRepository.deleteTagTag(id);
         tagRepository.delete(id);
+        translationRepository.deleteTranslations(tagEntity.getI18NStringByNameId().getId());
     }
 
     private List<TagDTO> buildTagsDTO(UUID propertyId) {

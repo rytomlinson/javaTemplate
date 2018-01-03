@@ -1,6 +1,5 @@
 package com.navis.insightserver.Repository;
 
-import com.navis.insightserver.entity.TagEntity;
 import com.navis.insightserver.entity.TagTagEntity;
 import org.springframework.data.repository.CrudRepository;
 

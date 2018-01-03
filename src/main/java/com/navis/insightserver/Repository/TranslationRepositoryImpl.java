@@ -41,4 +41,13 @@ public class TranslationRepositoryImpl implements TranslationRepositoryCustom {
         }
         return (null != i18nId) ? i18nId.longValue() : null;
     }
+
+    @Override
+    public void deleteTranslations(Long id) {
+        Query query = entityManager.createQuery("delete from TranslationEntity t " +
+                " where t.i18NStringByI18NStringId.id = :id ")
+                .setParameter("id", id);
+
+        query.executeUpdate();
+    }
 }

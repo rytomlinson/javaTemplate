@@ -15,4 +15,6 @@ public interface TagRepositoryCustom {
    List<TagTagEntity> getDepartmentTagsByOwner(UUID owner, Long departmentTagId);
 
    TagEntity getDepartmentTag(UUID owner);
+
+   void deleteTagTag(Long id);
 }
