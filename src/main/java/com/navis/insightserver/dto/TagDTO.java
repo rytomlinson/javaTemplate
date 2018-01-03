@@ -19,7 +19,6 @@ public class TagDTO extends BaseDTO {
 
 //    @NotNull(message = "tag.id.notnull")
     private Long id;
-    private String type;
     private String name;
     private Integer minimumValue;
     private Integer maximumValue;
@@ -44,7 +43,6 @@ public class TagDTO extends BaseDTO {
         super();
         TagEntity tagEntity = tagTagEntity.getTagByTagId();
         this.id = tagEntity.getId();
-        this.type = tagEntity.getType();
         this.name = tagEntity.getI18NStringByNameId().getTranslationsById().iterator().next().getLocalizedString();
         this.minimumValue = (null != tagEntity.getMinimumValue()) ? tagEntity.getMinimumValue() : null;
         this.maximumValue = (null != tagEntity.getMaximumValue()) ? tagEntity.getMaximumValue() : null;
@@ -66,7 +64,6 @@ public class TagDTO extends BaseDTO {
         TagEntity tagEntity = surveyTagEntity.getTagByTagId();
 
         this.id = tagEntity.getId();
-        this.type = tagEntity.getType();
         this.name = tagEntity.getI18NStringByNameId().getTranslationsById().iterator().next().getLocalizedString();
         this.minimumValue = (null != tagEntity.getMinimumValue()) ? tagEntity.getMinimumValue() : null;
         this.maximumValue = (null != tagEntity.getMaximumValue()) ? tagEntity.getMaximumValue() : null;
@@ -78,14 +75,6 @@ public class TagDTO extends BaseDTO {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getName() {
@@ -138,7 +127,6 @@ public class TagDTO extends BaseDTO {
 
     private void buildDto(TagEntity tagEntity, Long parentTagId ) {
         this.id = tagEntity.getId();
-        this.type = tagEntity.getType();
         this.name = tagEntity.getI18NStringByNameId().getTranslationsById().iterator().next().getLocalizedString();
         this.minimumValue = (null != tagEntity.getMinimumValue()) ? tagEntity.getMinimumValue() : null;
         this.maximumValue = (null != tagEntity.getMaximumValue()) ? tagEntity.getMaximumValue() : null;

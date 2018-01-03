@@ -75,6 +75,11 @@ public class TagService implements ITagService {
             nameId = translationRepository.createTranslation(tagDTO.getName());
             tagEntity = convertToEntity(owner, tagDTO, locale);
             tagEntity.setI18NStringByNameId(i18nStringRepository.findOne(nameId));
+            tagEntity.setMarketSegment(false);
+            tagEntity.setQuestion(false);
+            tagEntity.setSurvey(false);
+            tagEntity.setSurveyType(false);
+//            tagEntity.setType(null);
         }
 
         tagEntity = tagRepository.save(tagEntity);
@@ -91,10 +96,23 @@ public class TagService implements ITagService {
         tagTagEntity.setTagByTagId(tagEntity);
         tagTagEntity.setCreatedAt(now);
         tagTagEntity.setUpdatedAt(now);
+        tagTagEntity.setOwner(owner);
 
         tagTagRepository.save(tagTagEntity);
 
         return tagEntity.getId();
+    }
+
+    @Override
+    public TagDTO getTag(UUID owner, Long id) {
+        TagEntity tagEntity = tagRepository.findOne(id);
+
+        return convertToDto(tagEntity);
+    }
+
+    @Override
+    public void deleteTag(UUID owner, Long id) {
+        tagRepository.delete(id);
     }
 
     private List<TagDTO> buildTagsDTO(UUID propertyId) {

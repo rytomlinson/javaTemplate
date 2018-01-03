@@ -16,7 +16,7 @@ import java.util.UUID;
 public class TagEntity {
     private Long id;
     private Date createdAt;
-    private String type;
+//    private String type;
     private Boolean isMarketSegment;
     private Boolean isSurvey;
     private Boolean isSurveyType;
@@ -32,7 +32,7 @@ public class TagEntity {
 
     @Id
     @Column(name = "id", nullable = false)
-
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }
@@ -51,15 +51,15 @@ public class TagEntity {
         this.createdAt = createdAt;
     }
 
-    @Basic
-    @Column(name = "type", nullable = true)
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
+//    @Basic
+//    @Column(name = "type", nullable = true)
+//    public String getType() {
+//        return type;
+//    }
+//
+//    public void setType(String type) {
+//        this.type = type;
+//    }
 
     @Basic
     @Column(name = "is_market_segment", nullable = false)
@@ -140,7 +140,7 @@ public class TagEntity {
 
         if (id != null ? !id.equals(tagEntity.id) : tagEntity.id != null) return false;
         if (createdAt != null ? !createdAt.equals(tagEntity.createdAt) : tagEntity.createdAt != null) return false;
-        if (type != null ? !type.equals(tagEntity.type) : tagEntity.type != null) return false;
+//        if (type != null ? !type.equals(tagEntity.type) : tagEntity.type != null) return false;
         if (isMarketSegment != null ? !isMarketSegment.equals(tagEntity.isMarketSegment) : tagEntity.isMarketSegment != null)
             return false;
         if (isSurvey != null ? !isSurvey.equals(tagEntity.isSurvey) : tagEntity.isSurvey != null) return false;
@@ -158,7 +158,7 @@ public class TagEntity {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
-        result = 31 * result + (type != null ? type.hashCode() : 0);
+//        result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (isMarketSegment != null ? isMarketSegment.hashCode() : 0);
         result = 31 * result + (isSurvey != null ? isSurvey.hashCode() : 0);
         result = 31 * result + (isSurveyType != null ? isSurveyType.hashCode() : 0);

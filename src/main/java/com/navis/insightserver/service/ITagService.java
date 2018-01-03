@@ -11,7 +11,9 @@ import java.util.UUID;
 public interface ITagService {
 
     List<TagDTO> getTags(UUID propertyId);
+    TagDTO getTag(UUID propertyId, Long id);
     List<TagDTO> getDepartmentTags(UUID propertyId);
     List<TagDTO> getSurveyTypeTags();
     Long upsertTag(UUID owner, TagDTO tagDTO, String locale);
+    void deleteTag(UUID propertyId, Long id);
 }

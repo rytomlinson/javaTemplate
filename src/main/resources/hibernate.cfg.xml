@@ -40,5 +40,7 @@
 		<!-- Mapping with model class containing annotations -->
 		<!--<mapping class="com.navis.insightserver.entity.ReachEventTypesEntity"/>-->
 
+
+
 	</session-factory>
 </hibernate-configuration>

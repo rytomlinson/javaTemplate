@@ -57,7 +57,7 @@ public class SettingsController {
     }
 
     @RequestMapping(value = "properties/{propertyId}/tags", method = RequestMethod.POST)
-    public ResponseEntity<Void> getSurveys(@PathVariable("propertyId") UUID owner
+    public ResponseEntity<Void> upsertTag(@PathVariable("propertyId") UUID owner
             , @RequestParam(value = "locale", required = false, defaultValue = "en-US") String locale
             , @Validated @RequestBody TagDTO tagDTO
             , UriComponentsBuilder builder
@@ -72,6 +72,31 @@ public class SettingsController {
         headers.setLocation(builder.path("secure/properties/{propertyId}/tags/{id}").buildAndExpand(owner, tagId).toUri());
 
         return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "properties/{propertyId}/tags/{id}", method = RequestMethod.GET)
+    public ResponseEntity<TagDTO> getTag(
+            @PathVariable("propertyId") UUID propertyId,
+            @PathVariable("id") Long id,
+            HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+        final WebContext context = new J2EContext(request, response);
+        UserProfileDTO user = security.GetUserProfile(context);
+        log.info("View a Insight Tag for UserProfileDTO: " + user.getUserId());
+
+        return new ResponseEntity<TagDTO>(tagService.getTag(propertyId, id), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "properties/{propertyId}/tags/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Void> deleteTag(
+            @PathVariable("propertyId") UUID propertyId,
+            @PathVariable("id") Long id,
+            HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+        final WebContext context = new J2EContext(request, response);
+        UserProfileDTO user = security.GetUserProfile(context);
+        log.info("View a Insight Tag for UserProfileDTO: " + user.getUserId());
+
+        tagService.deleteTag(propertyId, id);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "properties/{propertyId}/departmentTags", method = RequestMethod.GET)
