@@ -28,6 +28,7 @@ public class SurveyDTO extends BaseDTO {
     private String description;
     private Boolean enabled;
     private Date launchDate;
+    private Long questionCount;
     @NotNull(message = "survey.type.notnull")
     @Valid
     private TagDTO surveyType;
@@ -35,7 +36,7 @@ public class SurveyDTO extends BaseDTO {
     public SurveyDTO() {
     }
 
-    public SurveyDTO(SurveyEntity surveyEntity, String locale) {
+    public SurveyDTO(SurveyEntity surveyEntity, Long questionCount, String locale) {
         super();
         List<TranslationEntity> displayTitleEntities;
         TranslationEntity displayTitleEntity;
@@ -43,6 +44,7 @@ public class SurveyDTO extends BaseDTO {
         TranslationEntity descriptionEntity;
 
         this.id = surveyEntity.getId();
+        this.questionCount = questionCount;
         displayTitleEntities = new ArrayList(surveyEntity.getI18NStringByDisplayTitleId().getTranslationsById());
         displayTitleEntity = displayTitleEntities.stream().filter(e -> e.getLocale().equals(locale)).findFirst().orElse(null);
         descriptionEntities =
@@ -116,5 +118,13 @@ public class SurveyDTO extends BaseDTO {
 
     public void setSurveyType(TagDTO surveyType) {
         this.surveyType = surveyType;
+    }
+
+    public Long getQuestionCount() {
+        return questionCount;
+    }
+
+    public void setQuestionCount(Long questionCount) {
+        this.questionCount = questionCount;
     }
 }

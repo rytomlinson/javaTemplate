@@ -4,6 +4,7 @@ import com.navis.insightserver.Utils.ISecurity;
 import com.navis.insightserver.dto.SurveyDTO;
 import com.navis.insightserver.dto.UserProfileDTO;
 import com.navis.insightserver.service.ISurveysService;
+import com.navis.insightserver.service.SecurityService;
 import io.swagger.annotations.Api;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
@@ -24,13 +25,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.navis.insightserver.service.SecurityService.*;
+
 /**
  * Created by darrell-shofstall on 9/14/17.
  */
 
 @Controller
 @RequestMapping("secure")
-@Api(value="Insight", description="Operations pertaining to Insight Surveys")
+@Api(value = "Insight", description = "Operations pertaining to Insight Surveys")
 public class SurveysController {
     private static final Logger log = LoggerFactory.getLogger(SurveysController.class);
 
@@ -82,4 +85,36 @@ public class SurveysController {
 
         return new ResponseEntity<SurveyDTO>(surveysService.getSurveyById(propertyId, locale, surveyId), HttpStatus.OK);
     }
+
+    @RequestMapping(value = "properties/{propertyId}/surveys/{surveyId}", method = RequestMethod.DELETE)
+    public ResponseEntity<Void> deleteSurveyById(
+            @PathVariable("propertyId") UUID propertyId
+            , @PathVariable("surveyId") Long surveyId
+            , @RequestParam(value = "locale", required = false, defaultValue = "en-US") String locale
+            , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+        final WebContext context = new J2EContext(request, response);
+        UserProfileDTO user = security.GetUserProfile(context);
+        log.info("Delete a Insight Survey for UserProfileDTO: " + user.getUserId());
+
+        surveysService.deleteSurvey(propertyId, surveyId);
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "properties/{propertyId}/surveys/{surveyId}/links/anonymous", method = RequestMethod.GET)
+    public ResponseEntity<String> getSurveyLinkPreview(
+            @PathVariable("propertyId") UUID propertyId
+            , @PathVariable("surveyId") Long surveyId
+            , @RequestParam(value = "source", required = false, defaultValue = "") String source
+            , @RequestParam(value = "isDemoSurveyMode", required = false, defaultValue = "false") boolean isDemoSurveyMode
+            , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+        final WebContext context = new J2EContext(request, response);
+        UserProfileDTO user = security.GetUserProfile(context);
+        log.info("List a Insight Survey Link for UserProfileDTO: " + user.getUserId());
+
+        String surveyMode = (isDemoSurveyMode) ? SecurityService.surveyModeDemo : SecurityService.surveyModeNormal;
+
+        return new ResponseEntity<String>(surveysService.generateAnonymousSurveyLink(propertyId, surveyId, source, surveyMode), HttpStatus.OK);
+    }
+
 }
+

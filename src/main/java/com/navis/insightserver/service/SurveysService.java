@@ -7,12 +7,16 @@ import com.navis.insightserver.entity.SurveyTagEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -22,6 +26,12 @@ import java.util.stream.Collectors;
 @Service
 public class SurveysService implements ISurveysService {
     private static final Logger log = LoggerFactory.getLogger(SurveysService.class);
+
+    @Value("${survey.taker.url}")
+    private String surveyTakerUrl;
+
+    @Autowired
+    private SecurityService securityService;
 
     @Autowired
     private SurveyRepository surveyRepository;
@@ -51,6 +61,12 @@ public class SurveysService implements ISurveysService {
     }
 
     @Override
+    public void deleteSurvey(UUID owner, Long id) {
+        log.debug("In deleteSurveyById Service:");
+        surveyRepository.deleteSurvey(owner, id);
+    }
+
+    @Override
     public Long upsertSurvey(UUID owner, SurveyDTO surveyDTO, String locale) {
         log.debug("In upsertSurvey Service:");
         Date now = new Date();
@@ -59,7 +75,7 @@ public class SurveysService implements ISurveysService {
         SurveyEntity surveyEntity;
         Long surveyTypeId = surveyDTO.getSurveyType().getId();
 
-        if(null != surveyId) {
+        if (null != surveyId) {
             surveyEntity = surveyRepository.findOne(surveyId);
         } else {
             displayTitleId = translationRepository.createTranslation(surveyDTO.getDisplayTitle());
@@ -81,15 +97,27 @@ public class SurveysService implements ISurveysService {
         return surveyEntity.getId();
     }
 
-    private SurveyEntity convertToEntity(UUID owner, SurveyDTO surveyDTO, String locale) {
-     Date now = new Date();
-      SurveyEntity surveyEntity = new SurveyEntity();
-      surveyEntity.setOwner(owner);
-      surveyEntity.setCreatedAt(now);
-      surveyEntity.setUpdatedAt(now);
-      surveyEntity.setDeleted(false);
+    @Override
+    public String generateAnonymousSurveyLink(UUID owner, Long surveyId, String source, String surveyMode) {
 
-      return surveyEntity;
+        String responseKey = securityService.generateSurveyResponseKey(surveyId, 0L, source, surveyMode);
+        StringBuilder builder = new StringBuilder();
+        builder.append(surveyTakerUrl)
+                .append("?id=")
+                .append(responseKey);
+
+        return builder.toString();
+    }
+
+    private SurveyEntity convertToEntity(UUID owner, SurveyDTO surveyDTO, String locale) {
+        Date now = new Date();
+        SurveyEntity surveyEntity = new SurveyEntity();
+        surveyEntity.setOwner(owner);
+        surveyEntity.setCreatedAt(now);
+        surveyEntity.setUpdatedAt(now);
+        surveyEntity.setDeleted(false);
+
+        return surveyEntity;
     }
 
     private List<SurveyDTO> buildSurveysDTO(UUID owner, String locale, Boolean includeDeleted) {
@@ -107,8 +135,10 @@ public class SurveysService implements ISurveysService {
 
         return surveyDTO;
     }
+
     private SurveyDTO convertToDto(SurveyEntity surveyEntity, String locale) {
-        SurveyDTO surveyDTO = new SurveyDTO(surveyEntity, locale);
+        Long questionCount = surveyRepository.getCurrentSurveyQuestionCount(surveyEntity.getId());
+        SurveyDTO surveyDTO = new SurveyDTO(surveyEntity, questionCount, locale);
         return surveyDTO;
     }
 }
