@@ -79,6 +79,19 @@ public class IndexController {
         return "index";
     }
 
+    @RequestMapping("/secure/CreateSurvey/")
+    protected String createSurveyModal(Model model)  throws HttpAction {
+        model.addAttribute("sourcePath", sourcePath);
+        return "index";
+    }
+
+    @RequestMapping("/secure/surveys")
+    protected String Surveys(Model model)  throws HttpAction {
+        model.addAttribute("sourcePath", sourcePath);
+        return "index";
+    }
+
+
     public String BuildEndSessionRedirectUri(WebContext context) {
 
         UserProfileDTO userProfileDTO = security.GetUserProfile(context);
