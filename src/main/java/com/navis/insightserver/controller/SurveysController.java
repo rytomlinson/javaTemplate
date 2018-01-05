@@ -6,6 +6,8 @@ import com.navis.insightserver.dto.UserProfileDTO;
 import com.navis.insightserver.service.ISurveysService;
 import com.navis.insightserver.service.SecurityService;
 import io.swagger.annotations.Api;
+import org.javatuples.Pair;
+import org.javatuples.Unit;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.slf4j.Logger;
@@ -19,6 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.persistence.Tuple;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -115,7 +118,7 @@ public class SurveysController {
     }
 
     @RequestMapping(value = "properties/{propertyId}/surveys/{surveyId}/links/anonymous", method = RequestMethod.GET)
-    public ResponseEntity<String> getSurveyLinkPreview(
+    public ResponseEntity<Unit<String>> getSurveyLinkPreview(
             @PathVariable("propertyId") UUID propertyId
             , @PathVariable("surveyId") Long surveyId
             , @RequestParam(value = "source", required = false, defaultValue = "") String source
@@ -127,7 +130,7 @@ public class SurveysController {
 
         String surveyMode = (isDemoSurveyMode) ? SecurityService.surveyModeDemo : SecurityService.surveyModeNormal;
 
-        return new ResponseEntity<String>(surveysService.generateAnonymousSurveyLink(propertyId, surveyId, source, surveyMode), HttpStatus.OK);
+        return new ResponseEntity<Unit<String>>(surveysService.generateAnonymousSurveyLink(propertyId, surveyId, source, surveyMode), HttpStatus.OK);
     }
 
 }

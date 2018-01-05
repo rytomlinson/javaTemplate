@@ -7,6 +7,8 @@ import com.navis.insightserver.dto.ResourceNotFoundExceptionDTO;
 import com.navis.insightserver.dto.SurveyDTO;
 import com.navis.insightserver.entity.SurveyEntity;
 import com.navis.insightserver.entity.SurveyTagEntity;
+import org.javatuples.Pair;
+import org.javatuples.Unit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,7 +129,7 @@ public class SurveysService implements ISurveysService {
     }
 
     @Override
-    public String generateAnonymousSurveyLink(UUID owner, Long surveyId, String source, String surveyMode) {
+    public Unit<String> generateAnonymousSurveyLink(UUID owner, Long surveyId, String source, String surveyMode) {
 
         String responseKey = securityService.generateSurveyResponseKey(surveyId, 0L, source, surveyMode);
         StringBuilder builder = new StringBuilder();
@@ -135,7 +137,8 @@ public class SurveysService implements ISurveysService {
                 .append("?id=")
                 .append(responseKey);
 
-        return builder.toString();
+        Unit<String> unit = new Unit<String>(builder.toString());
+        return unit;
     }
 
     private SurveyEntity convertToEntity(UUID owner, SurveyDTO surveyDTO, String locale) {

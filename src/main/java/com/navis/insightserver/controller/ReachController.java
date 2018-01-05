@@ -49,5 +49,16 @@ public class ReachController {
 
         return new ResponseEntity<ReachSurveysDTO>(surveysService.getReachSurveys(accountId, locale, includeDeleted), HttpStatus.OK);
     }
+
+    @RequestMapping(value = "surveys/link/{email}/stayid/{stayId}/accountid/{accountId}", method = RequestMethod.GET)
+    public ResponseEntity<String> getReachSurveyLink(
+            @PathVariable("email") String email
+            , @PathVariable("stayId") Long stayId
+            , @PathVariable("accountId") String accountId) {
+        log.info("Return a Reach Insight Survey link for AccountId: ", accountId);
+
+        return null;
+//        return new ResponseEntity<String>(null, HttpStatus.OK);
+    }
 }
 

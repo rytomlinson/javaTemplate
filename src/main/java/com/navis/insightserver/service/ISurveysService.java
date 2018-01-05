@@ -2,7 +2,10 @@ package com.navis.insightserver.service;
 
 import com.navis.insightserver.dto.ReachSurveysDTO;
 import com.navis.insightserver.dto.SurveyDTO;
+import org.javatuples.Pair;
+import org.javatuples.Unit;
 
+import javax.persistence.Tuple;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,5 +26,7 @@ public interface ISurveysService {
 
     void updateSurveyPublishStatus(UUID owner, Long id, Boolean status);
 
-    String generateAnonymousSurveyLink(UUID owner, Long surveyId, String source, String surveyMode);
+    Unit<String> generateAnonymousSurveyLink(UUID owner, Long surveyId, String source, String surveyMode);
+
+//    String generate
 }

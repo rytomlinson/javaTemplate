@@ -60,6 +60,7 @@ dependencies {
     compile group: 'de.siegmar', name: 'logback-gelf', version: '1.0.4'
     compile group: 'org.flywaydb', name: 'flyway-core', version: '4.2.0'
     compile group: 'org.hibernate', name: 'hibernate-core', version: '5.0.4.Final'
+    compile group: 'org.javatuples', name: 'javatuples', version: '1.2'
     testCompile(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.5.6.RELEASE') {
         exclude(module: 'commons-logging')
     }
