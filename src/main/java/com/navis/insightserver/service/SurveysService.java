@@ -1,6 +1,9 @@
 package com.navis.insightserver.service;
 
 import com.navis.insightserver.Repository.*;
+import com.navis.insightserver.dto.ReachSurveyDTO;
+import com.navis.insightserver.dto.ReachSurveysDTO;
+import com.navis.insightserver.dto.ResourceNotFoundExceptionDTO;
 import com.navis.insightserver.dto.SurveyDTO;
 import com.navis.insightserver.entity.SurveyEntity;
 import com.navis.insightserver.entity.SurveyTagEntity;
@@ -9,14 +12,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.transaction.Transactional;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-import java.util.regex.Pattern;
+import java.net.URI;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -29,6 +30,9 @@ public class SurveysService implements ISurveysService {
 
     @Value("${survey.taker.url}")
     private String surveyTakerUrl;
+
+    @Value("${navis.properties.api.propertiesForAcctnbrEndpoint}")
+    private String propertiesForAcctnbrEndpoint;
 
     @Autowired
     private SecurityService securityService;
@@ -55,6 +59,20 @@ public class SurveysService implements ISurveysService {
     }
 
     @Override
+    public ReachSurveysDTO getReachSurveys(String accountId, String locale, Boolean includeDeleted) {
+        log.debug("In getReachSurveys Service:");
+        URI uri = URI.create(UriComponentsBuilder.fromUriString(propertiesForAcctnbrEndpoint).queryParam("acctnbr",accountId).toUriString());
+
+        RestTemplate restTemplate = new RestTemplate();
+        Object[]  accountObject = restTemplate.getForObject(uri.toString(), Object[].class);
+        LinkedHashMap entry = (LinkedHashMap) Arrays.asList(accountObject).get(0);
+        String propertyOwner = (String) entry.get("property_uuid");
+        UUID owner = UUID.fromString(propertyOwner);
+
+        return buildReachSurveysDTO(owner, locale, includeDeleted);
+    }
+
+    @Override
     public SurveyDTO getSurveyById(UUID owner, String locale, Long surveyId) {
         log.debug("In getSurveyById Service:");
         return buildSurveyDTO(owner, locale, surveyId);
@@ -67,6 +85,17 @@ public class SurveysService implements ISurveysService {
     }
 
     @Override
+    public void updateSurveyPublishStatus(UUID owner, Long id, Boolean status) {
+        log.debug("In updateSurveyPublishStatus Service:");
+        SurveyEntity surveyEntity = validateSurvey(id);
+
+        validateSurveyQuestionCount(id);
+
+        surveyEntity.setEnabled(status);
+        surveyRepository.save(surveyEntity);
+    }
+
+    @Override
     public Long upsertSurvey(UUID owner, SurveyDTO surveyDTO, String locale) {
         log.debug("In upsertSurvey Service:");
         Date now = new Date();
@@ -76,7 +105,7 @@ public class SurveysService implements ISurveysService {
         Long surveyTypeId = surveyDTO.getSurveyType().getId();
 
         if (null != surveyId) {
-            surveyEntity = surveyRepository.findOne(surveyId);
+            surveyEntity = validateSurvey(surveyId);
         } else {
             displayTitleId = translationRepository.createTranslation(surveyDTO.getDisplayTitle());
             surveyEntity = convertToEntity(owner, surveyDTO, locale);
@@ -128,6 +157,16 @@ public class SurveysService implements ISurveysService {
         return listDto;
     }
 
+    private ReachSurveysDTO buildReachSurveysDTO(UUID owner, String locale, Boolean includeDeleted) {
+        List<SurveyEntity> list = includeDeleted ? surveyRepository.findByOwner(owner) : surveyRepository.findByOwnerAndDeletedFalse(owner);
+
+        List<ReachSurveyDTO> listDto = list.stream().map(item -> convertToReachSurveyDto(item, locale)).collect(Collectors.toList());
+
+        ReachSurveysDTO reachSurveysDTO = new ReachSurveysDTO();
+        reachSurveysDTO.setSurveyList(listDto);
+        return reachSurveysDTO;
+    }
+
     private SurveyDTO buildSurveyDTO(UUID owner, String locale, Long surveyId) {
         SurveyEntity surveyEntity = surveyRepository.findByOwnerAndId(owner, surveyId);
 
@@ -140,5 +179,28 @@ public class SurveysService implements ISurveysService {
         Long questionCount = surveyRepository.getCurrentSurveyQuestionCount(surveyEntity.getId());
         SurveyDTO surveyDTO = new SurveyDTO(surveyEntity, questionCount, locale);
         return surveyDTO;
+    }
+
+    private ReachSurveyDTO convertToReachSurveyDto(SurveyEntity surveyEntity, String locale) {
+        ReachSurveyDTO surveyDTO = new ReachSurveyDTO(surveyEntity, locale);
+        return surveyDTO;
+    }
+
+    private SurveyEntity validateSurvey(Long id) {
+
+        if (!surveyRepository.exists(id)) {
+
+            throw new ResourceNotFoundExceptionDTO(id.toString(), "survey.id.invalid");
+        } else {
+            return surveyRepository.findOne(id);
+        }
+    }
+
+    private void validateSurveyQuestionCount(Long id) {
+
+        if (0 == surveyRepository.getCurrentSurveyQuestionCount(id)) {
+
+            throw new ResourceNotFoundExceptionDTO("", "survey.question.count.invalid");
+        }
     }
 }

@@ -18,33 +18,33 @@ CREATE OR REPLACE FUNCTION GetConditionalQuestionsForQuestions(questionId BIGINT
             q.web_service as "question/web-service",
             (select json_agg(displayTitle) from (Select  tls.id as "db/id",
                                                  tls.locale as "language/locale",
-                                                 tls.localized_string "localized-string/value"
+                                                 tls.displayTitle "localized-string/value"
                                                  from translation tls
                                                  where q.display_title_id = tls.i18n_string_id and tls.locale = locationLocale::language_locale) as displayTitle) as "artifact/display-title",
             (select json_agg(semanticTitle) from (Select  tls.id as "db/id",
                                                  tls.locale as "language/locale",
-                                                 tls.localized_string "localized-string/value"
+                                                 tls.displayTitle "localized-string/value"
                                                  from translation tls
                                                  where q.semantic_title_id = tls.i18n_string_id and tls.locale = locationLocale::language_locale) as semanticTitle) as "artifact/semantic-title",
             (select json_agg(questionTip) from (Select  tls.id as "db/id",
                                                  tls.locale as "language/locale",
-                                                 tls.localized_string "localized-string/value"
+                                                 tls.displayTitle "localized-string/value"
                                                  from translation tls
                                                  where q.tip_id = tls.i18n_string_id and tls.locale = locationLocale::language_locale) as questionTip) as "question/tip",
             q.is_library as "artifact/is-library",
             (select json_agg(questionBenefit) from (Select  tls.id as "db/id",
                                                  tls.locale as "language/locale",
-                                                 tls.localized_string "localized-string/value"
+                                                 tls.displayTitle "localized-string/value"
                                                  from translation tls
                                                  where q.benefit_id = tls.i18n_string_id and tls.locale = locationLocale::language_locale) as questionBenefit) as "question/benefit",
             (select json_agg(questionShortLabel) from (Select  tls.id as "db/id",
                                                  tls.locale as "language/locale",
-                                                 tls.localized_string "localized-string/value"
+                                                 tls.displayTitle "localized-string/value"
                                                  from translation tls
                                                  where q.short_label_id = tls.i18n_string_id and tls.locale = locationLocale::language_locale) as questionShortLabel) as "question/short-label",
             (select json_agg(questionPlaceholder) from (Select  tls.id as "db/id",
                                                  tls.locale as "language/locale",
-                                                 tls.localized_string "localized-string/value"
+                                                 tls.displayTitle "localized-string/value"
                                                  from
                                                  text_question tq
                                                  join translation tls on tq.placeholder_id = tls.i18n_string_id
@@ -63,12 +63,12 @@ CREATE OR REPLACE FUNCTION GetConditionalQuestionsForQuestions(questionId BIGINT
             sq.allowed_selection_count as "select-question/allowed-selection-count",
             (select json_agg(lowRangeLabel) from (Select  tls.id as "db/id",
                                                  tls.locale as "language/locale",
-                                                 tls.localized_string "localized-string/value"
+                                                 tls.displayTitle "localized-string/value"
                                                  from translation tls
                                                  where rq.low_range_label_id = tls.i18n_string_id and tls.locale = locationLocale::language_locale) as lowRangeLabel) as "range-question/low-range-label",
             (select json_agg(highRangeLabel) from (Select  tls.id as "db/id",
                                                  tls.locale as "language/locale",
-                                                 tls.localized_string "localized-string/value"
+                                                 tls.displayTitle "localized-string/value"
                                                  from translation tls
                                                  where rq.high_range_label_id = tls.i18n_string_id and tls.locale = locationLocale::language_locale) as highRangeLabel) as "range-question/high-range-label",
             tq.text_columns as "text-question/text-columns",
@@ -94,7 +94,7 @@ CREATE OR REPLACE FUNCTION GetConditionalQuestionsForQuestions(questionId BIGINT
                                                           q.rank as "item/rank",
                                                          (select json_agg(displayTitles) from (select
                                                           tl2.id as "db/id",
-                                                          tl2.localized_string as "localized-string/value",
+                                                          tl2.displayTitle as "localized-string/value",
                                                           tl2.locale as "language/locale"
                                                           ) as displayTitles)
                                                           as "selection/display-title"

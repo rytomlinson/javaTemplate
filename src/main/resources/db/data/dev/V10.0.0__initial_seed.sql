@@ -61,7 +61,7 @@ $$ LANGUAGE plpgsql volatile cost 100;
 CREATE OR replace function returnTagId(_name text ) returns bigint as $$
 BEGIN
 return (
-select tag.id from tag tag join translation t on tag.name_id = t.i18n_string_id where t.localized_string = _name);
+select tag.id from tag tag join translation t on tag.name_id = t.i18n_string_id where t.displayTitle = _name);
 END;
 $$ LANGUAGE plpgsql;
 
@@ -172,7 +172,7 @@ CREATE OR replace function insertSelectionList(_description_title text, _placeho
 CREATE OR replace function returnSelectionListId(_name text ) returns bigint as $$
 BEGIN
 return (
-select sl.id from selection_list sl join translation t on sl.description_id = t.i18n_string_id where t.localized_string = _name);
+select sl.id from selection_list sl join translation t on sl.description_id = t.i18n_string_id where t.displayTitle = _name);
 END;
 $$ LANGUAGE plpgsql;
 
@@ -205,14 +205,14 @@ CREATE OR replace function insertSurvey(_display_title text, _description text, 
 CREATE OR replace function returnSurveyId(_name text ) returns bigint as $$
 BEGIN
   return (
-    select s.id from survey s join translation t on s.display_title_id = t.i18n_string_id where t.localized_string = _name);
+    select s.id from survey s join translation t on s.display_title_id = t.i18n_string_id where t.displayTitle = _name);
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR replace function returnQuestionId(_name text ) returns bigint as $$
 BEGIN
   return (
-    select q.id from question q join translation t on q.display_title_id = t.i18n_string_id where t.localized_string = _name);
+    select q.id from question q join translation t on q.display_title_id = t.i18n_string_id where t.displayTitle = _name);
 END;
 $$ LANGUAGE plpgsql;
 

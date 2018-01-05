@@ -6,12 +6,12 @@ CREATE OR REPLACE FUNCTION GetConditionalRangeGroupMemberQuestionsForSurveyJson(
                 q.type as "question/type",
                 (select json_agg(displayTitle) from (Select  tls.id as "db/id",
                                                      tls.locale as "language/locale",
-                                                     tls.localized_string "localized-string/value"
+                                                     tls.displayTitle "localized-string/value"
                                                      from translation tls
                                                      where q.display_title_id = tls.i18n_string_id and tls.locale = lang_locale::language_locale) as displayTitle) as "artifact/display-title",
                 (select json_agg(semanticTitle) from (Select  tls.id as "db/id",
                                                      tls.locale as "language/locale",
-                                                     tls.localized_string "localized-string/value"
+                                                     tls.displayTitle "localized-string/value"
                                                      from translation tls
                                                      where q.semantic_title_id = tls.i18n_string_id and tls.locale = lang_locale::language_locale) as semanticTitle) as "artifact/semantic-title",
                 (select row_to_json(questionSource) from (select
@@ -19,12 +19,12 @@ CREATE OR REPLACE FUNCTION GetConditionalRangeGroupMemberQuestionsForSurveyJson(
                 q.type as "question/type",
                 (select json_agg(displayTitle) from (Select  tls.id as "db/id",
                                                      tls.locale as "language/locale",
-                                                     tls.localized_string "localized-string/value"
+                                                     tls.displayTitle "localized-string/value"
                                                      from translation tls
                                                      where q.display_title_id = tls.i18n_string_id and tls.locale = lang_locale::language_locale) as displayTitle) as "artifact/display-title",
                 (select json_agg(semanticTitle) from (Select  tls.id as "db/id",
                                                      tls.locale as "language/locale",
-                                                     tls.localized_string "localized-string/value"
+                                                     tls.displayTitle "localized-string/value"
                                                      from translation tls
                                                      where q.semantic_title_id = tls.i18n_string_id and tls.locale = lang_locale::language_locale) as semanticTitle) as "artifact/semantic-title") as questionSource) as "question/source"
                 from
@@ -46,12 +46,12 @@ CREATE OR REPLACE FUNCTION GetRangeGroupMemberQuestionsWithSourceForSurveyJson(q
                 q.type as "question/type",
                 (select json_agg(displayTitle) from (Select  tls.id as "db/id",
                                                      tls.locale as "language/locale",
-                                                     tls.localized_string "localized-string/value"
+                                                     tls.displayTitle "localized-string/value"
                                                      from translation tls
                                                      where q.display_title_id = tls.i18n_string_id and tls.locale = lang_locale::language_locale) as displayTitle) as "artifact/display-title",
                 (select json_agg(semanticTitle) from (Select  tls.id as "db/id",
                                                      tls.locale as "language/locale",
-                                                     tls.localized_string "localized-string/value"
+                                                     tls.displayTitle "localized-string/value"
                                                      from translation tls
                                                      where q.semantic_title_id = tls.i18n_string_id and tls.locale = lang_locale::language_locale) as semanticTitle) as "artifact/semantic-title"
                 ) as questionSource) as "question/source"
@@ -69,12 +69,12 @@ CREATE OR REPLACE FUNCTION GetRangeGroupMemberQuestionsWithoutSourceForSurveyJso
                 q.type as "question/type",
                 (select json_agg(displayTitle) from (Select  tls.id as "db/id",
                                                      tls.locale as "language/locale",
-                                                     tls.localized_string "localized-string/value"
+                                                     tls.displayTitle "localized-string/value"
                                                      from translation tls
                                                      where q.display_title_id = tls.i18n_string_id and tls.locale = lang_locale::language_locale) as displayTitle) as "artifact/display-title",
                 (select json_agg(semanticTitle) from (Select  tls.id as "db/id",
                                                      tls.locale as "language/locale",
-                                                     tls.localized_string "localized-string/value"
+                                                     tls.displayTitle "localized-string/value"
                                                      from translation tls
                                                      where q.semantic_title_id = tls.i18n_string_id and tls.locale = lang_locale::language_locale) as semanticTitle) as "artifact/semantic-title"
                 from

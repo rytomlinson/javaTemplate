@@ -1,5 +1,5 @@
 ﻿SET SCHEMA 'insight';
-CREATE OR REPLACE FUNCTION CreateTranslation(localized_string text, locale text) RETURNS BIGINT AS $$
+CREATE OR REPLACE FUNCTION CreateTranslation(displayTitle text, locale text) RETURNS BIGINT AS $$
 
     DECLARE i18n_id BIGINT;
 
@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION CreateTranslation(localized_string text, locale text)
     BEGIN
       insert into i18n_string (created_at) values (CURRENT_TIMESTAMP) returning id into i18n_id;
 
-      insert into translation (locale, localized_string, i18n_string_id) values (locale::language_locale, localized_string, i18n_id) returning id into translation_id;
+      insert into translation (locale, displayTitle, i18n_string_id) values (locale::language_locale, displayTitle, i18n_id) returning id into translation_id;
 
       return (Select i18n_id);
     END;
@@ -21,7 +21,7 @@ CREATE OR REPLACE FUNCTION CreateSurveyForm(surveyId BIGINT, formId BIGINT, rank
     DECLARE surveyFormId BIGINT;
 
     BEGIN
-      Select CreateTranslation((select localized_string from
+      Select CreateTranslation((select displayTitle from
       form f join translation t on f.default_preface_id = t.i18n_string_id limit 1), locale) into i18n_id;
 
       insert into survey_form (survey_id, form_id, rank, preface_id, deleted, required) values (surveyId, formId, rank, i18n_id, false, false) returning id into surveyFormId;

@@ -100,6 +100,20 @@ public class SurveysController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
+    @RequestMapping(value = "properties/{propertyId}/surveys/{surveyId}/publish/{status}", method = RequestMethod.POST)
+    public ResponseEntity<Void> updateSurveyPublishStatus(
+            @PathVariable("propertyId") UUID propertyId
+            , @PathVariable("surveyId") Long surveyId
+            , @PathVariable("status") Boolean status
+            , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+        final WebContext context = new J2EContext(request, response);
+        UserProfileDTO user = security.GetUserProfile(context);
+        log.info("Update a Insight Survey publish status for UserProfileDTO: " + user.getUserId());
+
+        surveysService.updateSurveyPublishStatus(propertyId, surveyId, status);
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
     @RequestMapping(value = "properties/{propertyId}/surveys/{surveyId}/links/anonymous", method = RequestMethod.GET)
     public ResponseEntity<String> getSurveyLinkPreview(
             @PathVariable("propertyId") UUID propertyId
