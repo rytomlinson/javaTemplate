@@ -18,6 +18,7 @@ public class SelectionEntity {
     private Date updatedAt;
     private I18NStringEntity i18NStringByDisplayTitleId;
     private I18NStringEntity i18NStringBySemanticTitleId;
+    private Boolean deleted;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -104,5 +105,15 @@ public class SelectionEntity {
 
     public void setI18NStringBySemanticTitleId(I18NStringEntity i18NStringBySemanticTitleId) {
         this.i18NStringBySemanticTitleId = i18NStringBySemanticTitleId;
+    }
+
+    @Basic
+    @Column(name = "deleted", nullable = false)
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 }

@@ -22,6 +22,7 @@ public class SelectionListEntity {
     private Date updatedAt;
     private I18NStringEntity i18NStringByDescriptionId;
     private I18NStringEntity i18NStringByPlaceholderId;
+    private Boolean deleted;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -144,5 +145,15 @@ public class SelectionListEntity {
 
     public void setI18NStringByPlaceholderId(I18NStringEntity i18NStringByPlaceholderId) {
         this.i18NStringByPlaceholderId = i18NStringByPlaceholderId;
+    }
+
+    @Basic
+    @Column(name = "deleted", nullable = false)
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 }

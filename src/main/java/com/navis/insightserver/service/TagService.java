@@ -4,9 +4,11 @@ import com.navis.insightserver.Repository.I18nStringRepository;
 import com.navis.insightserver.Repository.TagRepository;
 import com.navis.insightserver.Repository.TagTagRepository;
 import com.navis.insightserver.Repository.TranslationRepository;
+import com.navis.insightserver.dto.ResourceNotFoundExceptionDTO;
 import com.navis.insightserver.dto.TagDTO;
 import com.navis.insightserver.entity.TagEntity;
 import com.navis.insightserver.entity.TagTagEntity;
+import com.navis.insightserver.entity.TranslationEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -70,10 +73,20 @@ public class TagService implements ITagService {
         Long nameId;
         TagEntity tagEntity;
         TagEntity tagParentEntity;
+        String mode;
 
         if(null != tagId) {
-            tagEntity = tagRepository.findOne(tagId);
+            tagEntity = validateTag(tagId);
+            mode = "UPDATE";
+
+            List<TranslationEntity> nameEntities = new ArrayList(tagEntity.getI18NStringByNameId().getTranslationsById());
+            TranslationEntity nameEntity = nameEntities.stream().filter(e -> e.getLocale().equals(locale)).findFirst().orElse(null);
+
+            nameId = (!tagDTO.getName().equals(nameEntity.getLocalizedString()) ? translationRepository.createTranslation(tagDTO.getName()) : tagEntity.getI18NStringByNameId().getId());
+            tagEntity.setI18NStringByNameId(i18nStringRepository.findOne(nameId));
+
         } else {
+            mode = "INSERT";
             nameId = translationRepository.createTranslation(tagDTO.getName());
             tagEntity = convertToEntity(owner, tagDTO, locale);
             tagEntity.setI18NStringByNameId(i18nStringRepository.findOne(nameId));
@@ -81,13 +94,23 @@ public class TagService implements ITagService {
             tagEntity.setQuestion(false);
             tagEntity.setSurvey(false);
             tagEntity.setSurveyType(false);
-//            tagEntity.setType(null);
+            tagEntity.setDeleted(false);
         }
 
         tagEntity = tagRepository.save(tagEntity);
 
+        if("INSERT".equals(mode)) {
+            insertTagTag(tagDTO, tagEntity, owner);
+        }
+
+        return tagEntity.getId();
+    }
+
+    private void insertTagTag(TagDTO tagDTO, TagEntity tagEntity, UUID owner) {
+        Date now = new Date();
+        TagEntity tagParentEntity;
         if(null != tagDTO.getParentTagId()) {
-            tagParentEntity = tagRepository.findOne(tagDTO.getParentTagId());
+            tagParentEntity = validateTag(tagDTO.getParentTagId());
         } else {
             tagParentEntity = tagRepository.getDepartmentTag(uuid);
         }
@@ -101,23 +124,20 @@ public class TagService implements ITagService {
         tagTagEntity.setOwner(owner);
 
         tagTagRepository.save(tagTagEntity);
-
-        return tagEntity.getId();
     }
 
     @Override
     public TagDTO getTag(UUID owner, Long id) {
-        TagEntity tagEntity = tagRepository.findOne(id);
+        TagEntity tagEntity = validateTag(id);
 
         return convertToDto(tagEntity);
     }
 
     @Override
     public void deleteTag(UUID owner, Long id) {
-        TagEntity tagEntity = tagRepository.findOne(id);
-        tagRepository.deleteTagTag(id);
-        tagRepository.delete(id);
-        translationRepository.deleteTranslations(tagEntity.getI18NStringByNameId().getId());
+        TagEntity tagEntity = validateTag(id);
+        tagEntity.setDeleted(true);
+        tagRepository.save(tagEntity);
     }
 
     private List<TagDTO> buildTagsDTO(UUID propertyId) {
@@ -131,7 +151,7 @@ public class TagService implements ITagService {
     private List<TagDTO> buildDepartmentTagsDTO(UUID propertyId, Long departmentTagId) {
         List<TagTagEntity> list = tagRepository.getDepartmentTagsByOwner(propertyId, departmentTagId);
 
-        List<TagDTO> listDto = list.stream().map(item -> convertToDto(item)).collect(Collectors.toList());
+        List<TagDTO> listDto = list.stream().filter(item -> !item.getTagByTagId().getDeleted()).map(item -> convertToDto(item)).collect(Collectors.toList());
 
         return listDto;
     }
@@ -163,5 +183,15 @@ public class TagService implements ITagService {
         tagEntity.setMaximumValue(tagDTO.getMaximumValue());
 
         return tagEntity;
+    }
+
+    private TagEntity validateTag(Long id) {
+
+        if (!tagRepository.exists(id)) {
+
+            throw new ResourceNotFoundExceptionDTO(id.toString(), "tag.id.invalid");
+        } else {
+            return tagRepository.findOne(id);
+        }
     }
 }

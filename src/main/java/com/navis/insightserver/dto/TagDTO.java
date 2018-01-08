@@ -53,7 +53,7 @@ public class TagDTO extends BaseDTO {
                 : null;
 
         List<TagDTO> tagDTOList = (null != tagEntityList)
-                ? tagEntityList.stream().map(item -> convertToDto(item)).collect(Collectors.toList())
+                ? tagEntityList.stream().filter(item -> !item.getTagByTagId().getDeleted()).map(item -> convertToDto(item)).collect(Collectors.toList())
                 : null;
 
         this.tags = tagDTOList;
@@ -138,7 +138,7 @@ public class TagDTO extends BaseDTO {
                 : null;
 
         List<TagDTO> tagDTOList = (null != tagEntityList)
-                ? tagEntityList.stream().map(item -> convertToDto(item)).collect(Collectors.toList())
+                ? tagEntityList.stream().filter(item -> !item.getTagByTagId().getDeleted()).map(item -> convertToDto(item)).collect(Collectors.toList())
                 : null;
 
         this.tags = tagDTOList;

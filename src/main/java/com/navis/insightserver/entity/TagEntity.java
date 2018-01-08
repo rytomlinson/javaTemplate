@@ -29,6 +29,7 @@ public class TagEntity {
     private Integer minimumValue;
     private Integer maximumValue;
     private Collection<TagTagEntity> tagTagsById_0;
+    private Boolean deleted;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -47,10 +48,6 @@ public class TagEntity {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
 //    @Basic
 //    @Column(name = "type", nullable = true)
 //    public String getType() {
@@ -60,6 +57,10 @@ public class TagEntity {
 //    public void setType(String type) {
 //        this.type = type;
 //    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
 
     @Basic
     @Column(name = "is_market_segment", nullable = false)
@@ -218,5 +219,15 @@ public class TagEntity {
 
     public void setTagTagsById_0(Collection<TagTagEntity> tagTagsById_0) {
         this.tagTagsById_0 = tagTagsById_0;
+    }
+
+    @Basic
+    @Column(name = "deleted", nullable = false)
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 }
