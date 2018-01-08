@@ -17,8 +17,6 @@ public class SurveyRequestEntity {
     private Date createdAt;
     private Date activeUntil;
     private Date completionDate;
-    private String completionStatus;
-    private String completionTask;
     private String accountId;
     private String crmContactId;
     private Long crmStayId;
@@ -34,6 +32,7 @@ public class SurveyRequestEntity {
     private Collection<SurveyRequestRangeAnswerEntity> surveyRequestRangeAnswersById;
     private Collection<SurveyRequestSelectAnswerEntity> surveyRequestSelectAnswersById;
     private Collection<SurveyRequestTextAnswerEntity> surveyRequestTextAnswersById;
+    private SurveyRequestCompletionStatusTypesEntity surveyRequestCompletionStatusTypesByCompletionStatusType;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -74,26 +73,6 @@ public class SurveyRequestEntity {
 
     public void setCompletionDate(Date completionDate) {
         this.completionDate = completionDate;
-    }
-
-    @Basic
-    @Column(name = "completion_status", nullable = true)
-    public String getCompletionStatus() {
-        return completionStatus;
-    }
-
-    public void setCompletionStatus(String completionStatus) {
-        this.completionStatus = completionStatus;
-    }
-
-    @Basic
-    @Column(name = "completion_task", nullable = true)
-    public String getCompletionTask() {
-        return completionTask;
-    }
-
-    public void setCompletionTask(String completionTask) {
-        this.completionTask = completionTask;
     }
 
     @Basic
@@ -178,10 +157,6 @@ public class SurveyRequestEntity {
         if (activeUntil != null ? !activeUntil.equals(that.activeUntil) : that.activeUntil != null) return false;
         if (completionDate != null ? !completionDate.equals(that.completionDate) : that.completionDate != null)
             return false;
-        if (completionStatus != null ? !completionStatus.equals(that.completionStatus) : that.completionStatus != null)
-            return false;
-        if (completionTask != null ? !completionTask.equals(that.completionTask) : that.completionTask != null)
-            return false;
         if (accountId != null ? !accountId.equals(that.accountId) : that.accountId != null) return false;
         if (crmContactId != null ? !crmContactId.equals(that.crmContactId) : that.crmContactId != null) return false;
         if (crmStayId != null ? !crmStayId.equals(that.crmStayId) : that.crmStayId != null) return false;
@@ -199,8 +174,6 @@ public class SurveyRequestEntity {
         result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
         result = 31 * result + (activeUntil != null ? activeUntil.hashCode() : 0);
         result = 31 * result + (completionDate != null ? completionDate.hashCode() : 0);
-        result = 31 * result + (completionStatus != null ? completionStatus.hashCode() : 0);
-        result = 31 * result + (completionTask != null ? completionTask.hashCode() : 0);
         result = 31 * result + (accountId != null ? accountId.hashCode() : 0);
         result = 31 * result + (crmContactId != null ? crmContactId.hashCode() : 0);
         result = 31 * result + (crmStayId != null ? crmStayId.hashCode() : 0);
@@ -280,5 +253,15 @@ public class SurveyRequestEntity {
 
     public void setSurveyRequestTextAnswersById(Collection<SurveyRequestTextAnswerEntity> surveyRequestTextAnswersById) {
         this.surveyRequestTextAnswersById = surveyRequestTextAnswersById;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "completion_status_type", referencedColumnName = "id")
+    public SurveyRequestCompletionStatusTypesEntity getSurveyRequestCompletionStatusTypesByCompletionStatusType() {
+        return surveyRequestCompletionStatusTypesByCompletionStatusType;
+    }
+
+    public void setSurveyRequestCompletionStatusTypesByCompletionStatusType(SurveyRequestCompletionStatusTypesEntity surveyRequestCompletionStatusTypesByCompletionStatusType) {
+        this.surveyRequestCompletionStatusTypesByCompletionStatusType = surveyRequestCompletionStatusTypesByCompletionStatusType;
     }
 }

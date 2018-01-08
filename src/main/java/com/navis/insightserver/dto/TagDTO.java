@@ -131,5 +131,16 @@ public class TagDTO extends BaseDTO {
         this.minimumValue = (null != tagEntity.getMinimumValue()) ? tagEntity.getMinimumValue() : null;
         this.maximumValue = (null != tagEntity.getMaximumValue()) ? tagEntity.getMaximumValue() : null;
         this.parentTagId = parentTagId;
+
+        List<TagTagEntity> tagEntityList
+                = (null != tagEntity.getTagTagsById_0())
+                ? new ArrayList(tagEntity.getTagTagsById_0())
+                : null;
+
+        List<TagDTO> tagDTOList = (null != tagEntityList)
+                ? tagEntityList.stream().map(item -> convertToDto(item)).collect(Collectors.toList())
+                : null;
+
+        this.tags = tagDTOList;
     }
 }

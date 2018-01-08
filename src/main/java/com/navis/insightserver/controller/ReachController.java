@@ -50,15 +50,27 @@ public class ReachController {
         return new ResponseEntity<ReachSurveysDTO>(surveysService.getReachSurveys(accountId, locale, includeDeleted), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "surveys/link/{email}/stayid/{stayId}/accountid/{accountId}", method = RequestMethod.GET)
+    @RequestMapping(value = "surveys/{surveyId}/link/{email}/stayid/{stayId}/accountid/{accountId}", method = RequestMethod.GET)
     public ResponseEntity<String> getReachSurveyLink(
-            @PathVariable("email") String email
+            @PathVariable("surveyId") Long surveyId
+            , @PathVariable("email") String email
             , @PathVariable("stayId") Long stayId
             , @PathVariable("accountId") String accountId) {
         log.info("Return a Reach Insight Survey link for AccountId: ", accountId);
 
-        return null;
-//        return new ResponseEntity<String>(null, HttpStatus.OK);
+        return new ResponseEntity<String>(surveysService.generateReachSurveyLink(surveyId, email, stayId, accountId, null), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "surveys/{surveyId}/link/{email}/stayid/{stayId}/accountid/{accountId}/survey-mode/{surveyMode}", method = RequestMethod.GET)
+    public ResponseEntity<String> getReachSurveyLinkWithMode(
+            @PathVariable("surveyId") Long surveyId
+            , @PathVariable("email") String email
+            , @PathVariable("stayId") Long stayId
+            , @PathVariable("accountId") String accountId
+            , @PathVariable("surveyMode") String surveyMode) {
+        log.info("Return a Reach Insight Survey link for AccountId: ", accountId);
+
+        return new ResponseEntity<String>(surveysService.generateReachSurveyLink(surveyId, email, stayId, accountId, surveyMode), HttpStatus.OK);
     }
 }
 

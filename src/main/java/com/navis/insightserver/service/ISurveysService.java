@@ -28,5 +28,6 @@ public interface ISurveysService {
 
     Unit<String> generateAnonymousSurveyLink(UUID owner, Long surveyId, String source, String surveyMode);
 
-//    String generate
+    String generateReachSurveyLink(Long surveyId, String email, Long stayId, String accountId, String surveyMode);
+
 }

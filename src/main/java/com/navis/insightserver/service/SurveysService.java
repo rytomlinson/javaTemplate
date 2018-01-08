@@ -6,6 +6,7 @@ import com.navis.insightserver.dto.ReachSurveysDTO;
 import com.navis.insightserver.dto.ResourceNotFoundExceptionDTO;
 import com.navis.insightserver.dto.SurveyDTO;
 import com.navis.insightserver.entity.SurveyEntity;
+import com.navis.insightserver.entity.SurveyRequestEntity;
 import com.navis.insightserver.entity.SurveyTagEntity;
 import org.javatuples.Pair;
 import org.javatuples.Unit;
@@ -41,6 +42,12 @@ public class SurveysService implements ISurveysService {
 
     @Autowired
     private SurveyRepository surveyRepository;
+
+    @Autowired
+    private SurveyRequestRepository surveyRequestRepository;
+
+    @Autowired
+    private SurveyRequestCompletionStatusTypesRepository surveyRequestCompletionStatusTypesRepository;
 
     @Autowired
     private I18nStringRepository i18nStringRepository;
@@ -139,6 +146,51 @@ public class SurveysService implements ISurveysService {
 
         Unit<String> unit = new Unit<String>(builder.toString());
         return unit;
+    }
+
+    @Override
+    public String generateReachSurveyLink(Long surveyId, String email, Long stayId, String accountId, String surveyMode) {
+        log.debug("In generateReachSurveyLink Service:");
+        URI uri = URI.create(UriComponentsBuilder.fromUriString(propertiesForAcctnbrEndpoint).queryParam("acctnbr",accountId).toUriString());
+
+        RestTemplate restTemplate = new RestTemplate();
+        Object[]  accountObject = restTemplate.getForObject(uri.toString(), Object[].class);
+        LinkedHashMap entry = (LinkedHashMap) Arrays.asList(accountObject).get(0);
+        String propertyOwner = (String) entry.get("property_uuid");
+        UUID owner = UUID.fromString(propertyOwner);
+
+        surveyMode = (null != surveyMode) ? surveyMode : SecurityService.surveyModeNormal;
+
+        SurveyEntity surveyEntity = validateSurvey(surveyId);
+        SurveyRequestEntity surveyRequestEntity;
+
+        surveyRequestEntity = surveyRequestRepository
+                .findBySurveyBySurveyId_IdAndCrmStayIdAndAccountIdAndEmail(surveyId, stayId, accountId, email);
+
+        surveyRequestEntity  = (null != surveyRequestEntity) ? surveyRequestEntity : createSurveyRequest(surveyId, stayId, accountId, email);
+
+        String responseKey = securityService.generateSurveyResponseKey(surveyId, surveyRequestEntity.getId(), email, surveyMode);
+        StringBuilder builder = new StringBuilder();
+        builder.append(surveyTakerUrl)
+                .append("?id=")
+                .append(responseKey);
+
+        return builder.toString();
+    }
+
+    private SurveyRequestEntity createSurveyRequest(Long surveyId, Long stayId, String accountId, String email) {
+
+        Date now = new Date();
+        SurveyRequestEntity surveyRequestEntity = new SurveyRequestEntity();
+        surveyRequestEntity.setCreatedAt(now);
+        surveyRequestEntity.setUpdatedAt(now);
+        surveyRequestEntity.setSurveyBySurveyId(validateSurvey(surveyId));
+        surveyRequestEntity.setCrmStayId(stayId);
+        surveyRequestEntity.setAccountId(accountId);
+        surveyRequestEntity.setEmail(email);
+        surveyRequestEntity.setSurveyRequestCompletionStatusTypesByCompletionStatusType(surveyRequestCompletionStatusTypesRepository.findByCode("IN_PROCESS"));
+
+        return surveyRequestRepository.save(surveyRequestEntity);
     }
 
     private SurveyEntity convertToEntity(UUID owner, SurveyDTO surveyDTO, String locale) {
