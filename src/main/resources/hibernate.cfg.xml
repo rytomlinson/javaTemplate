@@ -37,6 +37,7 @@
         <mapping class="com.navis.insightserver.entity.SurveyRequestCompletionStatusTypesEntity"/>
         <mapping class="com.navis.insightserver.entity.SelectionEntity"/>
         <mapping class="com.navis.insightserver.entity.SelectionListEntity"/>
+        <mapping class="com.navis.insightserver.entity.SelectQuestionEntity"/>
 
         <!-- mapping file, we can use Bean annotations too
         <mapping resource="reachEventTypes.hbm.xml" /> -->

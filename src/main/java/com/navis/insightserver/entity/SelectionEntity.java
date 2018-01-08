@@ -19,6 +19,7 @@ public class SelectionEntity {
     private I18NStringEntity i18NStringByDisplayTitleId;
     private I18NStringEntity i18NStringBySemanticTitleId;
     private Boolean deleted;
+    private SelectionListEntity selectionListBySelectionListId;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -115,5 +116,15 @@ public class SelectionEntity {
 
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "selection_list_id", referencedColumnName = "id", nullable = false)
+    public SelectionListEntity getSelectionListBySelectionListId() {
+        return selectionListBySelectionListId;
+    }
+
+    public void setSelectionListBySelectionListId(SelectionListEntity selectionListBySelectionListId) {
+        this.selectionListBySelectionListId = selectionListBySelectionListId;
     }
 }

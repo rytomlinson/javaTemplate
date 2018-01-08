@@ -4,6 +4,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
 
@@ -23,6 +24,8 @@ public class SelectionListEntity {
     private I18NStringEntity i18NStringByDescriptionId;
     private I18NStringEntity i18NStringByPlaceholderId;
     private Boolean deleted;
+    private Collection<SelectQuestionEntity> selectQuestionsById;
+    private Collection<SelectionEntity> selectionsById;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -155,5 +158,23 @@ public class SelectionListEntity {
 
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @OneToMany(mappedBy = "selectionListBySelectionListId")
+    public Collection<SelectQuestionEntity> getSelectQuestionsById() {
+        return selectQuestionsById;
+    }
+
+    public void setSelectQuestionsById(Collection<SelectQuestionEntity> selectQuestionsById) {
+        this.selectQuestionsById = selectQuestionsById;
+    }
+
+    @OneToMany(mappedBy = "selectionListBySelectionListId")
+    public Collection<SelectionEntity> getSelectionsById() {
+        return selectionsById;
+    }
+
+    public void setSelectionsById(Collection<SelectionEntity> selectionsById) {
+        this.selectionsById = selectionsById;
     }
 }

@@ -2,6 +2,7 @@ package com.navis.insightserver.controller;
 
 import com.navis.insightserver.Utils.ISecurity;
 import com.navis.insightserver.dto.*;
+import com.navis.insightserver.service.ISelectionListService;
 import com.navis.insightserver.service.ITagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -44,6 +45,9 @@ public class SettingsController {
 
     @Autowired
     private ITagService tagService;
+
+    @Autowired
+    private ISelectionListService selectionListService;
 
     @RequestMapping(value = "properties/{propertyId}/tags", method = RequestMethod.GET)
     public ResponseEntity<List<TagDTO>> getTags(
@@ -118,5 +122,16 @@ public class SettingsController {
         log.info("View a list of Insight Survey Type Tags for UserProfileDTO: " + user.getUserId());
 
         return new ResponseEntity<List<TagDTO>>(tagService.getSurveyTypeTags(), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "properties/{propertyId}/selectionLists", method = RequestMethod.GET)
+    public ResponseEntity<List<SelectionListDTO>> getSelectionLists(
+            @PathVariable("propertyId") UUID propertyId,
+            HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+        final WebContext context = new J2EContext(request, response);
+        UserProfileDTO user = security.GetUserProfile(context);
+        log.info("View a list of Insight Selection Lists for UserProfileDTO: " + user.getUserId());
+
+        return new ResponseEntity<List<SelectionListDTO>>(selectionListService.getSelectionLists(propertyId), HttpStatus.OK);
     }
 }

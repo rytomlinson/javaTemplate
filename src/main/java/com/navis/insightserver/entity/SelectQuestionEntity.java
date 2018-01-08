@@ -17,6 +17,7 @@ public class SelectQuestionEntity {
     private Integer allowedSelectionCount;
     private Date updatedAt;
     private QuestionEntity questionByQuestionId;
+    private SelectionListEntity selectionListBySelectionListId;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -93,5 +94,15 @@ public class SelectQuestionEntity {
 
     public void setQuestionByQuestionId(QuestionEntity questionByQuestionId) {
         this.questionByQuestionId = questionByQuestionId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "selection_list_id", referencedColumnName = "id")
+    public SelectionListEntity getSelectionListBySelectionListId() {
+        return selectionListBySelectionListId;
+    }
+
+    public void setSelectionListBySelectionListId(SelectionListEntity selectionListBySelectionListId) {
+        this.selectionListBySelectionListId = selectionListBySelectionListId;
     }
 }
