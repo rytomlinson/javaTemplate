@@ -46,31 +46,31 @@ public class SelectionListService implements ISelectionListService {
     private I18nStringRepository i18nStringRepository;
 
     @Override
-    public List<SelectionListDTO> getSelectionLists(UUID propertyId) {
+    public List<SelectionListDTO> getSelectionLists(UUID propertyId, String locale) {
         log.debug("In getSelectionLists Service:");
-        return buildSelectionListsDTO(propertyId);
+        return buildSelectionListsDTO(propertyId, locale);
     }
 
 
 
-    private List<SelectionListDTO> buildSelectionListsDTO(UUID propertyId) {
+    private List<SelectionListDTO> buildSelectionListsDTO(UUID propertyId, String locale) {
         List<UUID> owners = new ArrayList<>();
         owners.add(propertyId);
         owners.add(uuid);
 
         List<SelectionListEntity> list = selectionListRepository.findByOwnerInAndDeletedFalse(owners);
 
-        List<SelectionListDTO> listDto = list.stream().map(item -> convertToDto(item)).collect(Collectors.toList());
+        List<SelectionListDTO> listDto = list.stream().map(item -> convertToDto(item, locale)).collect(Collectors.toList());
 
         return listDto;
     }
 
 
 
-    private SelectionListDTO convertToDto(SelectionListEntity selectionListEntity) {
+    private SelectionListDTO convertToDto(SelectionListEntity selectionListEntity, String locale) {
 
 
-        SelectionListDTO selectionListDTO = new SelectionListDTO(selectionListEntity);
+        SelectionListDTO selectionListDTO = new SelectionListDTO(selectionListEntity, locale);
         return selectionListDTO;
     }
 

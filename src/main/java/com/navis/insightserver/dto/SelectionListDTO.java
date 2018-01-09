@@ -28,9 +28,9 @@ public class SelectionListDTO extends BaseDTO {
     public SelectionListDTO() {
     }
 
-    public SelectionListDTO(SelectionListEntity selectionListEntity) {
+    public SelectionListDTO(SelectionListEntity selectionListEntity, String locale) {
         super();
-       buildDto(selectionListEntity);
+       buildDto(selectionListEntity, locale);
     }
 
     public Long getId() {
@@ -83,9 +83,13 @@ public class SelectionListDTO extends BaseDTO {
         this.answers = answers;
     }
 
-    private void buildDto(SelectionListEntity selectionListEntity ) {
+    private void buildDto(SelectionListEntity selectionListEntity, String locale ) {
         this.id = selectionListEntity.getId();
-        this.name = selectionListEntity.getI18NStringByDescriptionId().getTranslationsById().iterator().next().getLocalizedString();
+
+        List<TranslationEntity> displayTitleEntities = (List<TranslationEntity>) selectionListEntity.getI18NStringByDescriptionId().getTranslationsById();
+        TranslationEntity displayTitleEntity = displayTitleEntities.stream().filter(e -> e.getLocale().equals(locale)).findFirst().orElse(null);
+
+        this.name = displayTitleEntity.getLocalizedString();
         this.ownerId = selectionListEntity.getOwner();
         this.isLibrary = selectionListEntity.getLibrary();
         this.isActive = (null != selectionListEntity.getSelectQuestionsById() && !selectionListEntity.getSelectQuestionsById().isEmpty()) ? true : false;

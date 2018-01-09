@@ -126,12 +126,13 @@ public class SettingsController {
 
     @RequestMapping(value = "properties/{propertyId}/selectionLists", method = RequestMethod.GET)
     public ResponseEntity<List<SelectionListDTO>> getSelectionLists(
-            @PathVariable("propertyId") UUID propertyId,
-            HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+            @PathVariable("propertyId") UUID propertyId
+            , @RequestParam(value = "locale", required = false, defaultValue = "en-US") String locale
+            , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
         final WebContext context = new J2EContext(request, response);
         UserProfileDTO user = security.GetUserProfile(context);
         log.info("View a list of Insight Selection Lists for UserProfileDTO: " + user.getUserId());
 
-        return new ResponseEntity<List<SelectionListDTO>>(selectionListService.getSelectionLists(propertyId), HttpStatus.OK);
+        return new ResponseEntity<List<SelectionListDTO>>(selectionListService.getSelectionLists(propertyId, locale), HttpStatus.OK);
     }
 }
