@@ -51,6 +51,20 @@ public class SelectionListService implements ISelectionListService {
         return buildSelectionListsDTO(propertyId, locale);
     }
 
+    @Override
+    public SelectionListDTO getSelectionList(UUID propertyId, Long selectionListId, String locale) {
+        log.debug("In getSelectionList Service:");
+        return buildSelectionListDTO(propertyId, selectionListId, locale);
+    }
+
+    private SelectionListDTO buildSelectionListDTO(UUID propertyId, Long selectionListId, String locale) {
+
+        SelectionListEntity selectionListEntity = validateSelectionList(propertyId, selectionListId);
+
+
+
+        return convertToDto(selectionListEntity, locale);
+    }
 
 
     private List<SelectionListDTO> buildSelectionListsDTO(UUID propertyId, String locale) {
@@ -72,6 +86,18 @@ public class SelectionListService implements ISelectionListService {
 
         SelectionListDTO selectionListDTO = new SelectionListDTO(selectionListEntity, locale);
         return selectionListDTO;
+    }
+
+    private SelectionListEntity validateSelectionList(UUID owner , Long selectionListId) {
+
+        SelectionListEntity selectionListEntity = selectionListRepository.findByOwnerAndId(owner, selectionListId);
+
+        if (null == selectionListEntity) {
+
+            throw new ResourceNotFoundExceptionDTO(selectionListId.toString(), "selectionList.id.invalid");
+        } else {
+            return selectionListEntity;
+        }
     }
 
 }

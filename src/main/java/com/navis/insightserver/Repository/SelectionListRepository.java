@@ -14,4 +14,5 @@ import java.util.UUID;
 public interface SelectionListRepository extends CrudRepository<SelectionListEntity, Long>, SelectionListRepositoryCustom {
 
     List<SelectionListEntity> findByOwnerInAndDeletedFalse(List<UUID> owners);
+    SelectionListEntity findByOwnerAndId(UUID owner, Long id);
 }

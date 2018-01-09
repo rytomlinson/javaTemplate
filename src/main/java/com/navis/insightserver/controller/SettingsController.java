@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("secure")
-@Api(value="Insight", description="Operations pertaining to Insight Settings")
+@Api(value = "Insight", description = "Operations pertaining to Insight Settings")
 public class SettingsController {
     private static final Logger log = LoggerFactory.getLogger(SettingsController.class);
 
@@ -134,5 +134,18 @@ public class SettingsController {
         log.info("View a list of Insight Selection Lists for UserProfileDTO: " + user.getUserId());
 
         return new ResponseEntity<List<SelectionListDTO>>(selectionListService.getSelectionLists(propertyId, locale), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "properties/{propertyId}/selectionLists/{id}", method = RequestMethod.GET)
+    public ResponseEntity<SelectionListDTO> getSelectionList(
+            @PathVariable("propertyId") UUID propertyId
+            , @PathVariable("id") Long selectionListId
+            , @RequestParam(value = "locale", required = false, defaultValue = "en-US") String locale
+            , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+        final WebContext context = new J2EContext(request, response);
+        UserProfileDTO user = security.GetUserProfile(context);
+        log.info("View a Insight Selection List for UserProfileDTO: " + user.getUserId());
+
+        return new ResponseEntity<SelectionListDTO>(selectionListService.getSelectionList(propertyId, selectionListId, locale), HttpStatus.OK);
     }
 }
