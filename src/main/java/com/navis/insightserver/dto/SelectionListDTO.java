@@ -106,9 +106,6 @@ public class SelectionListDTO extends BaseDTO {
     private SelectionDTO convertToDto(SelectionEntity selectionEntity) {
         SelectionDTO selectionDTO = new SelectionDTO(selectionEntity);
 
-
-
-
         return selectionDTO;
     }
 }

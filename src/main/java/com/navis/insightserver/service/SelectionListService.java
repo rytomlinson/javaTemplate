@@ -2,12 +2,10 @@ package com.navis.insightserver.service;
 
 import com.navis.insightserver.Repository.*;
 import com.navis.insightserver.dto.ResourceNotFoundExceptionDTO;
+import com.navis.insightserver.dto.SelectionDTO;
 import com.navis.insightserver.dto.SelectionListDTO;
 import com.navis.insightserver.dto.TagDTO;
-import com.navis.insightserver.entity.SelectionListEntity;
-import com.navis.insightserver.entity.TagEntity;
-import com.navis.insightserver.entity.TagTagEntity;
-import com.navis.insightserver.entity.TranslationEntity;
+import com.navis.insightserver.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +33,9 @@ public class SelectionListService implements ISelectionListService {
 
     @Autowired
     private SelectionListRepository selectionListRepository;
+
+    @Autowired
+    private SelectionRepository selectionRepository;
 
     @Autowired
     private SelectQuestionRepository selectQuestionRepository;
@@ -96,6 +97,34 @@ public class SelectionListService implements ISelectionListService {
         return selectionListEntity.getId();
     }
 
+    @Override
+    public SelectionDTO getSelectionListItem(UUID propertyId, Long selectionListId, Long itemId, String locale) {
+        log.debug("In getSelectionListItem Service:");
+        SelectionEntity selectionEntity = validateSelection(selectionListId, itemId);
+        return convertToDto(selectionEntity);
+    }
+
+    @Override
+    public List<SelectionDTO> getSelectionListItems(UUID propertyId, Long selectionListId, String locale) {
+        log.debug("In getSelectionListItems Service:");
+        SelectionListEntity selectionListEntity = validateSelectionList(propertyId, selectionListId);
+
+        List<SelectionEntity> selectionEntityList = (List<SelectionEntity>) selectionListEntity.getSelectionsById();
+
+        List<SelectionDTO> selectionDTOList = selectionEntityList.stream()
+                .filter(item -> !item.getDeleted())
+                .map(item -> convertToDto(item, locale)).collect(Collectors.toList());
+
+        return selectionDTOList;
+    }
+
+    private SelectionDTO convertToDto(SelectionEntity selectionEntity) {
+
+        SelectionDTO selectionDTO = new SelectionDTO(selectionEntity);
+
+        return selectionDTO;
+    }
+
     private SelectionListDTO buildSelectionListDTO(UUID propertyId, Long selectionListId, String locale) {
 
         SelectionListEntity selectionListEntity = validateSelectionList(propertyId, selectionListId);
@@ -125,6 +154,13 @@ public class SelectionListService implements ISelectionListService {
         return selectionListDTO;
     }
 
+    private SelectionDTO convertToDto(SelectionEntity selectionEntity, String locale) {
+
+
+        SelectionDTO selectionDTO = new SelectionDTO(selectionEntity, locale);
+        return selectionDTO;
+    }
+
     private SelectionListEntity validateSelectionList(UUID owner , Long selectionListId) {
 
         SelectionListEntity selectionListEntity = selectionListRepository.findByOwnerAndId(owner, selectionListId);
@@ -134,6 +170,18 @@ public class SelectionListService implements ISelectionListService {
             throw new ResourceNotFoundExceptionDTO(selectionListId.toString(), "selectionList.id.invalid");
         } else {
             return selectionListEntity;
+        }
+    }
+
+    private SelectionEntity validateSelection(Long selectionListId, Long itemId) {
+
+        SelectionEntity selectionEntity = selectionRepository.findBySelectionListBySelectionListId_IdAndId(selectionListId, itemId);
+
+        if (null == selectionEntity) {
+
+            throw new ResourceNotFoundExceptionDTO(selectionListId.toString(), "selection.id.invalid");
+        } else {
+            return selectionEntity;
         }
     }
 

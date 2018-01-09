@@ -1,5 +1,6 @@
 package com.navis.insightserver.service;
 
+import com.navis.insightserver.dto.SelectionDTO;
 import com.navis.insightserver.dto.SelectionListDTO;
 import com.navis.insightserver.dto.TagDTO;
 
@@ -18,5 +19,9 @@ public interface ISelectionListService {
     void deleteSelectionList(UUID propertyId, Long selectionListId);
 
     Long upsertSelectionList(UUID propertyID, SelectionListDTO selectionListDTO, String locale);
+
+    SelectionDTO getSelectionListItem(UUID propertyId, Long selectionListId, Long itemId, String locale);
+
+    List<SelectionDTO> getSelectionListItems(UUID propertyId, Long selectionListId, String locale);
 
 }

@@ -158,7 +158,7 @@ public class SettingsController {
     @RequestMapping(value = "properties/{propertyId}/selectionLists/{id}", method = RequestMethod.GET)
     public ResponseEntity<SelectionListDTO> getSelectionList(
             @PathVariable("propertyId") UUID propertyId
-            , @PathVariable("id") Long selectionListId
+            , @PathVariable("selectionListId") Long selectionListId
             , @RequestParam(value = "locale", required = false, defaultValue = "en-US") String locale
             , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
         final WebContext context = new J2EContext(request, response);
@@ -170,7 +170,7 @@ public class SettingsController {
     @RequestMapping(value = "properties/{propertyId}/selectionLists/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Void> deleteSelectionList(
             @PathVariable("propertyId") UUID propertyId
-            , @PathVariable("id") Long selectionListId
+            , @PathVariable("selectionListId") Long selectionListId
             , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
         final WebContext context = new J2EContext(request, response);
         UserProfileDTO user = security.GetUserProfile(context);
@@ -179,5 +179,32 @@ public class SettingsController {
         selectionListService.deleteSelectionList(propertyId, selectionListId);
 
         return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "properties/{propertyId}/selectionLists/{id}/items", method = RequestMethod.GET)
+    public ResponseEntity<List<SelectionDTO>> getSelectionListItems(
+            @PathVariable("propertyId") UUID propertyId
+            , @PathVariable("selectionListId") Long selectionListId
+            , @RequestParam(value = "locale", required = false, defaultValue = "en-US") String locale
+            , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+        final WebContext context = new J2EContext(request, response);
+        UserProfileDTO user = security.GetUserProfile(context);
+        log.info("View a Insight Selection List Items for UserProfileDTO: " + user.getUserId());
+
+        return new ResponseEntity<List<SelectionDTO>>(selectionListService.getSelectionListItems(propertyId, selectionListId, locale), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "properties/{propertyId}/selectionLists/{id}/items/{itemId}", method = RequestMethod.GET)
+    public ResponseEntity<SelectionDTO> getSelectionListItem(
+            @PathVariable("propertyId") UUID propertyId
+            , @PathVariable("selectionListId") Long selectionListId
+            , @PathVariable("itemId") Long itemId
+            , @RequestParam(value = "locale", required = false, defaultValue = "en-US") String locale
+            , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+        final WebContext context = new J2EContext(request, response);
+        UserProfileDTO user = security.GetUserProfile(context);
+        log.info("View a Insight Selection List Item for UserProfileDTO: " + user.getUserId());
+
+        return new ResponseEntity<SelectionDTO>(selectionListService.getSelectionListItem(propertyId, selectionListId, itemId, locale), HttpStatus.OK);
     }
 }

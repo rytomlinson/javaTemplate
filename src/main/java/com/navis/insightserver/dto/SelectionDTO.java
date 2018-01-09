@@ -1,13 +1,9 @@
 package com.navis.insightserver.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.navis.insightserver.entity.SelectionEntity;
-import com.navis.insightserver.entity.SelectionListEntity;
+import com.navis.insightserver.entity.TranslationEntity;
 
-import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by darrell-shofstall on 8/11/17.
@@ -26,6 +22,11 @@ public class SelectionDTO extends BaseDTO {
     public SelectionDTO(SelectionEntity selectionEntity) {
         super();
        buildDto(selectionEntity);
+    }
+
+    public SelectionDTO(SelectionEntity selectionEntity, String locale) {
+        super();
+        buildDto(selectionEntity, locale);
     }
 
     public Long getId() {
@@ -47,5 +48,13 @@ public class SelectionDTO extends BaseDTO {
     private void buildDto(SelectionEntity selectionEntity ) {
         this.id = selectionEntity.getId();
         this.name = selectionEntity.getI18NStringByDisplayTitleId().getTranslationsById().iterator().next().getLocalizedString();
+    }
+
+    private void buildDto(SelectionEntity selectionEntity, String locale) {
+        List<TranslationEntity> displayTitleEntities = (List<TranslationEntity>) selectionEntity.getI18NStringByDisplayTitleId().getTranslationsById();
+        TranslationEntity displayTitleEntity = displayTitleEntities.stream().filter(e -> e.getLocale().equals(locale)).findFirst().orElse(null);
+
+        this.name = displayTitleEntity.getLocalizedString();
+        this.id = selectionEntity.getId();
     }
 }
