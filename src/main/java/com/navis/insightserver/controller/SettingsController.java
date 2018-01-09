@@ -155,7 +155,7 @@ public class SettingsController {
         return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "properties/{propertyId}/selectionLists/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "properties/{propertyId}/selectionLists/{selectionListId}", method = RequestMethod.GET)
     public ResponseEntity<SelectionListDTO> getSelectionList(
             @PathVariable("propertyId") UUID propertyId
             , @PathVariable("selectionListId") Long selectionListId
@@ -167,7 +167,7 @@ public class SettingsController {
 
         return new ResponseEntity<SelectionListDTO>(selectionListService.getSelectionList(propertyId, selectionListId, locale), HttpStatus.OK);
     }
-    @RequestMapping(value = "properties/{propertyId}/selectionLists/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "properties/{propertyId}/selectionLists/{selectionListId}", method = RequestMethod.DELETE)
     public ResponseEntity<Void> deleteSelectionList(
             @PathVariable("propertyId") UUID propertyId
             , @PathVariable("selectionListId") Long selectionListId
@@ -181,7 +181,7 @@ public class SettingsController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "properties/{propertyId}/selectionLists/{id}/items", method = RequestMethod.GET)
+    @RequestMapping(value = "properties/{propertyId}/selectionLists/{selectionListId}/items", method = RequestMethod.GET)
     public ResponseEntity<List<SelectionDTO>> getSelectionListItems(
             @PathVariable("propertyId") UUID propertyId
             , @PathVariable("selectionListId") Long selectionListId
@@ -194,7 +194,7 @@ public class SettingsController {
         return new ResponseEntity<List<SelectionDTO>>(selectionListService.getSelectionListItems(propertyId, selectionListId, locale), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "properties/{propertyId}/selectionLists/{id}/items/{itemId}", method = RequestMethod.GET)
+    @RequestMapping(value = "properties/{propertyId}/selectionLists/{selectionListId}/items/{itemId}", method = RequestMethod.GET)
     public ResponseEntity<SelectionDTO> getSelectionListItem(
             @PathVariable("propertyId") UUID propertyId
             , @PathVariable("selectionListId") Long selectionListId
