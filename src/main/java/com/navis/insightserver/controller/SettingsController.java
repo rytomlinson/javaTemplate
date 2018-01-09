@@ -136,6 +136,25 @@ public class SettingsController {
         return new ResponseEntity<List<SelectionListDTO>>(selectionListService.getSelectionLists(propertyId, locale), HttpStatus.OK);
     }
 
+    @RequestMapping(value = "properties/{propertyId}/selectionLists", method = RequestMethod.POST)
+    public ResponseEntity<Void> upsertSelectionList(
+            @PathVariable("propertyId") UUID propertyId
+            , @Validated @RequestBody SelectionListDTO selectionListDTO
+            , UriComponentsBuilder builder
+            , @RequestParam(value = "locale", required = false, defaultValue = "en-US") String locale
+            , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+        final WebContext context = new J2EContext(request, response);
+        UserProfileDTO user = security.GetUserProfile(context);
+        log.info("Upsert a Insight Selection List for UserProfileDTO: " + user.getUserId());
+
+        Long selectionListId = selectionListService.upsertSelectionList(propertyId, selectionListDTO, locale);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(builder.path("secure/properties/{propertyId}/surveys/{surveyId}").buildAndExpand(propertyId, selectionListId).toUri());
+
+        return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
+    }
+
     @RequestMapping(value = "properties/{propertyId}/selectionLists/{id}", method = RequestMethod.GET)
     public ResponseEntity<SelectionListDTO> getSelectionList(
             @PathVariable("propertyId") UUID propertyId
@@ -147,5 +166,18 @@ public class SettingsController {
         log.info("View a Insight Selection List for UserProfileDTO: " + user.getUserId());
 
         return new ResponseEntity<SelectionListDTO>(selectionListService.getSelectionList(propertyId, selectionListId, locale), HttpStatus.OK);
+    }
+    @RequestMapping(value = "properties/{propertyId}/selectionLists/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Void> deleteSelectionList(
+            @PathVariable("propertyId") UUID propertyId
+            , @PathVariable("id") Long selectionListId
+            , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+        final WebContext context = new J2EContext(request, response);
+        UserProfileDTO user = security.GetUserProfile(context);
+        log.info("View a Insight Selection List for UserProfileDTO: " + user.getUserId());
+
+        selectionListService.deleteSelectionList(propertyId, selectionListId);
+
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 }

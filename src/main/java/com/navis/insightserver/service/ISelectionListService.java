@@ -12,5 +12,11 @@ import java.util.UUID;
 public interface ISelectionListService {
 
     List<SelectionListDTO> getSelectionLists(UUID propertyId, String locale);
+
     SelectionListDTO getSelectionList(UUID propertyId, Long selectionListId, String locale);
+
+    void deleteSelectionList(UUID propertyId, Long selectionListId);
+
+    Long upsertSelectionList(UUID propertyID, SelectionListDTO selectionListDTO, String locale);
+
 }

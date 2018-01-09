@@ -93,7 +93,6 @@ public class SurveysController {
     public ResponseEntity<Void> deleteSurveyById(
             @PathVariable("propertyId") UUID propertyId
             , @PathVariable("surveyId") Long surveyId
-            , @RequestParam(value = "locale", required = false, defaultValue = "en-US") String locale
             , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
         final WebContext context = new J2EContext(request, response);
         UserProfileDTO user = security.GetUserProfile(context);

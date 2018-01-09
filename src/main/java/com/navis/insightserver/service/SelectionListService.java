@@ -57,11 +57,48 @@ public class SelectionListService implements ISelectionListService {
         return buildSelectionListDTO(propertyId, selectionListId, locale);
     }
 
-    private SelectionListDTO buildSelectionListDTO(UUID propertyId, Long selectionListId, String locale) {
+    @Override
+    public void deleteSelectionList(UUID propertyId, Long selectionListId) {
+        log.debug("In deleteSelectionList Service:");
 
         SelectionListEntity selectionListEntity = validateSelectionList(propertyId, selectionListId);
 
+        selectionListEntity.setDeleted(true);
+        selectionListRepository.save(selectionListEntity);
+    }
 
+    @Override
+    public Long upsertSelectionList(UUID propertyID, SelectionListDTO selectionListDTO, String locale) {
+        log.debug("In upsertSelectionList Service:");
+        Long selectionListId = selectionListDTO.getId();
+        Long descriptionId;
+        SelectionListEntity selectionListEntity;
+
+        if(null != selectionListId) {
+            selectionListEntity = validateSelectionList(propertyID, selectionListId);
+
+            List<TranslationEntity> nameEntities = (List<TranslationEntity>) selectionListEntity.getI18NStringByDescriptionId().getTranslationsById();
+            TranslationEntity nameEntity = nameEntities.stream().filter(e -> e.getLocale().equals(locale)).findFirst().orElse(null);
+
+            descriptionId = (!selectionListDTO.getName().equals(nameEntity.getLocalizedString())
+                    ? translationRepository.createTranslation(selectionListDTO.getName())
+                    : selectionListEntity.getI18NStringByDescriptionId().getId());
+            selectionListEntity.setI18NStringByDescriptionId(i18nStringRepository.findOne(descriptionId));
+        } else {
+            descriptionId = translationRepository.createTranslation(selectionListDTO.getName());
+
+            selectionListEntity = convertToEntity(propertyID, selectionListDTO, locale);
+            selectionListEntity.setI18NStringByDescriptionId(i18nStringRepository.findOne(descriptionId));
+        }
+
+        selectionListRepository.save(selectionListEntity);
+
+        return selectionListEntity.getId();
+    }
+
+    private SelectionListDTO buildSelectionListDTO(UUID propertyId, Long selectionListId, String locale) {
+
+        SelectionListEntity selectionListEntity = validateSelectionList(propertyId, selectionListId);
 
         return convertToDto(selectionListEntity, locale);
     }
@@ -98,6 +135,20 @@ public class SelectionListService implements ISelectionListService {
         } else {
             return selectionListEntity;
         }
+    }
+
+    private SelectionListEntity convertToEntity(UUID owner, SelectionListDTO selectionListDTO, String locale) {
+        Date now = new Date();
+        Boolean isNavis = (uuid.equals(owner)) ? true : false;
+        SelectionListEntity selectionListEntity = new SelectionListEntity();
+        selectionListEntity.setOwner(owner);
+        selectionListEntity.setCreatedAt(now);
+        selectionListEntity.setUpdatedAt(now);
+        selectionListEntity.setLibrary(isNavis);
+        selectionListEntity.setDeleted(false);
+        selectionListEntity.setCustom(false);
+
+        return selectionListEntity;
     }
 
 }
