@@ -24,4 +24,6 @@ public interface ISelectionListService {
 
     List<SelectionDTO> getSelectionListItems(UUID propertyId, Long selectionListId, String locale);
 
+    void deleteSelectionListItem(UUID propertyId, Long selectionListId, Long itemId);
+
 }

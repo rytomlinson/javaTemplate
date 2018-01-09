@@ -118,6 +118,14 @@ public class SelectionListService implements ISelectionListService {
         return selectionDTOList;
     }
 
+    @Override
+    public void deleteSelectionListItem(UUID propertyId, Long selectionListId, Long itemId) {
+        log.debug("In deleteSelectionListItem Service:");
+        SelectionEntity selectionEntity = validateSelection(selectionListId, itemId);
+        selectionEntity.setDeleted(true);
+        selectionRepository.save(selectionEntity);
+    }
+
     private SelectionDTO convertToDto(SelectionEntity selectionEntity) {
 
         SelectionDTO selectionDTO = new SelectionDTO(selectionEntity);

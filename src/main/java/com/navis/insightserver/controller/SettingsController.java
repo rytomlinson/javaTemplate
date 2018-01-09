@@ -207,4 +207,18 @@ public class SettingsController {
 
         return new ResponseEntity<SelectionDTO>(selectionListService.getSelectionListItem(propertyId, selectionListId, itemId, locale), HttpStatus.OK);
     }
+
+    @RequestMapping(value = "properties/{propertyId}/selectionLists/{selectionListId}/items/{itemId}", method = RequestMethod.DELETE)
+    public ResponseEntity<Void> deleteSelectionListItem(
+            @PathVariable("propertyId") UUID propertyId
+            , @PathVariable("selectionListId") Long selectionListId
+            , @PathVariable("itemId") Long itemId
+            , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+        final WebContext context = new J2EContext(request, response);
+        UserProfileDTO user = security.GetUserProfile(context);
+        log.info("Delete a Insight Selection List Item for UserProfileDTO: " + user.getUserId());
+
+        selectionListService.deleteSelectionListItem(propertyId, selectionListId, itemId);
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
 }
