@@ -26,4 +26,6 @@ public interface ISelectionListService {
 
     void deleteSelectionListItem(UUID propertyId, Long selectionListId, Long itemId);
 
+    Long upsertSelectionListItem(UUID propertyId, Long selectionListId, SelectionDTO selectionDTO, String locale);
+
 }

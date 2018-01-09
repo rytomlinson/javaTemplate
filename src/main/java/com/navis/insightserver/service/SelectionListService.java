@@ -126,6 +126,47 @@ public class SelectionListService implements ISelectionListService {
         selectionRepository.save(selectionEntity);
     }
 
+    @Override
+    public Long upsertSelectionListItem(UUID propertyID, Long selectionListId, SelectionDTO selectionDTO, String locale) {
+        log.debug("In upsertSelectionListItem Service:");
+        Long selectionId = selectionDTO.getId();
+        Long descriptionId;
+        SelectionEntity selectionEntity;
+
+        if(null != selectionId) {
+            selectionEntity = validateSelection(selectionListId, selectionId);
+
+            List<TranslationEntity> nameEntities = (List<TranslationEntity>) selectionEntity.getI18NStringByDisplayTitleId().getTranslationsById();
+            TranslationEntity nameEntity = nameEntities.stream().filter(e -> e.getLocale().equals(locale)).findFirst().orElse(null);
+
+            descriptionId = (!selectionDTO.getName().equals(nameEntity.getLocalizedString())
+                    ? translationRepository.createTranslation(selectionDTO.getName())
+                    : selectionEntity.getI18NStringByDisplayTitleId().getId());
+            selectionEntity.setI18NStringByDisplayTitleId(i18nStringRepository.findOne(descriptionId));
+        } else {
+            descriptionId = translationRepository.createTranslation(selectionDTO.getName());
+
+            selectionEntity = convertToEntity(selectionListId, selectionDTO, locale);
+            selectionEntity.setI18NStringByDisplayTitleId(i18nStringRepository.findOne(descriptionId));
+        }
+
+        selectionRepository.save(selectionEntity);
+
+        return selectionEntity.getId();
+    }
+
+    private SelectionEntity convertToEntity(Long selectionListId, SelectionDTO selectionDTO, String locale) {
+
+            Date now = new Date();
+            SelectionEntity selectionEntity = new SelectionEntity();
+            selectionEntity.setCreatedAt(now);
+            selectionEntity.setUpdatedAt(now);
+            selectionEntity.setDeleted(false);
+            selectionEntity.setSelectionListBySelectionListId(selectionListRepository.findOne(selectionListId));
+
+            return selectionEntity;
+    }
+
     private SelectionDTO convertToDto(SelectionEntity selectionEntity) {
 
         SelectionDTO selectionDTO = new SelectionDTO(selectionEntity);
@@ -187,7 +228,7 @@ public class SelectionListService implements ISelectionListService {
 
         if (null == selectionEntity) {
 
-            throw new ResourceNotFoundExceptionDTO(selectionListId.toString(), "selection.id.invalid");
+            throw new ResourceNotFoundExceptionDTO(itemId.toString(), "selection.id.invalid");
         } else {
             return selectionEntity;
         }

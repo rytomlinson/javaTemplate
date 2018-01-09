@@ -150,7 +150,7 @@ public class SettingsController {
         Long selectionListId = selectionListService.upsertSelectionList(propertyId, selectionListDTO, locale);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(builder.path("secure/properties/{propertyId}/surveys/{surveyId}").buildAndExpand(propertyId, selectionListId).toUri());
+        headers.setLocation(builder.path("secure/properties/{propertyId}/selectionLists/{selectionListId}").buildAndExpand(propertyId, selectionListId).toUri());
 
         return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
     }
@@ -192,6 +192,26 @@ public class SettingsController {
         log.info("View a Insight Selection List Items for UserProfileDTO: " + user.getUserId());
 
         return new ResponseEntity<List<SelectionDTO>>(selectionListService.getSelectionListItems(propertyId, selectionListId, locale), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "properties/{propertyId}/selectionLists/{selectionListId}/items", method = RequestMethod.POST)
+    public ResponseEntity<Void> upsertSelectionListItem(
+            @PathVariable("propertyId") UUID propertyId
+            , @PathVariable("selectionListId") Long selectionListId
+            , @Validated @RequestBody SelectionDTO selectionDTO
+            , UriComponentsBuilder builder
+            , @RequestParam(value = "locale", required = false, defaultValue = "en-US") String locale
+            , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+        final WebContext context = new J2EContext(request, response);
+        UserProfileDTO user = security.GetUserProfile(context);
+        log.info("Upsert a Insight Selection List Item for UserProfileDTO: " + user.getUserId());
+
+        Long selectionId = selectionListService.upsertSelectionListItem(propertyId, selectionListId, selectionDTO, locale);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(builder.path("secure/properties/{propertyId}/selectionLists/{selectionListId}/items/{itemId}").buildAndExpand(propertyId, selectionListId, selectionId).toUri());
+
+        return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "properties/{propertyId}/selectionLists/{selectionListId}/items/{itemId}", method = RequestMethod.GET)
