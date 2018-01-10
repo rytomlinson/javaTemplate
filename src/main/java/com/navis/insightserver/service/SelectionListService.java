@@ -155,6 +155,27 @@ public class SelectionListService implements ISelectionListService {
         return selectionEntity.getId();
     }
 
+    @Override
+    public Long copySelectionList(UUID propertyId, Long selectionListId, SelectionListDTO selectionListDTO, String locale) {
+        log.debug("In copySelectionList Service:");
+        SelectionListEntity selectionListEntity = validateSelectionList(propertyId, selectionListId);
+        List<SelectionEntity> selectionEntityList = (List<SelectionEntity>) selectionListEntity.getSelectionsById();
+
+        SelectionListDTO copySelectionListDTO = new SelectionListDTO();
+        copySelectionListDTO.setName(selectionListDTO.getName());
+        Long copySelectionListId = upsertSelectionList(propertyId, copySelectionListDTO, locale);
+
+        selectionEntityList.stream().filter(item -> !item.getDeleted()).forEach(item -> copySelectionListSelection(propertyId, copySelectionListId, item, locale));
+
+        return copySelectionListId;
+    }
+
+    private void copySelectionListSelection(UUID propertyId, Long copySelectionListId, SelectionEntity selectionEntity, String locale) {
+
+        SelectionDTO selectionDTO = new SelectionDTO(copySelectionListId, selectionEntity, locale);
+        upsertSelectionListItem(propertyId, copySelectionListId, selectionDTO, locale);
+    }
+
     private SelectionEntity convertToEntity(Long selectionListId, SelectionDTO selectionDTO, String locale) {
 
             Date now = new Date();
@@ -193,7 +214,6 @@ public class SelectionListService implements ISelectionListService {
 
         return listDto;
     }
-
 
 
     private SelectionListDTO convertToDto(SelectionListEntity selectionListEntity, String locale) {

@@ -29,6 +29,14 @@ public class SelectionDTO extends BaseDTO {
         buildDto(selectionEntity, locale);
     }
 
+    public SelectionDTO(Long copySelectionListId, SelectionEntity selectionEntity, String locale) {
+        super();
+        List<TranslationEntity> displayTitleEntities = (List<TranslationEntity>) selectionEntity.getI18NStringByDisplayTitleId().getTranslationsById();
+        TranslationEntity displayTitleEntity = displayTitleEntities.stream().filter(e -> e.getLocale().equals(locale)).findFirst().orElse(null);
+        this.name = displayTitleEntity.getLocalizedString();
+
+    }
+
     public Long getId() {
         return id;
     }

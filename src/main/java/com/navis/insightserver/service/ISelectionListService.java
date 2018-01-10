@@ -28,4 +28,6 @@ public interface ISelectionListService {
 
     Long upsertSelectionListItem(UUID propertyId, Long selectionListId, SelectionDTO selectionDTO, String locale);
 
+    Long copySelectionList(UUID propertyId, Long selectionListId, SelectionListDTO selectionListDTO, String locale);
+
 }

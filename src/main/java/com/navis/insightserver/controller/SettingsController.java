@@ -181,6 +181,26 @@ public class SettingsController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
+    @RequestMapping(value = "properties/{propertyId}/selectionLists/{selectionListId}/copy", method = RequestMethod.POST)
+    public ResponseEntity<Void> copySelectionList(
+            @PathVariable("propertyId") UUID propertyId
+            , @PathVariable("selectionListId") Long selectionListId
+            , @Validated @RequestBody SelectionListDTO selectionListDTO
+            , UriComponentsBuilder builder
+            , @RequestParam(value = "locale", required = false, defaultValue = "en-US") String locale
+            , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+        final WebContext context = new J2EContext(request, response);
+        UserProfileDTO user = security.GetUserProfile(context);
+        log.info("Copy a Insight Selection List for UserProfileDTO: " + user.getUserId());
+
+        Long newSelectionListId = selectionListService.copySelectionList(propertyId, selectionListId, selectionListDTO, locale);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(builder.path("secure/properties/{propertyId}/selectionLists/{selectionListId}").buildAndExpand(propertyId, newSelectionListId).toUri());
+
+        return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
+    }
+
     @RequestMapping(value = "properties/{propertyId}/selectionLists/{selectionListId}/items", method = RequestMethod.GET)
     public ResponseEntity<List<SelectionDTO>> getSelectionListItems(
             @PathVariable("propertyId") UUID propertyId
