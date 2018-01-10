@@ -184,7 +184,7 @@ public class SurveyRequestEntity {
         return result;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @Fetch(value = FetchMode.SELECT)
     @JoinColumn(name = "survey_id", referencedColumnName = "id")
     public SurveyEntity getSurveyBySurveyId() {

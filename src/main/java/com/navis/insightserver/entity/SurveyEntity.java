@@ -1,5 +1,7 @@
 package com.navis.insightserver.entity;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -29,6 +31,7 @@ public class SurveyEntity {
     private Collection<SurveyReportRecipientsEntity> surveyReportRecipientssById;
     private Collection<SurveyReportSchedulerEntity> surveyReportSchedulersById;
     private Collection<SurveyTagEntity> surveyTagsById;
+    private Collection<SurveyRequestEntity> surveyRequestsById;
 
     public void setId(Long id) {
         this.id = id;
@@ -192,7 +195,8 @@ public class SurveyEntity {
         this.i18NStringByDisplayTitleId = i18NStringByDisplayTitleId;
     }
 
-    @OneToMany(mappedBy = "surveyBySurveyId")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "surveyBySurveyId")
+    @Fetch(value = FetchMode.SELECT)
     public Collection<ReportSendsEntity> getReportSendssById() {
         return reportSendssById;
     }
@@ -201,7 +205,8 @@ public class SurveyEntity {
         this.reportSendssById = reportSendssById;
     }
 
-    @OneToMany(mappedBy = "surveyBySurveyId")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "surveyBySurveyId")
+    @Fetch(value = FetchMode.SELECT)
     public Collection<SurveyReportRecipientsEntity> getSurveyReportRecipientssById() {
         return surveyReportRecipientssById;
     }
@@ -210,7 +215,8 @@ public class SurveyEntity {
         this.surveyReportRecipientssById = surveyReportRecipientssById;
     }
 
-    @OneToMany(mappedBy = "surveyBySurveyId")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "surveyBySurveyId")
+    @Fetch(value = FetchMode.SELECT)
     public Collection<SurveyReportSchedulerEntity> getSurveyReportSchedulersById() {
         return surveyReportSchedulersById;
     }
@@ -219,12 +225,23 @@ public class SurveyEntity {
         this.surveyReportSchedulersById = surveyReportSchedulersById;
     }
 
-    @OneToMany(mappedBy = "surveyBySurveyId")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "surveyBySurveyId")
+    @Fetch(value = FetchMode.SELECT)
     public Collection<SurveyTagEntity> getSurveyTagsById() {
         return surveyTagsById;
     }
 
     public void setSurveyTagsById(Collection<SurveyTagEntity> surveyTagsById) {
         this.surveyTagsById = surveyTagsById;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "surveyBySurveyId")
+    @Fetch(value = FetchMode.SELECT)
+    public Collection<SurveyRequestEntity> getSurveyRequestsById() {
+        return surveyRequestsById;
+    }
+
+    public void setSurveyRequestsById(Collection<SurveyRequestEntity> surveyRequestsById) {
+        this.surveyRequestsById = surveyRequestsById;
     }
 }

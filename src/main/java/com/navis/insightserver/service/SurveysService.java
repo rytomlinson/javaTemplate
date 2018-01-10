@@ -8,7 +8,7 @@ import com.navis.insightserver.dto.SurveyDTO;
 import com.navis.insightserver.entity.SurveyEntity;
 import com.navis.insightserver.entity.SurveyRequestEntity;
 import com.navis.insightserver.entity.SurveyTagEntity;
-import org.javatuples.Pair;
+import org.javatuples.Triplet;
 import org.javatuples.Unit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -232,7 +232,10 @@ public class SurveysService implements ISurveysService {
 
     private SurveyDTO convertToDto(SurveyEntity surveyEntity, String locale) {
         Long questionCount = surveyRepository.getCurrentSurveyQuestionCount(surveyEntity.getId());
-        SurveyDTO surveyDTO = new SurveyDTO(surveyEntity, questionCount, locale);
+
+        List<Object[]> surveyCompletionCounts = surveyRepository.getSurveyCompletionCounts(surveyEntity.getId());
+
+        SurveyDTO surveyDTO = new SurveyDTO(surveyEntity, questionCount, surveyCompletionCounts, locale);
         return surveyDTO;
     }
 

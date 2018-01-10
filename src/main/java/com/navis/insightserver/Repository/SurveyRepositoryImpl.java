@@ -1,11 +1,12 @@
 package com.navis.insightserver.Repository;
 
 import com.navis.insightserver.entity.SurveyEntity;
+import org.javatuples.Triplet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
-import java.math.BigInteger;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -49,5 +50,17 @@ public class SurveyRepositoryImpl implements SurveyRepositoryCustom {
                 .setParameter("id", id);
 
         return (Long) query.getSingleResult();
+    }
+
+    @Override
+    public List<Object[]> getSurveyCompletionCounts(Long surveyId) {
+
+        Query query = entityManager.createNativeQuery("select s.id, sr.completion_status, count(*) from survey s " +
+                " join survey_request sr on s.id = sr.survey_id where s.id = :surveyId " +
+                " group by s.id, sr.completion_status")
+                .setParameter("surveyId", surveyId);
+
+        return (List<Object[]>) query.getResultList();
+
     }
 }

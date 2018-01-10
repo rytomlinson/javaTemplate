@@ -8,9 +8,11 @@ import com.navis.insightserver.entity.SurveyEntity;
 import com.navis.insightserver.entity.SurveyTagEntity;
 import com.navis.insightserver.entity.TranslationEntity;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.javatuples.Triplet;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,14 +31,13 @@ public class SurveyDTO extends BaseDTO {
     private Boolean enabled;
     private Date launchDate;
     private Long questionCount;
+    private Long inProgressCount;
+    private Long completedCount;
     @NotNull(message = "survey.type.notnull")
     @Valid
     private TagDTO surveyType;
 
-    public SurveyDTO() {
-    }
-
-    public SurveyDTO(SurveyEntity surveyEntity, Long questionCount, String locale) {
+    public SurveyDTO(SurveyEntity surveyEntity, Long questionCount, List<Object[]> completionCounts, String locale) {
         super();
         List<TranslationEntity> displayTitleEntities;
         TranslationEntity displayTitleEntity;
@@ -62,6 +63,24 @@ public class SurveyDTO extends BaseDTO {
         this.surveyType = (null != surveyEntity.getSurveyTagsById() && !surveyEntity.getSurveyTagsById().isEmpty())
         ? convertToDto(surveyEntity.getSurveyTagsById().iterator().next()) : null;
 
+
+        extractCounts(completionCounts);
+
+    }
+
+    //TODO: refactor code
+    private void extractCounts(List<Object[]> completionCounts) {
+
+        BigInteger completedCountBigInt = null;
+        BigInteger inProgressCountBigInt = null;
+
+        for (Object[] completionCountNew : completionCounts) {
+            completedCountBigInt = ("completed".equals(completionCountNew[1])) ? (BigInteger) completionCountNew[2] : completedCountBigInt;
+            inProgressCountBigInt = ("in-progress".equals(completionCountNew[1])) ? (BigInteger) completionCountNew[2] : completedCountBigInt;
+        }
+
+        this.completedCount = (null != completedCountBigInt) ? completedCountBigInt.longValue() : null;
+        this.inProgressCount = (null != inProgressCountBigInt) ? inProgressCountBigInt.longValue() : null;
     }
 
     private TagDTO convertToDto(SurveyTagEntity surveyTagEntity) {
@@ -126,5 +145,21 @@ public class SurveyDTO extends BaseDTO {
 
     public void setQuestionCount(Long questionCount) {
         this.questionCount = questionCount;
+    }
+
+    public Long getInProgressCount() {
+        return inProgressCount;
+    }
+
+    public void setInProgressCount(Long inProgressCount) {
+        this.inProgressCount = inProgressCount;
+    }
+
+    public Long getCompletedCount() {
+        return completedCount;
+    }
+
+    public void setCompletedCount(Long completedCount) {
+        this.completedCount = completedCount;
     }
 }
