@@ -37,6 +37,9 @@ public class SurveyDTO extends BaseDTO {
     @Valid
     private TagDTO surveyType;
 
+    public SurveyDTO() {
+    }
+
     public SurveyDTO(SurveyEntity surveyEntity, Long questionCount, List<Object[]> completionCounts, String locale) {
         super();
         List<TranslationEntity> displayTitleEntities;

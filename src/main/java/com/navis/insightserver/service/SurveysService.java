@@ -8,6 +8,7 @@ import com.navis.insightserver.dto.SurveyDTO;
 import com.navis.insightserver.entity.SurveyEntity;
 import com.navis.insightserver.entity.SurveyRequestEntity;
 import com.navis.insightserver.entity.SurveyTagEntity;
+import com.navis.insightserver.entity.TagEntity;
 import org.javatuples.Triplet;
 import org.javatuples.Unit;
 import org.slf4j.Logger;
@@ -70,10 +71,10 @@ public class SurveysService implements ISurveysService {
     @Override
     public ReachSurveysDTO getReachSurveys(String accountId, String locale, Boolean includeDeleted) {
         log.debug("In getReachSurveys Service:");
-        URI uri = URI.create(UriComponentsBuilder.fromUriString(propertiesForAcctnbrEndpoint).queryParam("acctnbr",accountId).toUriString());
+        URI uri = URI.create(UriComponentsBuilder.fromUriString(propertiesForAcctnbrEndpoint).queryParam("acctnbr", accountId).toUriString());
 
         RestTemplate restTemplate = new RestTemplate();
-        Object[]  accountObject = restTemplate.getForObject(uri.toString(), Object[].class);
+        Object[] accountObject = restTemplate.getForObject(uri.toString(), Object[].class);
         LinkedHashMap entry = (LinkedHashMap) Arrays.asList(accountObject).get(0);
         String propertyOwner = (String) entry.get("property_uuid");
         UUID owner = UUID.fromString(propertyOwner);
@@ -126,7 +127,7 @@ public class SurveysService implements ISurveysService {
         //TODO: refactor code
         SurveyTagEntity surveyTagEntity = new SurveyTagEntity();
         surveyTagEntity.setSurveyBySurveyId(surveyEntity);
-        surveyTagEntity.setTagByTagId(tagRepository.findOne(surveyTypeId));
+        surveyTagEntity.setTagByTagId(validateSurveyType(surveyTypeId));
         surveyTagEntity.setCreatedAt(now);
         surveyTagEntity.setUpdatedAt(now);
 
@@ -151,10 +152,10 @@ public class SurveysService implements ISurveysService {
     @Override
     public String generateReachSurveyLink(Long surveyId, String email, Long stayId, String accountId, String surveyMode) {
         log.debug("In generateReachSurveyLink Service:");
-        URI uri = URI.create(UriComponentsBuilder.fromUriString(propertiesForAcctnbrEndpoint).queryParam("acctnbr",accountId).toUriString());
+        URI uri = URI.create(UriComponentsBuilder.fromUriString(propertiesForAcctnbrEndpoint).queryParam("acctnbr", accountId).toUriString());
 
         RestTemplate restTemplate = new RestTemplate();
-        Object[]  accountObject = restTemplate.getForObject(uri.toString(), Object[].class);
+        Object[] accountObject = restTemplate.getForObject(uri.toString(), Object[].class);
         LinkedHashMap entry = (LinkedHashMap) Arrays.asList(accountObject).get(0);
         String propertyOwner = (String) entry.get("property_uuid");
         UUID owner = UUID.fromString(propertyOwner);
@@ -167,7 +168,7 @@ public class SurveysService implements ISurveysService {
         surveyRequestEntity = surveyRequestRepository
                 .findBySurveyBySurveyId_IdAndCrmStayIdAndAccountIdAndEmail(surveyId, stayId, accountId, email);
 
-        surveyRequestEntity  = (null != surveyRequestEntity) ? surveyRequestEntity : createSurveyRequest(surveyId, stayId, accountId, email);
+        surveyRequestEntity = (null != surveyRequestEntity) ? surveyRequestEntity : createSurveyRequest(surveyId, stayId, accountId, email);
 
         String responseKey = securityService.generateSurveyResponseKey(surveyId, surveyRequestEntity.getId(), email, surveyMode);
         StringBuilder builder = new StringBuilder();
@@ -260,5 +261,14 @@ public class SurveysService implements ISurveysService {
 
             throw new ResourceNotFoundExceptionDTO("", "survey.question.count.invalid");
         }
+    }
+
+    private TagEntity validateSurveyType(Long id) {
+
+        TagEntity tagEntity = tagRepository.findOne(id);
+        if (null == tagEntity) {
+            throw new ResourceNotFoundExceptionDTO(id.toString(), "survey.type.id.invalid");
+        }
+        return tagEntity;
     }
 }
