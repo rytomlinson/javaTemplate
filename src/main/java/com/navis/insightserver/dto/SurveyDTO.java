@@ -55,7 +55,7 @@ public class SurveyDTO extends BaseDTO {
         this.enabled = surveyEntity.getEnabled();
         this.setLaunchDate(surveyEntity.getLaunchDate());
         this.surveyType = (null != surveyEntity.getSurveyTagsById() && !surveyEntity.getSurveyTagsById().isEmpty())
-        ? convertToDto(surveyEntity.getSurveyTagsById().iterator().next()) : null;
+        ? convertToDto(surveyEntity.getSurveyTagsById().iterator().next(), locale) : null;
 
         extractCounts(completionCounts);
     }
@@ -75,8 +75,8 @@ public class SurveyDTO extends BaseDTO {
         this.inProgressCount = (null != inProgressCountBigInt) ? inProgressCountBigInt.longValue() : null;
     }
 
-    private TagDTO convertToDto(SurveyTagEntity surveyTagEntity) {
-        TagDTO tagDTO = new TagDTO(surveyTagEntity);
+    private TagDTO convertToDto(SurveyTagEntity surveyTagEntity, String locale) {
+        TagDTO tagDTO = new TagDTO(surveyTagEntity, locale);
 
         return tagDTO;
     }

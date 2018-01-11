@@ -61,12 +61,13 @@ public class TagDTO extends BaseDTO {
         this.tags = tagDTOList;
     }
 
-    public TagDTO(SurveyTagEntity surveyTagEntity) {
+    public TagDTO(SurveyTagEntity surveyTagEntity, String locale) {
         super();
         TagEntity tagEntity = surveyTagEntity.getTagByTagId();
+        List<TranslationEntity> translationEntities = (List<TranslationEntity>) tagEntity.getI18NStringByNameId().getTranslationsById();
 
         this.id = tagEntity.getId();
-        this.name = tagEntity.getI18NStringByNameId().getTranslationsById().iterator().next().getLocalizedString();
+        this.name = super.returnTranslationForLocale(translationEntities, locale);
         this.minimumValue = (null != tagEntity.getMinimumValue()) ? tagEntity.getMinimumValue() : null;
         this.maximumValue = (null != tagEntity.getMaximumValue()) ? tagEntity.getMaximumValue() : null;
     }
