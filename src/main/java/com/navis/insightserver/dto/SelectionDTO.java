@@ -19,11 +19,6 @@ public class SelectionDTO extends BaseDTO {
     public SelectionDTO() {
     }
 
-    public SelectionDTO(SelectionEntity selectionEntity) {
-        super();
-       buildDto(selectionEntity);
-    }
-
     public SelectionDTO(SelectionEntity selectionEntity, String locale) {
         super();
         buildDto(selectionEntity, locale);
@@ -32,8 +27,7 @@ public class SelectionDTO extends BaseDTO {
     public SelectionDTO(Long copySelectionListId, SelectionEntity selectionEntity, String locale) {
         super();
         List<TranslationEntity> displayTitleEntities = (List<TranslationEntity>) selectionEntity.getI18NStringByDisplayTitleId().getTranslationsById();
-        TranslationEntity displayTitleEntity = displayTitleEntities.stream().filter(e -> e.getLocale().equals(locale)).findFirst().orElse(null);
-        this.name = displayTitleEntity.getLocalizedString();
+        this.name = super.returnTranslationForLocale(displayTitleEntities, locale);
 
     }
 
@@ -53,16 +47,10 @@ public class SelectionDTO extends BaseDTO {
         this.name = name;
     }
 
-    private void buildDto(SelectionEntity selectionEntity ) {
-        this.id = selectionEntity.getId();
-        this.name = selectionEntity.getI18NStringByDisplayTitleId().getTranslationsById().iterator().next().getLocalizedString();
-    }
-
     private void buildDto(SelectionEntity selectionEntity, String locale) {
         List<TranslationEntity> displayTitleEntities = (List<TranslationEntity>) selectionEntity.getI18NStringByDisplayTitleId().getTranslationsById();
-        TranslationEntity displayTitleEntity = displayTitleEntities.stream().filter(e -> e.getLocale().equals(locale)).findFirst().orElse(null);
 
-        this.name = displayTitleEntity.getLocalizedString();
+        this.name = super.returnTranslationForLocale(displayTitleEntities, locale);
         this.id = selectionEntity.getId();
     }
 }

@@ -101,7 +101,7 @@ public class SelectionListService implements ISelectionListService {
     public SelectionDTO getSelectionListItem(UUID propertyId, Long selectionListId, Long itemId, String locale) {
         log.debug("In getSelectionListItem Service:");
         SelectionEntity selectionEntity = validateSelection(selectionListId, itemId);
-        return convertToDto(selectionEntity);
+        return convertToDto(selectionEntity, locale);
     }
 
     @Override
@@ -188,9 +188,9 @@ public class SelectionListService implements ISelectionListService {
             return selectionEntity;
     }
 
-    private SelectionDTO convertToDto(SelectionEntity selectionEntity) {
+    private SelectionDTO convertToDto(SelectionEntity selectionEntity, String locale) {
 
-        SelectionDTO selectionDTO = new SelectionDTO(selectionEntity);
+        SelectionDTO selectionDTO = new SelectionDTO(selectionEntity, locale);
 
         return selectionDTO;
     }
@@ -221,13 +221,6 @@ public class SelectionListService implements ISelectionListService {
 
         SelectionListDTO selectionListDTO = new SelectionListDTO(selectionListEntity, locale);
         return selectionListDTO;
-    }
-
-    private SelectionDTO convertToDto(SelectionEntity selectionEntity, String locale) {
-
-
-        SelectionDTO selectionDTO = new SelectionDTO(selectionEntity, locale);
-        return selectionDTO;
     }
 
     private SelectionListEntity validateSelectionList(UUID owner , Long selectionListId) {
