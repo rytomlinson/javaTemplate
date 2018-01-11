@@ -22,13 +22,10 @@ public class ReachSurveyDTO extends BaseDTO {
 
     public ReachSurveyDTO(SurveyEntity surveyEntity, String locale) {
         super();
-        List<TranslationEntity> displayTitleEntities;
-        TranslationEntity displayTitleEntity;
 
         this.id = surveyEntity.getId();
-        displayTitleEntities = new ArrayList(surveyEntity.getI18NStringByDisplayTitleId().getTranslationsById());
-        displayTitleEntity = displayTitleEntities.stream().filter(e -> e.getLocale().equals(locale)).findFirst().orElse(null);
-        this.displayTitle = (null != displayTitleEntity) ? displayTitleEntity.getLocalizedString() : null;
+        List<TranslationEntity> displayTitleEntities = (List<TranslationEntity>) surveyEntity.getI18NStringByDisplayTitleId().getTranslationsById();
+        this.displayTitle = super.returnTranslationForLocale(displayTitleEntities, locale);
 
     }
 

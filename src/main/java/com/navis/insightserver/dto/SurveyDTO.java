@@ -42,33 +42,22 @@ public class SurveyDTO extends BaseDTO {
 
     public SurveyDTO(SurveyEntity surveyEntity, Long questionCount, List<Object[]> completionCounts, String locale) {
         super();
-        List<TranslationEntity> displayTitleEntities;
-        TranslationEntity displayTitleEntity;
-        List<TranslationEntity> descriptionEntities;
-        TranslationEntity descriptionEntity;
-
         this.id = surveyEntity.getId();
         this.questionCount = questionCount;
-        displayTitleEntities = new ArrayList(surveyEntity.getI18NStringByDisplayTitleId().getTranslationsById());
-        displayTitleEntity = displayTitleEntities.stream().filter(e -> e.getLocale().equals(locale)).findFirst().orElse(null);
-        descriptionEntities =
+        List<TranslationEntity> displayTitleEntities = (List<TranslationEntity>) surveyEntity.getI18NStringByDisplayTitleId().getTranslationsById();
+        List<TranslationEntity> descriptionEntities =
                 (null != surveyEntity.getI18NStringByDescriptionId())
-                        ? new ArrayList(surveyEntity.getI18NStringByDescriptionId().getTranslationsById())
-                        : null;
-        descriptionEntity = (null != descriptionEntities)
-                ? descriptionEntities.stream().filter(e -> e.getLocale().equals(locale)).findFirst().orElse(null)
+                        ? (List<TranslationEntity>) surveyEntity.getI18NStringByDescriptionId().getTranslationsById()
                 : null;
 
-        this.displayTitle = (null != displayTitleEntity) ? displayTitleEntity.getLocalizedString() : null;
-        this.description = (null != descriptionEntity) ? descriptionEntity.getLocalizedString() : null;
+        this.displayTitle = super.returnTranslationForLocale(displayTitleEntities, locale);
+        this.description = super.returnTranslationForLocale(descriptionEntities, locale);
         this.enabled = surveyEntity.getEnabled();
         this.setLaunchDate(surveyEntity.getLaunchDate());
         this.surveyType = (null != surveyEntity.getSurveyTagsById() && !surveyEntity.getSurveyTagsById().isEmpty())
         ? convertToDto(surveyEntity.getSurveyTagsById().iterator().next()) : null;
 
-
         extractCounts(completionCounts);
-
     }
 
     //TODO: refactor code

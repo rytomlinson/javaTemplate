@@ -1,5 +1,8 @@
 package com.navis.insightserver.dto;
 
+import com.navis.insightserver.entity.TranslationEntity;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,5 +19,14 @@ public class BaseDTO  implements java.io.Serializable {
 
     public void setMessages(List<String> messages) {
         this.messages = messages;
+    }
+
+    public String returnTranslationForLocale(List<TranslationEntity> translationEntities, String locale) {
+        String value;
+
+        TranslationEntity translationEntity = translationEntities.stream().filter(e -> e.getLocale().equals(locale)).findFirst().orElse(null);
+        value = (null != translationEntity) ? translationEntity.getLocalizedString() : null;
+
+        return value;
     }
 }
