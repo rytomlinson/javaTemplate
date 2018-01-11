@@ -3,6 +3,7 @@ package com.navis.insightserver.dto;
 import com.navis.insightserver.entity.SurveyTagEntity;
 import com.navis.insightserver.entity.TagEntity;
 import com.navis.insightserver.entity.TagTagEntity;
+import com.navis.insightserver.entity.TranslationEntity;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -29,21 +30,22 @@ public class TagDTO extends BaseDTO {
     public TagDTO() {
     }
 
-    public TagDTO(TagEntity tagEntity) {
+    public TagDTO(TagEntity tagEntity, String locale) {
         super();
-       buildDto(tagEntity, null);
+       buildDto(tagEntity, null, locale);
     }
 
-    public TagDTO(TagEntity tagEntity, Long parentTagId) {
+    public TagDTO(TagEntity tagEntity, Long parentTagId, String locale) {
         super();
-        buildDto(tagEntity, parentTagId);
+        buildDto(tagEntity, parentTagId, locale);
     }
 
-    public TagDTO(TagTagEntity tagTagEntity) {
+    public TagDTO(TagTagEntity tagTagEntity, String locale) {
         super();
         TagEntity tagEntity = tagTagEntity.getTagByTagId();
+        List<TranslationEntity> translationEntities = (List<TranslationEntity>) tagEntity.getI18NStringByNameId().getTranslationsById();
         this.id = tagEntity.getId();
-        this.name = tagEntity.getI18NStringByNameId().getTranslationsById().iterator().next().getLocalizedString();
+        this.name = super.returnTranslationForLocale(translationEntities, locale);
         this.minimumValue = (null != tagEntity.getMinimumValue()) ? tagEntity.getMinimumValue() : null;
         this.maximumValue = (null != tagEntity.getMaximumValue()) ? tagEntity.getMaximumValue() : null;
 
@@ -53,7 +55,7 @@ public class TagDTO extends BaseDTO {
                 : null;
 
         List<TagDTO> tagDTOList = (null != tagEntityList)
-                ? tagEntityList.stream().filter(item -> !item.getTagByTagId().getDeleted()).map(item -> convertToDto(item)).collect(Collectors.toList())
+                ? tagEntityList.stream().filter(item -> !item.getTagByTagId().getDeleted()).map(item -> convertToDto(item, locale)).collect(Collectors.toList())
                 : null;
 
         this.tags = tagDTOList;
@@ -117,17 +119,19 @@ public class TagDTO extends BaseDTO {
         this.parentTagId = parentTagId;
     }
 
-    private TagDTO convertToDto(TagTagEntity tagTagEntity) {
+    private TagDTO convertToDto(TagTagEntity tagTagEntity, String locale) {
        TagEntity tagEntity = tagTagEntity.getTagByTagId();
        Long parentTagId = tagTagEntity.getTagByParentTagId().getId();
-        TagDTO tagDTO = new TagDTO(tagEntity, parentTagId);
+        TagDTO tagDTO = new TagDTO(tagEntity, parentTagId, locale);
 
         return tagDTO;
     }
 
-    private void buildDto(TagEntity tagEntity, Long parentTagId ) {
+    private void buildDto(TagEntity tagEntity, Long parentTagId, String locale ) {
+
+        List<TranslationEntity> translationEntities = (List<TranslationEntity>) tagEntity.getI18NStringByNameId().getTranslationsById();
         this.id = tagEntity.getId();
-        this.name = tagEntity.getI18NStringByNameId().getTranslationsById().iterator().next().getLocalizedString();
+        this.name = super.returnTranslationForLocale(translationEntities, locale);
         this.minimumValue = (null != tagEntity.getMinimumValue()) ? tagEntity.getMinimumValue() : null;
         this.maximumValue = (null != tagEntity.getMaximumValue()) ? tagEntity.getMaximumValue() : null;
         this.parentTagId = parentTagId;
@@ -138,7 +142,7 @@ public class TagDTO extends BaseDTO {
                 : null;
 
         List<TagDTO> tagDTOList = (null != tagEntityList)
-                ? tagEntityList.stream().filter(item -> !item.getTagByTagId().getDeleted()).map(item -> convertToDto(item)).collect(Collectors.toList())
+                ? tagEntityList.stream().filter(item -> !item.getTagByTagId().getDeleted()).map(item -> convertToDto(item, locale)).collect(Collectors.toList())
                 : null;
 
         this.tags = tagDTOList;

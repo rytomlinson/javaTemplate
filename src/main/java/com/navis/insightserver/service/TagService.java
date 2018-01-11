@@ -47,22 +47,22 @@ public class TagService implements ITagService {
     private I18nStringRepository i18nStringRepository;
 
     @Override
-    public List<TagDTO> getTags(UUID propertyId) {
+    public List<TagDTO> getTags(UUID propertyId, String locale) {
         log.debug("In getTags Service:");
-        return buildTagsDTO(propertyId);
+        return buildTagsDTO(propertyId, locale);
     }
 
     @Override
-    public List<TagDTO> getDepartmentTags(UUID propertyId) {
+    public List<TagDTO> getDepartmentTags(UUID propertyId, String locale) {
         log.debug("In getDepartmentTags Service:");
         TagEntity tagEntity = tagRepository.getDepartmentTag(uuid);
-        return buildDepartmentTagsDTO(propertyId, tagEntity.getId());
+        return buildDepartmentTagsDTO(propertyId, tagEntity.getId(), locale);
     }
 
     @Override
-    public List<TagDTO> getSurveyTypeTags() {
+    public List<TagDTO> getSurveyTypeTags(String locale) {
         log.debug("In getSurveyTypeTags Service:");
-        return buildSurveyTypeTagsDTO(uuid);
+        return buildSurveyTypeTagsDTO(uuid, locale);
     }
 
     @Override
@@ -127,10 +127,10 @@ public class TagService implements ITagService {
     }
 
     @Override
-    public TagDTO getTag(UUID owner, Long id) {
+    public TagDTO getTag(UUID owner, Long id, String locale) {
         TagEntity tagEntity = validateTag(id);
 
-        return convertToDto(tagEntity);
+        return convertToDto(tagEntity, locale);
     }
 
     @Override
@@ -140,36 +140,36 @@ public class TagService implements ITagService {
         tagRepository.save(tagEntity);
     }
 
-    private List<TagDTO> buildTagsDTO(UUID propertyId) {
+    private List<TagDTO> buildTagsDTO(UUID propertyId, String locale) {
         List<TagEntity> list = tagRepository.findByOwner(propertyId);
 
-        List<TagDTO> listDto = list.stream().map(item -> convertToDto(item)).collect(Collectors.toList());
+        List<TagDTO> listDto = list.stream().map(item -> convertToDto(item, locale)).collect(Collectors.toList());
 
         return listDto;
     }
 
-    private List<TagDTO> buildDepartmentTagsDTO(UUID propertyId, Long departmentTagId) {
+    private List<TagDTO> buildDepartmentTagsDTO(UUID propertyId, Long departmentTagId, String locale) {
         List<TagTagEntity> list = tagRepository.getDepartmentTagsByOwner(propertyId, departmentTagId);
 
-        List<TagDTO> listDto = list.stream().filter(item -> !item.getTagByTagId().getDeleted()).map(item -> convertToDto(item)).collect(Collectors.toList());
+        List<TagDTO> listDto = list.stream().filter(item -> !item.getTagByTagId().getDeleted()).map(item -> convertToDto(item, locale)).collect(Collectors.toList());
 
         return listDto;
     }
 
-    private List<TagDTO> buildSurveyTypeTagsDTO(UUID owner) {
+    private List<TagDTO> buildSurveyTypeTagsDTO(UUID owner, String locale) {
         List<TagEntity> list = tagRepository.findByOwnerAndSurveyTypeTrue(owner);
 
-        List<TagDTO> listDto = list.stream().map(item -> convertToDto(item)).collect(Collectors.toList());
+        List<TagDTO> listDto = list.stream().map(item -> convertToDto(item, locale)).collect(Collectors.toList());
 
         return listDto;
     }
 
-    private TagDTO convertToDto(TagEntity tagEntity) {
-        TagDTO tagDTO = new TagDTO(tagEntity);
+    private TagDTO convertToDto(TagEntity tagEntity, String locale) {
+        TagDTO tagDTO = new TagDTO(tagEntity, locale);
         return tagDTO;
     }
-    private TagDTO convertToDto(TagTagEntity tagTagEntity) {
-        TagDTO tagDTO = new TagDTO(tagTagEntity);
+    private TagDTO convertToDto(TagTagEntity tagTagEntity, String locale) {
+        TagDTO tagDTO = new TagDTO(tagTagEntity, locale);
         return tagDTO;
     }
 
