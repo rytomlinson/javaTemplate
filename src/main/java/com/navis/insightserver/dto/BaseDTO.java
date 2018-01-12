@@ -22,10 +22,12 @@ public class BaseDTO  implements java.io.Serializable {
     }
 
     public String returnTranslationForLocale(List<TranslationEntity> translationEntities, String locale) {
-        String value;
+        String value = null;
 
+        if(null != translationEntities && !translationEntities.isEmpty()) {
         TranslationEntity translationEntity = translationEntities.stream().filter(e -> e.getLocale().equals(locale)).findFirst().orElse(null);
         value = (null != translationEntity) ? translationEntity.getLocalizedString() : null;
+        }
 
         return value;
     }
