@@ -30,14 +30,11 @@ public class SurveyAlertDTO extends BaseDTO {
 
     public SurveyAlertDTO(UUID owner, SurveyEntity surveyEntity, ReportTypeEntity reportTypeEntity, String locale) {
         super();
-        List<TranslationEntity> displayTitleEntities;
-        TranslationEntity displayTitleEntity;
         List<SurveyReportRecipientsEntity> emailEntities;
         List<SurveyReportRecipientsEntity> reportTypeEmailEntities;
 
         this.surveyId = surveyEntity.getId();
-        displayTitleEntities = new ArrayList(surveyEntity.getI18NStringByDisplayTitleId().getTranslationsById());
-        displayTitleEntity = displayTitleEntities.stream().filter(e -> e.getLocale().equals(locale)).findFirst().orElse(null);
+        List<TranslationEntity> displayTitleEntities = (List<TranslationEntity>) surveyEntity.getI18NStringByDisplayTitleId().getTranslationsById();
 
         this.reportTypeId = reportTypeEntity.getId();
         this.reportTypeName = reportTypeEntity.getDescription();
@@ -47,7 +44,7 @@ public class SurveyAlertDTO extends BaseDTO {
 
         reportTypeEmailEntities = emailEntities.stream().filter(e -> e.getReportTypeByReportTypeId().getId() == this.reportTypeId).collect(Collectors.toList());
 
-        this.surveyName = (null != displayTitleEntity) ? displayTitleEntity.getLocalizedString() : null;
+        this.surveyName = super.returnTranslationForLocale(displayTitleEntities, locale);
 
         List<EmailDTO> listDto = reportTypeEmailEntities.stream().map(item -> convertToDto(item)).collect(Collectors.toList());
         this.recipients = listDto;

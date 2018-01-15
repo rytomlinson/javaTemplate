@@ -5,30 +5,24 @@ import com.navis.insightserver.dto.*;
 import com.navis.insightserver.service.ISelectionListService;
 import com.navis.insightserver.service.ITagService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.net.URI;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Created by darrell-shofstall on 9/14/17.
@@ -51,13 +45,14 @@ public class SettingsController {
 
     @RequestMapping(value = "properties/{propertyId}/tags", method = RequestMethod.GET)
     public ResponseEntity<List<TagDTO>> getTags(
-            @PathVariable("propertyId") UUID propertyId,
-            HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+            @PathVariable("propertyId") UUID propertyId
+            , @RequestParam(value = "locale", required = false, defaultValue = "en-US") String locale
+            , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
         final WebContext context = new J2EContext(request, response);
         UserProfileDTO user = security.GetUserProfile(context);
         log.info("View a list of Insight Tags for UserProfileDTO: " + user.getUserId());
 
-        return new ResponseEntity<List<TagDTO>>(tagService.getTags(propertyId), HttpStatus.OK);
+        return new ResponseEntity<List<TagDTO>>(tagService.getTags(propertyId, locale), HttpStatus.OK);
     }
 
     @RequestMapping(value = "properties/{propertyId}/tags", method = RequestMethod.POST)
@@ -82,12 +77,13 @@ public class SettingsController {
     public ResponseEntity<TagDTO> getTag(
             @PathVariable("propertyId") UUID propertyId,
             @PathVariable("id") Long id,
+            @RequestParam(value = "locale", required = false, defaultValue = "en-US") String locale,
             HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
         final WebContext context = new J2EContext(request, response);
         UserProfileDTO user = security.GetUserProfile(context);
         log.info("View a Insight Tag for UserProfileDTO: " + user.getUserId());
 
-        return new ResponseEntity<TagDTO>(tagService.getTag(propertyId, id), HttpStatus.OK);
+        return new ResponseEntity<TagDTO>(tagService.getTag(propertyId, id, locale), HttpStatus.OK);
     }
 
     @RequestMapping(value = "properties/{propertyId}/tags/{id}", method = RequestMethod.DELETE)
@@ -106,22 +102,24 @@ public class SettingsController {
     @RequestMapping(value = "properties/{propertyId}/departmentTags", method = RequestMethod.GET)
     public ResponseEntity<List<TagDTO>> getDepartmentTags(
             @PathVariable("propertyId") UUID propertyId,
+            @RequestParam(value = "locale", required = false, defaultValue = "en-US") String locale,
             HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
         final WebContext context = new J2EContext(request, response);
         UserProfileDTO user = security.GetUserProfile(context);
         log.info("View a list of Insight Department Tags for UserProfileDTO: " + user.getUserId());
 
-        return new ResponseEntity<List<TagDTO>>(tagService.getDepartmentTags(propertyId), HttpStatus.OK);
+        return new ResponseEntity<List<TagDTO>>(tagService.getDepartmentTags(propertyId, locale), HttpStatus.OK);
     }
 
     @RequestMapping(value = "surveyTypeTags", method = RequestMethod.GET)
     public ResponseEntity<List<TagDTO>> getSurveyTypeTags(
+            @RequestParam(value = "locale", required = false, defaultValue = "en-US") String locale,
             HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
         final WebContext context = new J2EContext(request, response);
         UserProfileDTO user = security.GetUserProfile(context);
         log.info("View a list of Insight Survey Type Tags for UserProfileDTO: " + user.getUserId());
 
-        return new ResponseEntity<List<TagDTO>>(tagService.getSurveyTypeTags(), HttpStatus.OK);
+        return new ResponseEntity<List<TagDTO>>(tagService.getSurveyTypeTags(locale), HttpStatus.OK);
     }
 
     @RequestMapping(value = "properties/{propertyId}/selectionLists", method = RequestMethod.GET)
