@@ -83,7 +83,7 @@ public class SurveysControllerTest extends Mockito {
     }
 
     @Test
-    public void getSurveys_ReturnAll() {
+    public void testGetSurveys_ReturnAll() {
         ResponseEntity<List<SurveyDTO>> found = surveysController.getSurveys(null, null, null, null, null, null);
         Assert.assertNotNull("List shouldn't be null", found);
         Assert.assertEquals("Status should be 200", HttpStatus.OK, found.getStatusCode());
@@ -91,7 +91,7 @@ public class SurveysControllerTest extends Mockito {
     }
 
     @Test
-    public void getSurveysById() {
+    public void testGetSurveysById() {
         ResponseEntity<SurveyDTO> surveyDTOResponseEntity = surveysController.getSurveyById(null, null, null, null, null, null);
         Assert.assertNotNull("Shouldn't be null", surveyDTOResponseEntity);
         Assert.assertEquals("Status should be 200", HttpStatus.OK, surveyDTOResponseEntity.getStatusCode());
@@ -99,5 +99,11 @@ public class SurveysControllerTest extends Mockito {
 
     }
 
+    @Test
+    public void testUpdateSurveyPublishStatus() {
+        ResponseEntity<Void> responseEntity = surveysController.updateSurveyPublishStatus(null, null, null, null, null, null);
+        Assert.assertNotNull("Shouldn't be null", responseEntity);
+        Assert.assertEquals("Status should be 200", HttpStatus.OK, responseEntity.getStatusCode());
+    }
 
 }
