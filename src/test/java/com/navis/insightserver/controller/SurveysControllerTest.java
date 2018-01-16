@@ -4,6 +4,8 @@ import com.navis.insightserver.Utils.ISecurity;
 import com.navis.insightserver.dto.SurveyDTO;
 import com.navis.insightserver.dto.UserProfileDTO;
 import com.navis.insightserver.service.ISurveysService;
+import com.navis.insightserver.service.SecurityService;
+import org.javatuples.Unit;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +31,7 @@ public class SurveysControllerTest extends Mockito {
 
     SurveyDTO surveyDTO;
     List<SurveyDTO> surveyDTOList = new ArrayList<>();
+    Unit<String> unitString;
 
 
     @Autowired
@@ -38,6 +41,9 @@ public class SurveysControllerTest extends Mockito {
     ISurveysService isurveysService;
 
     @MockBean
+    SecurityService securityService;
+
+    @MockBean
     private ISecurity security;
 
     @MockBean
@@ -45,7 +51,7 @@ public class SurveysControllerTest extends Mockito {
 
     @Before
     public void setUp() throws Exception {
-        // mock a user
+        // Mock a User
         HttpServletRequest request;
         HttpServletResponse response;
         userProfileDTO = new UserProfileDTO("UserId_Test", "Name_Test", "Token_Test", "State_Test");
@@ -57,7 +63,7 @@ public class SurveysControllerTest extends Mockito {
         Mockito.when(security.GetUserProfile(context)).thenReturn(userProfileDTO);
 
 
-        // mock a survey
+        // Mock a Survey
         surveyDTO = new SurveyDTO();
         surveyDTO.setDescription("description_test");
         surveyDTO.setDisplayTitle("title_test");
@@ -66,6 +72,11 @@ public class SurveysControllerTest extends Mockito {
         surveyDTO.setEnabled(true);
         Mockito.when(isurveysService.getSurveys(null, null, null)).thenReturn(surveyDTOList);
         Mockito.when(isurveysService.getSurveyById(null, null, null)).thenReturn(surveyDTO);
+
+        // Mock Unit String
+        unitString = new Unit<>("UNIT_STRING_TEST");
+        Mockito.when(isurveysService.generateAnonymousSurveyLink(null, null, null, ":survey-mode/demo")).thenReturn(unitString);
+
     }
 
     @TestConfiguration
@@ -80,6 +91,7 @@ public class SurveysControllerTest extends Mockito {
     @Test
     public void testMockCreation() {
         Assert.assertNotNull(userProfileDTO);
+        Assert.assertNotNull(unitString);
     }
 
     @Test
@@ -106,4 +118,12 @@ public class SurveysControllerTest extends Mockito {
         Assert.assertEquals("Status should be 200", HttpStatus.OK, responseEntity.getStatusCode());
     }
 
+    @Test
+    public void testGetSurveyLinkPreview_SurveyMode() {
+        ResponseEntity<Unit<String>> unitResponseEntity = surveysController.getSurveyLinkPreview(null, null, null, true, null, null, null);
+        Assert.assertNotNull("Shouldn't be null", unitResponseEntity);
+        Assert.assertEquals("Status should be 200", HttpStatus.OK, unitResponseEntity.getStatusCode());
+        Assert.assertNotNull("Response entity body shouldn't be null", unitResponseEntity.getBody());
+
+    }
 }
