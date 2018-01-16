@@ -6,7 +6,6 @@ import com.navis.insightserver.dto.UserProfileDTO;
 import com.navis.insightserver.service.ISurveysService;
 import com.navis.insightserver.service.SecurityService;
 import io.swagger.annotations.Api;
-import org.javatuples.Pair;
 import org.javatuples.Unit;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
@@ -21,14 +20,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.persistence.Tuple;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.navis.insightserver.service.SecurityService.*;
 
 /**
  * Created by darrell-shofstall on 9/14/17.
@@ -53,7 +50,7 @@ public class SurveysController {
             , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
         final WebContext context = new J2EContext(request, response);
         UserProfileDTO user = security.GetUserProfile(context);
-        log.info("View a list of Insight Surveys for UserProfileDTO: " + user.getUserId());
+        log.info("View a list of Insight Surveys for UserProfileDTO: " + (user != null ? user.getUserId() : ""));
 
         return new ResponseEntity<List<SurveyDTO>>(surveysService.getSurveys(propertyId, locale, includeDeleted), HttpStatus.OK);
     }
@@ -84,7 +81,7 @@ public class SurveysController {
             , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
         final WebContext context = new J2EContext(request, response);
         UserProfileDTO user = security.GetUserProfile(context);
-        log.info("Return a Insight Survey for UserProfileDTO: " + user.getUserId());
+        log.info("Return a Insight Survey for UserProfileDTO: " + (user != null ? user.getUserId() : ""));
 
         return new ResponseEntity<SurveyDTO>(surveysService.getSurveyById(propertyId, locale, surveyId), HttpStatus.OK);
     }
@@ -96,7 +93,7 @@ public class SurveysController {
             , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
         final WebContext context = new J2EContext(request, response);
         UserProfileDTO user = security.GetUserProfile(context);
-        log.info("Delete a Insight Survey for UserProfileDTO: " + user.getUserId());
+        log.info("Delete a Insight Survey for UserProfileDTO: " + (user != null ? user.getUserId() : ""));
 
         surveysService.deleteSurvey(propertyId, surveyId);
         return new ResponseEntity<Void>(HttpStatus.OK);
@@ -110,7 +107,7 @@ public class SurveysController {
             , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
         final WebContext context = new J2EContext(request, response);
         UserProfileDTO user = security.GetUserProfile(context);
-        log.info("Update a Insight Survey publish status for UserProfileDTO: " + user.getUserId());
+        log.info("Update a Insight Survey publish status for UserProfileDTO: " + (user != null ? user.getUserId() : ""));
 
         surveysService.updateSurveyPublishStatus(propertyId, surveyId, status);
         return new ResponseEntity<Void>(HttpStatus.OK);
@@ -125,7 +122,7 @@ public class SurveysController {
             , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
         final WebContext context = new J2EContext(request, response);
         UserProfileDTO user = security.GetUserProfile(context);
-        log.info("List a Insight Survey Link for UserProfileDTO: " + user.getUserId());
+        log.info("List a Insight Survey Link for UserProfileDTO: " + (user != null ? user.getUserId() : ""));
 
         String surveyMode = (isDemoSurveyMode) ? SecurityService.surveyModeDemo : SecurityService.surveyModeNormal;
 
