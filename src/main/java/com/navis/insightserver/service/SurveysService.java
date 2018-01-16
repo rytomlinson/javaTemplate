@@ -111,15 +111,24 @@ public class SurveysService implements ISurveysService {
         Date now = new Date();
         Long surveyId = surveyDTO.getId();
         Long displayTitleId;
+        Long descriptionId;
         SurveyEntity surveyEntity;
         Long surveyTypeId = surveyDTO.getSurveyType().getId();
 
         if (null != surveyId) {
             surveyEntity = validateSurvey(surveyId);
+            //TODO: add functionality to edit title and description
+
         } else {
             displayTitleId = translationRepository.createTranslation(surveyDTO.getDisplayTitle());
             surveyEntity = convertToEntity(owner, surveyDTO, locale);
             surveyEntity.setI18NStringByDisplayTitleId(i18nStringRepository.findOne(displayTitleId));
+
+            descriptionId = (null != surveyDTO.getDescription()) ? translationRepository.createTranslation(surveyDTO.getDescription()) : null;
+
+            if(null != descriptionId) {
+                surveyEntity.setI18NStringByDescriptionId(i18nStringRepository.findOne(descriptionId));
+            }
         }
 
         surveyEntity = surveyRepository.save(surveyEntity);
