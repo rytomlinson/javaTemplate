@@ -4,6 +4,7 @@ import com.navis.insightserver.Repository.SurveyRepository;
 import com.navis.insightserver.dto.SurveyDTO;
 import com.navis.insightserver.entity.I18NStringEntity;
 import com.navis.insightserver.entity.SurveyEntity;
+import org.javatuples.Unit;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +23,7 @@ import java.util.List;
 public class SurveysServiceTest {
 
     List<SurveyEntity> surveyEntityList = new ArrayList<>();
+    String responseKey;
 
     @Mock
     SurveyRepository surveyRepository;
@@ -30,7 +32,11 @@ public class SurveysServiceTest {
     SurveysService surveysService;
 
     @MockBean
+    SecurityService securityService;
+
+    @MockBean
     private SurveyEntity surveyEntity;
+
 
     @Before
     public void setUp() {
@@ -57,6 +63,15 @@ public class SurveysServiceTest {
         Mockito.when(surveyRepository.findOne(null)).thenReturn(surveyEntity);
         Mockito.when(surveyRepository.getCurrentSurveyQuestionCount(null)).thenReturn(1L);
 
+        // Mock Response Key
+        responseKey = "RESPONSE_KEY_TEST";
+        Mockito.when(securityService.generateSurveyResponseKey(null, 0L, null, null)).thenReturn(responseKey);
+
+    }
+
+    @Test
+    public void testMockCreation() {
+        Assert.assertNotNull(responseKey);
     }
 
     @Test
@@ -87,6 +102,13 @@ public class SurveysServiceTest {
         Assert.assertNotNull(surveyEntity);
         Assert.assertEquals(surveyEntity.getEnabled(), true);
 
+    }
+
+    @Test
+    public void testGenerateAnonymousSurveyLink() {
+        Unit<String> unit = surveysService.generateAnonymousSurveyLink(null, null, null,
+                null);
+        Assert.assertNotNull(unit);
     }
 
 }
