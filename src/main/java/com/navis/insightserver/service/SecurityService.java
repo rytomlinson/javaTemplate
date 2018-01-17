@@ -93,16 +93,21 @@ public class SecurityService {
         return new String(decodedBytes, Charset.forName("UTF-8"));
     }
 
+    public static String base64EncodeInt(BigInteger token) {
+        byte[] encodedBytes = Base64.encode(token.toByteArray());
+        return new String(encodedBytes, Charset.forName("UTF-8"));
+    }
+
     private static String generateStrongHash(String token) throws NoSuchAlgorithmException, InvalidKeySpecException
     {
-        int iterations = 1; //iterations = 1000
+        Integer iterations = 1; //iterations = 1000
         char[] chars = token.toCharArray();
         byte[] salt = getSalt();
 
-        PBEKeySpec spec = new PBEKeySpec(chars, salt, iterations, 64 * 8);
+        PBEKeySpec spec = new PBEKeySpec(chars, salt, iterations, 160);
         SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
         byte[] hash = skf.generateSecret(spec).getEncoded();
-        return iterations + ":" + toHex(salt) + ":" + toHex(hash);
+        return base64EncodeInt(BigInteger.valueOf(iterations.intValue())) + "$" + toHex(salt) + "$" + toHex(hash);
     }
 
     private static byte[] getSalt() throws NoSuchAlgorithmException
@@ -138,7 +143,7 @@ public class SecurityService {
 
     private static boolean validatePassword(String originalPassword, String storedPassword) throws NoSuchAlgorithmException, InvalidKeySpecException
     {
-        String[] parts = storedPassword.split(":");
+        String[] parts = storedPassword.split("$");
         int iterations = Integer.parseInt(parts[0]);
         byte[] salt = fromHex(parts[1]);
         byte[] hash = fromHex(parts[2]);
