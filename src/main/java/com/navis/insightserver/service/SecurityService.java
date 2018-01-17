@@ -49,7 +49,9 @@ public class SecurityService {
         }
 
         StringJoiner joiner = new StringJoiner(",");
-        joiner.add(surveyId.toString()).add(source).add(surveyMode).add(result).add(requestId.toString());
+        if (surveyId != null && requestId != null) {
+            joiner.add(surveyId.toString()).add(source).add(surveyMode).add(result).add(requestId.toString());
+        }
 
         String encodedString = base64Encode(joiner.toString());
 

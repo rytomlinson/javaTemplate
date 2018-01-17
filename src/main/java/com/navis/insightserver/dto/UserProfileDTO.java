@@ -11,7 +11,7 @@ public class UserProfileDTO {
     private String userId;
     private String name;
 
-    public UserProfileDTO(String userId, String Name, String token, String state)
+    public UserProfileDTO(String userId, String name, String token, String state)
     {
         this.token =token;
         this.name = name;
