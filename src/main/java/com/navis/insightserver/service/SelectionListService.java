@@ -28,6 +28,9 @@ import java.util.stream.Collectors;
 public class SelectionListService implements ISelectionListService {
     private static final Logger log = LoggerFactory.getLogger(SelectionListService.class);
 
+    private static final String EDIT = "EDIT";
+    private static final String CREATE = "CREATE";
+
     @Value("${navis.prop.uuid}")
     private UUID uuid;
 
@@ -62,7 +65,7 @@ public class SelectionListService implements ISelectionListService {
     public void deleteSelectionList(UUID propertyId, Long selectionListId) {
         log.debug("In deleteSelectionList Service:");
 
-        SelectionListEntity selectionListEntity = validateSelectionList(propertyId, selectionListId);
+        SelectionListEntity selectionListEntity = validateSelectionList(propertyId, selectionListId, EDIT);
 
         selectionListEntity.setDeleted(true);
         selectionListRepository.save(selectionListEntity);
@@ -76,7 +79,7 @@ public class SelectionListService implements ISelectionListService {
         SelectionListEntity selectionListEntity;
 
         if(null != selectionListId) {
-            selectionListEntity = validateSelectionList(propertyID, selectionListId);
+            selectionListEntity = validateSelectionList(propertyID, selectionListId, EDIT);
 
             List<TranslationEntity> nameEntities = (List<TranslationEntity>) selectionListEntity.getI18NStringByDescriptionId().getTranslationsById();
             TranslationEntity nameEntity = nameEntities.stream().filter(e -> e.getLocale().equals(locale)).findFirst().orElse(null);
@@ -107,7 +110,7 @@ public class SelectionListService implements ISelectionListService {
     @Override
     public List<SelectionDTO> getSelectionListItems(UUID propertyId, Long selectionListId, String locale) {
         log.debug("In getSelectionListItems Service:");
-        SelectionListEntity selectionListEntity = validateSelectionList(propertyId, selectionListId);
+        SelectionListEntity selectionListEntity = validateSelectionList(propertyId, selectionListId, null);
 
         List<SelectionEntity> selectionEntityList = (List<SelectionEntity>) selectionListEntity.getSelectionsById();
 
@@ -121,7 +124,8 @@ public class SelectionListService implements ISelectionListService {
     @Override
     public void deleteSelectionListItem(UUID propertyId, Long selectionListId, Long itemId) {
         log.debug("In deleteSelectionListItem Service:");
-        SelectionEntity selectionEntity = validateSelection(selectionListId, itemId);
+        SelectionListEntity selectionListEntity = validateSelectionList(propertyId, selectionListId, EDIT);
+        SelectionEntity selectionEntity = validateSelection(selectionListEntity.getId(), itemId);
         selectionEntity.setDeleted(true);
         selectionRepository.save(selectionEntity);
     }
@@ -132,9 +136,10 @@ public class SelectionListService implements ISelectionListService {
         Long selectionId = selectionDTO.getId();
         Long descriptionId;
         SelectionEntity selectionEntity;
+        SelectionListEntity selectionListEntity = validateSelectionList(propertyID, selectionListId, EDIT);
 
         if(null != selectionId) {
-            selectionEntity = validateSelection(selectionListId, selectionId);
+            selectionEntity = validateSelection(selectionListEntity.getId(), selectionId);
 
             List<TranslationEntity> nameEntities = (List<TranslationEntity>) selectionEntity.getI18NStringByDisplayTitleId().getTranslationsById();
             TranslationEntity nameEntity = nameEntities.stream().filter(e -> e.getLocale().equals(locale)).findFirst().orElse(null);
@@ -158,7 +163,7 @@ public class SelectionListService implements ISelectionListService {
     @Override
     public Long copySelectionList(UUID propertyId, Long selectionListId, SelectionListDTO selectionListDTO, String locale) {
         log.debug("In copySelectionList Service:");
-        SelectionListEntity selectionListEntity = validateSelectionList(propertyId, selectionListId);
+        SelectionListEntity selectionListEntity = validateSelectionList(propertyId, selectionListId, CREATE);
         List<SelectionEntity> selectionEntityList = (List<SelectionEntity>) selectionListEntity.getSelectionsById();
 
         SelectionListDTO copySelectionListDTO = new SelectionListDTO();
@@ -197,7 +202,7 @@ public class SelectionListService implements ISelectionListService {
 
     private SelectionListDTO buildSelectionListDTO(UUID propertyId, Long selectionListId, String locale) {
 
-        SelectionListEntity selectionListEntity = validateSelectionList(propertyId, selectionListId);
+        SelectionListEntity selectionListEntity = validateSelectionList(propertyId, selectionListId, null);
 
         return convertToDto(selectionListEntity, locale);
     }
@@ -223,12 +228,16 @@ public class SelectionListService implements ISelectionListService {
         return selectionListDTO;
     }
 
-    private SelectionListEntity validateSelectionList(UUID owner , Long selectionListId) {
+    private SelectionListEntity validateSelectionList(UUID owner, Long selectionListId, String mode) {
 
-        SelectionListEntity selectionListEntity = selectionListRepository.findByOwnerAndId(owner, selectionListId);
+        SelectionListEntity selectionListEntity = selectionListRepository.findOne(selectionListId);
 
         if (null == selectionListEntity) {
 
+            throw new ResourceNotFoundExceptionDTO(selectionListId.toString(), "selectionList.id.invalid");
+        } else if ("INSERT".equals(mode) && !uuid.equals(selectionListEntity.getOwner()) && !owner.equals(selectionListEntity.getOwner())) {
+            throw new ResourceNotFoundExceptionDTO(selectionListId.toString(), "selectionList.id.invalid");
+        } else if ("EDIT".equals(mode) && !owner.equals(selectionListEntity.getOwner())) {
             throw new ResourceNotFoundExceptionDTO(selectionListId.toString(), "selectionList.id.invalid");
         } else {
             return selectionListEntity;
