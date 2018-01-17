@@ -9,7 +9,6 @@ import com.navis.insightserver.entity.SurveyEntity;
 import com.navis.insightserver.entity.SurveyRequestEntity;
 import com.navis.insightserver.entity.SurveyTagEntity;
 import com.navis.insightserver.entity.TagEntity;
-import org.javatuples.Triplet;
 import org.javatuples.Unit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
