@@ -21,7 +21,7 @@
 		<!-- Dialect is required to let Hibernate know the Database Type, MySQL, Oracle etc
 			Hibernate 4 automatically figure out Dialect from Database Connection Metadata -->
 		<property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
-        <mapping class="com.navis.insightserver.entity.I18NStringEntity"/>
+		<mapping class="com.navis.insightserver.entity.I18NStringEntity"/>
 		<mapping class="com.navis.insightserver.entity.TranslationEntity"/>
 		<mapping class="com.navis.insightserver.entity.TagEntity"/>
         <mapping class="com.navis.insightserver.entity.SurveyEntity"/>
@@ -38,6 +38,7 @@
         <mapping class="com.navis.insightserver.entity.SelectionEntity"/>
         <mapping class="com.navis.insightserver.entity.SelectionListEntity"/>
         <mapping class="com.navis.insightserver.entity.SelectQuestionEntity"/>
+		<mapping class="com.navis.insightserver.entity.QuestionEntity"/>
 
         <!-- mapping file, we can use Bean annotations too
         <mapping resource="reachEventTypes.hbm.xml" /> -->
