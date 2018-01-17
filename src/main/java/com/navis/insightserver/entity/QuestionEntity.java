@@ -364,22 +364,12 @@ public class QuestionEntity {
     }
 
     public enum QuestionType implements PostgreSQLEnum {
-        range ("range"),
-        select ("select"),
-        text ("text"),
-        range_group ("range_group"),
-        range_group_member ("range_group_member"),
-        boolean_question ("boolean");
-
-        private final String shortCode;
-        QuestionType(String code) {
-            this.shortCode = code;
-        }
-
-        public String getQuestionTypeCode() {
-            return this.shortCode;
-        }
-
+        range ,
+        select,
+        text,
+        range_group,
+        range_group_member,
+        yes_no;
     }
 
 
