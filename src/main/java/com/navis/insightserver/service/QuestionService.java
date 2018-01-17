@@ -8,6 +8,7 @@ import com.navis.insightserver.entity.QuestionEntity;
 import com.navis.insightserver.entity.TagEntity;
 import com.navis.insightserver.entity.TagTagEntity;
 import com.navis.insightserver.entity.TranslationEntity;
+import com.navis.insightserver.pgtypes.QuestionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,7 @@ public class QuestionService implements IQuestionService {
         List<QuestionEntity> questionEntities = (List<QuestionEntity>) questionRepository.findByOwnerInAndDeletedFalseAndTemplateTrueAndQuestionBySourceId_IdIsNull(owners);
 
         List<QuestionDTO> listDto = questionEntities.stream()
-                .filter(item -> !item.getType().equals(QuestionEntity.QuestionType.range_group_member))
+                .filter(item -> !item.getType().equals(QuestionType.range_group_member))
                 .map(item -> convertToDto(item, locale)).collect(Collectors.toList());
 
 //        List<QuestionDTO> listDto = list.stream().map(item -> convertToDto(item, locale)).collect(Collectors.toList());

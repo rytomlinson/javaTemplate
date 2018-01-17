@@ -9,6 +9,7 @@ import com.navis.insightserver.entity.SurveyEntity;
 import com.navis.insightserver.entity.SurveyRequestEntity;
 import com.navis.insightserver.entity.SurveyTagEntity;
 import com.navis.insightserver.entity.TagEntity;
+import com.navis.insightserver.pgtypes.SurveyRequestCompletionStatus;
 import org.javatuples.Unit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -197,7 +198,7 @@ public class SurveysService implements ISurveysService {
         surveyRequestEntity.setCrmStayId(stayId);
         surveyRequestEntity.setAccountId(accountId);
         surveyRequestEntity.setEmail(email);
-        surveyRequestEntity.setSurveyRequestCompletionStatusTypesByCompletionStatusType(surveyRequestCompletionStatusTypesRepository.findByCode("IN_PROCESS"));
+        surveyRequestEntity.setCompletionStatus(SurveyRequestCompletionStatus.in_progress);
 
         return surveyRequestRepository.save(surveyRequestEntity);
     }

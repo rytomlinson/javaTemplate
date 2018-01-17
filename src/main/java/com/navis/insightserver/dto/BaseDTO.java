@@ -1,6 +1,7 @@
 package com.navis.insightserver.dto;
 
 import com.navis.insightserver.entity.TranslationEntity;
+import com.navis.insightserver.pgtypes.LanguageLocale;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +24,10 @@ public class BaseDTO  implements java.io.Serializable {
 
     public String returnTranslationForLocale(List<TranslationEntity> translationEntities, String locale) {
         String value = null;
+        String adjustedLocale = locale.replaceAll("-", "_");
 
         if(null != translationEntities && !translationEntities.isEmpty()) {
-            TranslationEntity translationEntity = translationEntities.stream().filter(e -> e.getLocale().equals(locale)).findFirst().orElse(null);
+            TranslationEntity translationEntity = translationEntities.stream().filter(e -> e.getLocale().equals(LanguageLocale.valueOf(adjustedLocale))).findFirst().orElse(null);
             value = (null != translationEntity) ? translationEntity.getLocalizedString() : null;
         }
 

@@ -1,7 +1,10 @@
 package com.navis.insightserver.entity;
 
+import com.navis.insightserver.pgtypes.SurveyRequestCompletionStatus;
+import com.navis.insightserver.pgtypes.SurveyRequestCompletionTask;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -25,6 +28,8 @@ public class SurveyRequestEntity {
     private Date updatedAt;
     private Long externalId;
     private SurveyEntity surveyBySurveyId;
+    private SurveyRequestCompletionStatus completionStatus;
+    private SurveyRequestCompletionTask completionTask;
     private SurveyRequestReachableQuestionsEntity reachableQuestionsEntity;
     private Collection<SurveyRequestReachableQuestionsEntity> surveyRequestReachableQuestionssById;
     private Collection<SurveyRequestFormFieldAnswerEntity> surveyRequestFormFieldAnswersById;
@@ -32,7 +37,6 @@ public class SurveyRequestEntity {
     private Collection<SurveyRequestRangeAnswerEntity> surveyRequestRangeAnswersById;
     private Collection<SurveyRequestSelectAnswerEntity> surveyRequestSelectAnswersById;
     private Collection<SurveyRequestTextAnswerEntity> surveyRequestTextAnswersById;
-    private SurveyRequestCompletionStatusTypesEntity surveyRequestCompletionStatusTypesByCompletionStatusType;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -145,43 +149,41 @@ public class SurveyRequestEntity {
         this.externalId = externalId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    @Basic
+    @Enumerated(EnumType.STRING)
+    @Column(name = "completion_status", columnDefinition = "survey_request_completion_status")
+    @Type(type = "com.navis.insightserver.pgtypes.PostgreSQLEnumType")
 
-        SurveyRequestEntity that = (SurveyRequestEntity) o;
-
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (createdAt != null ? !createdAt.equals(that.createdAt) : that.createdAt != null) return false;
-        if (activeUntil != null ? !activeUntil.equals(that.activeUntil) : that.activeUntil != null) return false;
-        if (completionDate != null ? !completionDate.equals(that.completionDate) : that.completionDate != null)
-            return false;
-        if (accountId != null ? !accountId.equals(that.accountId) : that.accountId != null) return false;
-        if (crmContactId != null ? !crmContactId.equals(that.crmContactId) : that.crmContactId != null) return false;
-        if (crmStayId != null ? !crmStayId.equals(that.crmStayId) : that.crmStayId != null) return false;
-        if (email != null ? !email.equals(that.email) : that.email != null) return false;
-        if (sentDate != null ? !sentDate.equals(that.sentDate) : that.sentDate != null) return false;
-        if (updatedAt != null ? !updatedAt.equals(that.updatedAt) : that.updatedAt != null) return false;
-        if (externalId != null ? !externalId.equals(that.externalId) : that.externalId != null) return false;
-
-        return true;
+    public SurveyRequestCompletionStatus getCompletionStatus() {
+        return completionStatus;
     }
+
+    public void setCompletionStatus(SurveyRequestCompletionStatus completionStatus) {
+        this.completionStatus = completionStatus;
+    }
+
+    @Basic
+    @Enumerated(EnumType.STRING)
+    @Column(name = "completion_task", columnDefinition = "survey_request_completion_task")
+    @Type(type = "com.navis.insightserver.pgtypes.PostgreSQLEnumType")
+
+    public SurveyRequestCompletionTask getCompletionTask() {
+        return completionTask;
+    }
+
+    public void setCompletionTask(SurveyRequestCompletionTask completionTask) {
+        this.completionTask = completionTask;
+    }
+
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
-        result = 31 * result + (activeUntil != null ? activeUntil.hashCode() : 0);
-        result = 31 * result + (completionDate != null ? completionDate.hashCode() : 0);
-        result = 31 * result + (accountId != null ? accountId.hashCode() : 0);
-        result = 31 * result + (crmContactId != null ? crmContactId.hashCode() : 0);
-        result = 31 * result + (crmStayId != null ? crmStayId.hashCode() : 0);
-        result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (sentDate != null ? sentDate.hashCode() : 0);
-        result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
-        result = 31 * result + (externalId != null ? externalId.hashCode() : 0);
-        return result;
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
     }
 
     @ManyToOne
@@ -253,15 +255,5 @@ public class SurveyRequestEntity {
 
     public void setSurveyRequestTextAnswersById(Collection<SurveyRequestTextAnswerEntity> surveyRequestTextAnswersById) {
         this.surveyRequestTextAnswersById = surveyRequestTextAnswersById;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "completion_status_type", referencedColumnName = "id")
-    public SurveyRequestCompletionStatusTypesEntity getSurveyRequestCompletionStatusTypesByCompletionStatusType() {
-        return surveyRequestCompletionStatusTypesByCompletionStatusType;
-    }
-
-    public void setSurveyRequestCompletionStatusTypesByCompletionStatusType(SurveyRequestCompletionStatusTypesEntity surveyRequestCompletionStatusTypesByCompletionStatusType) {
-        this.surveyRequestCompletionStatusTypesByCompletionStatusType = surveyRequestCompletionStatusTypesByCompletionStatusType;
     }
 }
