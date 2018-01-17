@@ -23,7 +23,6 @@ import java.util.List;
 public class SurveysServiceTest {
 
     List<SurveyEntity> surveyEntityList = new ArrayList<>();
-    String responseKey;
 
     @Mock
     SurveyRepository surveyRepository;
@@ -36,7 +35,6 @@ public class SurveysServiceTest {
 
     @MockBean
     private SurveyEntity surveyEntity;
-
 
     @Before
     public void setUp() {
@@ -63,16 +61,8 @@ public class SurveysServiceTest {
         Mockito.when(surveyRepository.findOne(null)).thenReturn(surveyEntity);
         Mockito.when(surveyRepository.getCurrentSurveyQuestionCount(null)).thenReturn(1L);
 
-        // Mock Response Key
-        responseKey = "RESPONSE_KEY_TEST";
-        Mockito.when(securityService.generateSurveyResponseKey(null, 0L, null, null)).thenReturn(responseKey);
-
     }
 
-    @Test
-    public void testMockCreation() {
-        Assert.assertNotNull(responseKey);
-    }
 
     @Test
     public void testGetSurveyById() {
