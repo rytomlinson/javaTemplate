@@ -63,7 +63,7 @@ public class SurveysController {
             , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
         final WebContext context = new J2EContext(request, response);
         UserProfileDTO user = security.GetUserProfile(context);
-        log.info("Upsert a Insight Survey for UserProfileDTO: " + user.getUserId());
+        log.info("Upsert a Insight Survey for UserProfileDTO: " +(user != null ? user.getUserId() : ""));
 
         Long surveyId = surveysService.upsertSurvey(owner, surveyDTO, locale);
 

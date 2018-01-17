@@ -1,8 +1,10 @@
 package com.navis.insightserver.controller;
 
+import com.navis.insightserver.Repository.SurveyRepository;
 import com.navis.insightserver.Utils.ISecurity;
 import com.navis.insightserver.dto.SurveyDTO;
 import com.navis.insightserver.dto.UserProfileDTO;
+import com.navis.insightserver.entity.SurveyEntity;
 import com.navis.insightserver.service.ISurveysService;
 import com.navis.insightserver.service.SecurityService;
 import org.javatuples.Unit;
@@ -10,6 +12,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
@@ -20,9 +23,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,6 +38,7 @@ public class SurveysControllerTest extends Mockito {
     SurveyDTO surveyDTO;
     List<SurveyDTO> surveyDTOList = new ArrayList<>();
     Unit<String> unitString;
+    UUID uuid;
 
 
     @Autowired
@@ -48,6 +55,10 @@ public class SurveysControllerTest extends Mockito {
 
     @MockBean
     private UserProfileDTO userProfileDTO;
+
+    @MockBean
+    UriComponentsBuilder uriComponentsBuilder;
+
 
     @Before
     public void setUp() throws Exception {
@@ -73,9 +84,15 @@ public class SurveysControllerTest extends Mockito {
         Mockito.when(isurveysService.getSurveys(null, null, null)).thenReturn(surveyDTOList);
         Mockito.when(isurveysService.getSurveyById(null, null, null)).thenReturn(surveyDTO);
 
-        // Mock Unit String
+        // Mock a Unit String
         unitString = new Unit<>("UNIT_STRING_TEST");
         Mockito.when(isurveysService.generateAnonymousSurveyLink(null, null, null, ":survey-mode/demo")).thenReturn(unitString);
+
+        //Mock A UriComponentsBuilder
+        uuid = UUID.randomUUID();
+        uriComponentsBuilder = ServletUriComponentsBuilder.newInstance();
+        uriComponentsBuilder.scheme("http").host("localhost").port("8080").build();
+        Mockito.when(isurveysService.upsertSurvey(null, null, null)).thenReturn(2L);
 
     }
 
@@ -95,11 +112,17 @@ public class SurveysControllerTest extends Mockito {
     }
 
     @Test
-    public void testGetSurveys_ReturnAll() {
+    public void testGetSurveysGetAList() {
         ResponseEntity<List<SurveyDTO>> found = surveysController.getSurveys(null, null, null, null, null, null);
         Assert.assertNotNull("List shouldn't be null", found);
         Assert.assertEquals("Status should be 200", HttpStatus.OK, found.getStatusCode());
         Assert.assertNotNull("Response entity body shouldn't be null", found.getBody());
+    }
+
+    @Test
+    public void testGetSurvey_UpdateSurvey() {
+        ResponseEntity<Void> responseEntity = surveysController.getSurveys(null, null, null, uriComponentsBuilder, null, null, null);
+        Assert.assertEquals("Status should be 201", HttpStatus.CREATED, responseEntity.getStatusCode());
     }
 
     @Test
@@ -108,7 +131,6 @@ public class SurveysControllerTest extends Mockito {
         Assert.assertNotNull("Shouldn't be null", surveyDTOResponseEntity);
         Assert.assertEquals("Status should be 200", HttpStatus.OK, surveyDTOResponseEntity.getStatusCode());
         Assert.assertNotNull("Response entity body shouldn't be null", surveyDTOResponseEntity.getBody());
-
     }
 
     @Test
@@ -124,6 +146,5 @@ public class SurveysControllerTest extends Mockito {
         Assert.assertNotNull("Shouldn't be null", unitResponseEntity);
         Assert.assertEquals("Status should be 200", HttpStatus.OK, unitResponseEntity.getStatusCode());
         Assert.assertNotNull("Response entity body shouldn't be null", unitResponseEntity.getBody());
-
     }
 }
