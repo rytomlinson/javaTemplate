@@ -5,7 +5,6 @@ import com.navis.insightserver.pgtypes.QuestionType;
 import com.navis.insightserver.pgtypes.QuestionWebService;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Collection;
