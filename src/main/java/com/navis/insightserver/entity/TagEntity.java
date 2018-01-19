@@ -1,7 +1,9 @@
 package com.navis.insightserver.entity;
 
+import com.navis.insightserver.pgtypes.TagType;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -16,7 +18,6 @@ import java.util.UUID;
 public class TagEntity {
     private Long id;
     private Date createdAt;
-//    private String type;
     private Boolean isMarketSegment;
     private Boolean isSurvey;
     private Boolean isSurveyType;
@@ -30,6 +31,7 @@ public class TagEntity {
     private Integer maximumValue;
     private Collection<TagTagEntity> tagTagsById_0;
     private Boolean deleted;
+    private TagType type;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -47,16 +49,6 @@ public class TagEntity {
     public Date getCreatedAt() {
         return createdAt;
     }
-
-//    @Basic
-//    @Column(name = "type", nullable = true)
-//    public String getType() {
-//        return type;
-//    }
-//
-//    public void setType(String type) {
-//        this.type = type;
-//    }
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
@@ -132,42 +124,27 @@ public class TagEntity {
         this.updatedAt = updatedAt;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    @Basic
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tag_type", columnDefinition = "tag_type")
+    @Type(type = "com.navis.insightserver.pgtypes.PostgreSQLEnumType")
 
-        TagEntity tagEntity = (TagEntity) o;
+    public TagType getType() {
+        return type;
+    }
 
-        if (id != null ? !id.equals(tagEntity.id) : tagEntity.id != null) return false;
-        if (createdAt != null ? !createdAt.equals(tagEntity.createdAt) : tagEntity.createdAt != null) return false;
-//        if (type != null ? !type.equals(tagEntity.type) : tagEntity.type != null) return false;
-        if (isMarketSegment != null ? !isMarketSegment.equals(tagEntity.isMarketSegment) : tagEntity.isMarketSegment != null)
-            return false;
-        if (isSurvey != null ? !isSurvey.equals(tagEntity.isSurvey) : tagEntity.isSurvey != null) return false;
-        if (isSurveyType != null ? !isSurveyType.equals(tagEntity.isSurveyType) : tagEntity.isSurveyType != null)
-            return false;
-        if (isQuestion != null ? !isQuestion.equals(tagEntity.isQuestion) : tagEntity.isQuestion != null) return false;
-        if (owner != null ? !owner.equals(tagEntity.owner) : tagEntity.owner != null) return false;
-        if (externalId != null ? !externalId.equals(tagEntity.externalId) : tagEntity.externalId != null) return false;
-        if (updatedAt != null ? !updatedAt.equals(tagEntity.updatedAt) : tagEntity.updatedAt != null) return false;
-
-        return true;
+    public void setType(TagType type) {
+        this.type = type;
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
-//        result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (isMarketSegment != null ? isMarketSegment.hashCode() : 0);
-        result = 31 * result + (isSurvey != null ? isSurvey.hashCode() : 0);
-        result = 31 * result + (isSurveyType != null ? isSurveyType.hashCode() : 0);
-        result = 31 * result + (isQuestion != null ? isQuestion.hashCode() : 0);
-        result = 31 * result + (owner != null ? owner.hashCode() : 0);
-        result = 31 * result + (externalId != null ? externalId.hashCode() : 0);
-        result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
-        return result;
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

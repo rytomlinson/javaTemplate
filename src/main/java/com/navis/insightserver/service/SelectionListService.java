@@ -1,6 +1,7 @@
 package com.navis.insightserver.service;
 
 import com.navis.insightserver.Repository.*;
+import com.navis.insightserver.constants.Modes;
 import com.navis.insightserver.dto.ResourceNotFoundExceptionDTO;
 import com.navis.insightserver.dto.SelectionDTO;
 import com.navis.insightserver.dto.SelectionListDTO;
@@ -27,9 +28,6 @@ import java.util.stream.Collectors;
 @Transactional
 public class SelectionListService implements ISelectionListService {
     private static final Logger log = LoggerFactory.getLogger(SelectionListService.class);
-
-    private static final String EDIT = "EDIT";
-    private static final String CREATE = "CREATE";
 
     @Value("${navis.prop.uuid}")
     private UUID uuid;
@@ -65,7 +63,7 @@ public class SelectionListService implements ISelectionListService {
     public void deleteSelectionList(UUID propertyId, Long selectionListId) {
         log.debug("In deleteSelectionList Service:");
 
-        SelectionListEntity selectionListEntity = validateSelectionList(propertyId, selectionListId, EDIT);
+        SelectionListEntity selectionListEntity = validateSelectionList(propertyId, selectionListId, Modes.EDIT);
 
         selectionListEntity.setDeleted(true);
         selectionListRepository.save(selectionListEntity);
@@ -79,7 +77,7 @@ public class SelectionListService implements ISelectionListService {
         SelectionListEntity selectionListEntity;
 
         if(null != selectionListId) {
-            selectionListEntity = validateSelectionList(propertyID, selectionListId, EDIT);
+            selectionListEntity = validateSelectionList(propertyID, selectionListId, Modes.EDIT);
 
             List<TranslationEntity> nameEntities = (List<TranslationEntity>) selectionListEntity.getI18NStringByDescriptionId().getTranslationsById();
             TranslationEntity nameEntity = nameEntities.stream().filter(e -> e.getLocale().equals(locale)).findFirst().orElse(null);
@@ -124,7 +122,7 @@ public class SelectionListService implements ISelectionListService {
     @Override
     public void deleteSelectionListItem(UUID propertyId, Long selectionListId, Long itemId) {
         log.debug("In deleteSelectionListItem Service:");
-        SelectionListEntity selectionListEntity = validateSelectionList(propertyId, selectionListId, EDIT);
+        SelectionListEntity selectionListEntity = validateSelectionList(propertyId, selectionListId, Modes.EDIT);
         SelectionEntity selectionEntity = validateSelection(selectionListEntity.getId(), itemId);
         selectionEntity.setDeleted(true);
         selectionRepository.save(selectionEntity);
@@ -136,7 +134,7 @@ public class SelectionListService implements ISelectionListService {
         Long selectionId = selectionDTO.getId();
         Long descriptionId;
         SelectionEntity selectionEntity;
-        SelectionListEntity selectionListEntity = validateSelectionList(propertyID, selectionListId, EDIT);
+        SelectionListEntity selectionListEntity = validateSelectionList(propertyID, selectionListId, Modes.EDIT);
 
         if(null != selectionId) {
             selectionEntity = validateSelection(selectionListEntity.getId(), selectionId);
@@ -163,7 +161,7 @@ public class SelectionListService implements ISelectionListService {
     @Override
     public Long copySelectionList(UUID propertyId, Long selectionListId, SelectionListDTO selectionListDTO, String locale) {
         log.debug("In copySelectionList Service:");
-        SelectionListEntity selectionListEntity = validateSelectionList(propertyId, selectionListId, CREATE);
+        SelectionListEntity selectionListEntity = validateSelectionList(propertyId, selectionListId, Modes.CREATE);
         List<SelectionEntity> selectionEntityList = (List<SelectionEntity>) selectionListEntity.getSelectionsById();
 
         SelectionListDTO copySelectionListDTO = new SelectionListDTO();
@@ -235,9 +233,9 @@ public class SelectionListService implements ISelectionListService {
         if (null == selectionListEntity) {
 
             throw new ResourceNotFoundExceptionDTO(selectionListId.toString(), "selectionList.id.invalid");
-        } else if ("INSERT".equals(mode) && !uuid.equals(selectionListEntity.getOwner()) && !owner.equals(selectionListEntity.getOwner())) {
+        } else if (Modes.CREATE.equals(mode) && !uuid.equals(selectionListEntity.getOwner()) && !owner.equals(selectionListEntity.getOwner())) {
             throw new ResourceNotFoundExceptionDTO(selectionListId.toString(), "selectionList.id.invalid");
-        } else if ("EDIT".equals(mode) && !owner.equals(selectionListEntity.getOwner())) {
+        } else if (Modes.EDIT.equals(mode) && !owner.equals(selectionListEntity.getOwner())) {
             throw new ResourceNotFoundExceptionDTO(selectionListId.toString(), "selectionList.id.invalid");
         } else {
             return selectionListEntity;

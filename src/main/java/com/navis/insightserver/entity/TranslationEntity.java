@@ -1,7 +1,9 @@
 package com.navis.insightserver.entity;
 
+import com.navis.insightserver.pgtypes.LanguageLocale;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -25,7 +27,7 @@ import java.util.Date;
 public class TranslationEntity {
     private Long id;
     private Date createdAt;
-    private String locale;
+    private LanguageLocale locale;
     private String localizedString;
     private Date updatedAt;
     private I18NStringEntity i18NStringByI18NStringId;
@@ -51,13 +53,14 @@ public class TranslationEntity {
         this.createdAt = createdAt;
     }
 
-    @Basic
-    @Column(name = "locale", nullable = false)
-    public String getLocale() {
+    @Enumerated(EnumType.STRING)
+    @Column(name = "locale", columnDefinition = "language_locale")
+    @Type(type = "com.navis.insightserver.pgtypes.PostgreSQLEnumType")
+    public LanguageLocale getLocale() {
         return locale;
     }
 
-    public void setLocale(String locale) {
+    public void setLocale(LanguageLocale locale) {
         this.locale = locale;
     }
 
@@ -82,30 +85,13 @@ public class TranslationEntity {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        TranslationEntity that = (TranslationEntity) o;
-
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (createdAt != null ? !createdAt.equals(that.createdAt) : that.createdAt != null) return false;
-        if (locale != null ? !locale.equals(that.locale) : that.locale != null) return false;
-        if (localizedString != null ? !localizedString.equals(that.localizedString) : that.localizedString != null)
-            return false;
-        if (updatedAt != null ? !updatedAt.equals(that.updatedAt) : that.updatedAt != null) return false;
-
-        return true;
+    public int hashCode() {
+        return super.hashCode();
     }
 
     @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
-        result = 31 * result + (locale != null ? locale.hashCode() : 0);
-        result = 31 * result + (localizedString != null ? localizedString.hashCode() : 0);
-        result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
-        return result;
+    public boolean equals(Object obj) {
+        return super.equals(obj);
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -1,7 +1,11 @@
 package com.navis.insightserver.entity;
 
+import com.navis.insightserver.pgtypes.QuestionRenderAs;
+import com.navis.insightserver.pgtypes.QuestionType;
+import com.navis.insightserver.pgtypes.QuestionWebService;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -16,11 +20,8 @@ import java.util.UUID;
 public class QuestionEntity {
     private Long id;
     private Date createdAt;
-    private String renderAs;
     private Boolean required;
     private Integer rank;
-    private String type;
-    private String webService;
     private Boolean isLibrary;
     private Boolean deleted;
     private Boolean isTemplate;
@@ -43,6 +44,9 @@ public class QuestionEntity {
     private Collection<SurveyRequestTextAnswerEntity> surveyRequestTextAnswersById;
     private Collection<TextQuestionEntity> textQuestionsById;
     private Collection<QuestionGroupMemberQuestionEntity> questionGroupMemberQuestionsById_0;
+    private QuestionType type;
+    private QuestionRenderAs renderAs;
+    private QuestionWebService webService;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -66,16 +70,6 @@ public class QuestionEntity {
     }
 
     @Basic
-    @Column(name = "render_as", nullable = true)
-    public String getRenderAs() {
-        return renderAs;
-    }
-
-    public void setRenderAs(String renderAs) {
-        this.renderAs = renderAs;
-    }
-
-    @Basic
     @Column(name = "required", nullable = false)
     public Boolean getRequired() {
         return required;
@@ -93,26 +87,6 @@ public class QuestionEntity {
 
     public void setRank(Integer rank) {
         this.rank = rank;
-    }
-
-    @Basic
-    @Column(name = "type", nullable = true)
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    @Basic
-    @Column(name = "web_service", nullable = true)
-    public String getWebService() {
-        return webService;
-    }
-
-    public void setWebService(String webService) {
-        this.webService = webService;
     }
 
     @Basic
@@ -175,46 +149,54 @@ public class QuestionEntity {
         this.updatedAt = updatedAt;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
 
-        QuestionEntity that = (QuestionEntity) o;
+    @Basic
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", columnDefinition = "question_type")
+    @Type(type = "com.navis.insightserver.pgtypes.PostgreSQLEnumType")
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (createdAt != null ? !createdAt.equals(that.createdAt) : that.createdAt != null) return false;
-        if (renderAs != null ? !renderAs.equals(that.renderAs) : that.renderAs != null) return false;
-        if (required != null ? !required.equals(that.required) : that.required != null) return false;
-        if (rank != null ? !rank.equals(that.rank) : that.rank != null) return false;
-        if (type != null ? !type.equals(that.type) : that.type != null) return false;
-        if (webService != null ? !webService.equals(that.webService) : that.webService != null) return false;
-        if (isLibrary != null ? !isLibrary.equals(that.isLibrary) : that.isLibrary != null) return false;
-        if (deleted != null ? !deleted.equals(that.deleted) : that.deleted != null) return false;
-        if (isTemplate != null ? !isTemplate.equals(that.isTemplate) : that.isTemplate != null) return false;
-        if (owner != null ? !owner.equals(that.owner) : that.owner != null) return false;
-        if (externalId != null ? !externalId.equals(that.externalId) : that.externalId != null) return false;
-        if (updatedAt != null ? !updatedAt.equals(that.updatedAt) : that.updatedAt != null) return false;
+    public QuestionType getType() {
+        return type;
+    }
 
-        return true;
+    public void setType(QuestionType type) {
+        this.type = type;
+    }
+
+    @Basic
+    @Enumerated(EnumType.STRING)
+    @Column(name = "render_as", columnDefinition = "question_render_as")
+    @Type(type = "com.navis.insightserver.pgtypes.PostgreSQLEnumType")
+
+    public QuestionRenderAs getRenderAs() {
+        return renderAs;
+    }
+
+    public void setRenderAs(QuestionRenderAs renderAs) {
+        this.renderAs = renderAs;
+    }
+
+    @Basic
+    @Enumerated(EnumType.STRING)
+    @Column(name = "web_service", columnDefinition = "question_web_service")
+    @Type(type = "com.navis.insightserver.pgtypes.PostgreSQLEnumType")
+
+    public QuestionWebService getWebService() {
+        return webService;
+    }
+
+    public void setWebService(QuestionWebService webService) {
+        this.webService = webService;
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
-        result = 31 * result + (renderAs != null ? renderAs.hashCode() : 0);
-        result = 31 * result + (required != null ? required.hashCode() : 0);
-        result = 31 * result + (rank != null ? rank.hashCode() : 0);
-        result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (webService != null ? webService.hashCode() : 0);
-        result = 31 * result + (isLibrary != null ? isLibrary.hashCode() : 0);
-        result = 31 * result + (deleted != null ? deleted.hashCode() : 0);
-        result = 31 * result + (isTemplate != null ? isTemplate.hashCode() : 0);
-        result = 31 * result + (owner != null ? owner.hashCode() : 0);
-        result = 31 * result + (externalId != null ? externalId.hashCode() : 0);
-        result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
-        return result;
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -283,7 +265,7 @@ public class QuestionEntity {
         this.conditionByConditionId = conditionByConditionId;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @Fetch(value = FetchMode.SELECT)
     @JoinColumn(name = "source_id", referencedColumnName = "id")
     public QuestionEntity getQuestionBySourceId() {
@@ -383,4 +365,6 @@ public class QuestionEntity {
     public void setQuestionGroupMemberQuestionsById_0(Collection<QuestionGroupMemberQuestionEntity> questionGroupMemberQuestionsById_0) {
         this.questionGroupMemberQuestionsById_0 = questionGroupMemberQuestionsById_0;
     }
+
+
 }

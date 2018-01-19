@@ -79,8 +79,8 @@ public class IndexController {
         return "index";
     }
 
-    @RequestMapping("/secure/CreateSurvey/")
-    protected String createSurveyModal(Model model)  throws HttpAction {
+    @RequestMapping("/secure/library")
+    protected String Library(Model model)  throws HttpAction {
         model.addAttribute("sourcePath", sourcePath);
         return "index";
     }

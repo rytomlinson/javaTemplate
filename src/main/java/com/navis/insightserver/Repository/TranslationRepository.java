@@ -12,4 +12,6 @@ import java.util.UUID;
  */
 
 public interface TranslationRepository extends CrudRepository<TranslationEntity, Long> , TranslationRepositoryCustom {
+
+    List<TranslationEntity> findByI18NStringByI18NStringId_Id(Long id);
 }
