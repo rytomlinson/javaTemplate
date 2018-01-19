@@ -53,6 +53,19 @@ public class LibraryController {
         return new ResponseEntity<List<QuestionDTO>>(questionService.getQuestions(propertyId, locale), HttpStatus.OK);
     }
 
+    @RequestMapping(value = "properties/{propertyId}/questions/{questionId}", method = RequestMethod.DELETE)
+    public ResponseEntity<Void> deleteQuestionById(
+            @PathVariable("propertyId") UUID propertyId
+            , @PathVariable("questionId") Long questionId
+            , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+        final WebContext context = new J2EContext(request, response);
+        UserProfileDTO user = security.GetUserProfile(context);
+        log.info("Delete a Insight Question for UserProfileDTO: " + (user != null ? user.getUserId() : ""));
+
+        questionService.deleteQuestion(propertyId, questionId);
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
     @RequestMapping(value = "properties/{propertyId}/questionTypes", method = RequestMethod.GET)
     public ResponseEntity<List<QuestionTypeDTO>> getQuestionTypes(
             @PathVariable("propertyId") UUID propertyId

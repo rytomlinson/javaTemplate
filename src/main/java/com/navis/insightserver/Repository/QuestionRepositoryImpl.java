@@ -40,4 +40,13 @@ public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
 
         return resultList;
     }
+
+    @Override
+    public void deleteQuestion(UUID owner, Long id) {
+        Query query = entityManager.createQuery(" update QuestionEntity q set q.deleted = true " +
+                " where q.id = :id ")
+                .setParameter("id", id);
+
+        query.executeUpdate();
+    }
 }

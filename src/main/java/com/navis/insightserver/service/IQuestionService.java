@@ -14,5 +14,6 @@ public interface IQuestionService {
 
     List<QuestionDTO> getQuestions(UUID propertyId, String locale);
     List<QuestionTypeDTO> getQuestionTypes(UUID propertyId, String locale);
+    void deleteQuestion(UUID owner, Long id);
 
 }

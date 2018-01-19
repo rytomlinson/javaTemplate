@@ -1,6 +1,7 @@
 package com.navis.insightserver.service;
 
 import com.navis.insightserver.Repository.*;
+import com.navis.insightserver.constants.Modes;
 import com.navis.insightserver.dto.QuestionDTO;
 import com.navis.insightserver.dto.QuestionTypeDTO;
 import com.navis.insightserver.dto.ResourceNotFoundExceptionDTO;
@@ -53,6 +54,13 @@ public class QuestionService implements IQuestionService {
         return buildQuestionTypesDTO(propertyId, locale);
     }
 
+    @Override
+    public void deleteQuestion(UUID owner, Long id) {
+        log.debug("In deleteQuestion Service:");
+        QuestionEntity questionEntity = validateQuestion(owner, id, Modes.EDIT);
+        questionRepository.deleteQuestion(owner, id);
+    }
+
 
     private List<QuestionDTO> buildQuestionsDTO(UUID propertyId, String locale) {
         List<UUID> owners = new ArrayList<>();
@@ -97,5 +105,19 @@ public class QuestionService implements IQuestionService {
         questionTypeDTO.setQuestionType(questionTypeObject);
 
         return questionTypeDTO;
+    }
+
+    private QuestionEntity validateQuestion(UUID owner, Long id, String mode) {
+        QuestionEntity questionEntity = questionRepository.findOne(id);
+
+        if(null ==  questionEntity) {
+            throw new ResourceNotFoundExceptionDTO(id.toString(), "question.id.invalid");
+        }
+
+        if(Modes.EDIT.equals(mode) && !owner.equals(questionEntity.getOwner())) {
+            throw new ResourceNotFoundExceptionDTO(id.toString(), "question.id.invalid");
+        }
+
+        return questionEntity;
     }
 }

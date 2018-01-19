@@ -14,4 +14,5 @@ public interface QuestionRepositoryCustom {
 
     List<Object[]> getQuestionsByOwner(List<UUID> owners);
     List<String> getQuestionTypes();
+    void deleteQuestion(UUID owner, Long id);
 }
