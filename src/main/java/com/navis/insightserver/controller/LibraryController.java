@@ -53,5 +53,17 @@ public class LibraryController {
         return new ResponseEntity<List<QuestionDTO>>(questionService.getQuestions(propertyId, locale), HttpStatus.OK);
     }
 
+    @RequestMapping(value = "properties/{propertyId}/questionTypes", method = RequestMethod.GET)
+    public ResponseEntity<List<QuestionTypeDTO>> getQuestionTypes(
+            @PathVariable("propertyId") UUID propertyId
+            , @RequestParam(value = "locale", required = false, defaultValue = "en-US") String locale
+            , HttpServletRequest request, HttpServletResponse response, Map<String, Object> map) {
+        final WebContext context = new J2EContext(request, response);
+        UserProfileDTO user = security.GetUserProfile(context);
+        log.info("View a list of Insight Question Types for UserProfileDTO: " + user.getUserId());
+
+        return new ResponseEntity<List<QuestionTypeDTO>>(questionService.getQuestionTypes(propertyId, locale), HttpStatus.OK);
+    }
+
 
 }

@@ -13,4 +13,5 @@ import java.util.UUID;
 public interface QuestionRepositoryCustom {
 
     List<Object[]> getQuestionsByOwner(List<UUID> owners);
+    List<String> getQuestionTypes();
 }

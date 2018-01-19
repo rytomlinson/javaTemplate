@@ -2,6 +2,7 @@ package com.navis.insightserver.service;
 
 import com.navis.insightserver.Repository.*;
 import com.navis.insightserver.dto.QuestionDTO;
+import com.navis.insightserver.dto.QuestionTypeDTO;
 import com.navis.insightserver.dto.ResourceNotFoundExceptionDTO;
 import com.navis.insightserver.dto.TagDTO;
 import com.navis.insightserver.entity.QuestionEntity;
@@ -46,6 +47,11 @@ public class QuestionService implements IQuestionService {
         return buildQuestionsDTO(propertyId, locale);
     }
 
+    @Override
+    public List<QuestionTypeDTO> getQuestionTypes(UUID propertyId, String locale) {
+        log.debug("In getQuestionTypess Service:");
+        return buildQuestionTypesDTO(propertyId, locale);
+    }
 
 
     private List<QuestionDTO> buildQuestionsDTO(UUID propertyId, String locale) {
@@ -53,7 +59,6 @@ public class QuestionService implements IQuestionService {
         owners.add(propertyId);
         owners.add(uuid);
 
-        List<Object[]> list = questionRepository.getQuestionsByOwner(owners);
 
         List<QuestionEntity> questionEntities = (List<QuestionEntity>) questionRepository.findByOwnerInAndDeletedFalseAndTemplateTrueAndQuestionBySourceId_IdIsNull(owners);
 
@@ -61,7 +66,14 @@ public class QuestionService implements IQuestionService {
                 .filter(item -> !item.getType().equals(QuestionType.range_group_member))
                 .map(item -> convertToDto(item, locale)).collect(Collectors.toList());
 
-//        List<QuestionDTO> listDto = list.stream().map(item -> convertToDto(item, locale)).collect(Collectors.toList());
+        return listDto;
+    }
+
+    private List<QuestionTypeDTO> buildQuestionTypesDTO(UUID propertyId, String locale) {
+
+        List<String> questionTypeObjects = questionRepository.getQuestionTypes();
+
+        List<QuestionTypeDTO> listDto = questionTypeObjects.stream().map(questionType -> convertToDto(questionType)).collect(Collectors.toList());
 
         return listDto;
     }
@@ -78,5 +90,12 @@ public class QuestionService implements IQuestionService {
     private QuestionDTO convertToDto(QuestionEntity questionEntity, String locale) {
         QuestionDTO questionDTO = new QuestionDTO(questionEntity, locale);
         return questionDTO;
+    }
+
+    private  QuestionTypeDTO convertToDto(String questionTypeObject) {
+        QuestionTypeDTO questionTypeDTO = new QuestionTypeDTO();
+        questionTypeDTO.setQuestionType(questionTypeObject);
+
+        return questionTypeDTO;
     }
 }

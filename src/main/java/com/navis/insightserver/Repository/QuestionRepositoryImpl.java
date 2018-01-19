@@ -31,4 +31,13 @@ public class QuestionRepositoryImpl implements QuestionRepositoryCustom {
 
         return (List<Object[]>) resultList;
     }
+
+    @Override
+    public List<String> getQuestionTypes() {
+        Query query = entityManager.createNativeQuery(" SELECT e.enumlabel FROM pg_enum e JOIN pg_type t on e.enumtypid = t.oid where t.typname = 'question_type'");
+
+        List<String> resultList = query.getResultList();
+
+        return resultList;
+    }
 }
